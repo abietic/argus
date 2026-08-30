@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/calibration-promotion-observation.schema.json",
+  "title": "Argus CalibrationPromotionObservation v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request", "plan_binding", "baseline_snapshot", "observation_snapshot", "metrics", "status", "rollback_recommendation", "reason_codes", "observed_by", "audit", "idempotency_key"],
+  "properties": {
+    "schema_version": {"const": "argus.calibration_promotion_observation.v1alpha1"},
+    "request": {"$ref": "calibration-promotion-observation-request.schema.json"},
+    "plan_binding": {"$ref": "#/$defs/plan_binding"},
+    "baseline_snapshot": {"$ref": "#/$defs/snapshot_binding"},
+    "observation_snapshot": {"$ref": "#/$defs/snapshot_binding"},
+    "metrics": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"$ref": "#/$defs/metric"}},
+    "status": {"enum": ["healthy", "regressed", "insufficient_data", "unavailable"]},
+    "rollback_recommendation": {"type": "boolean"},
+    "reason_codes": {"type": "array", "items": {"$ref": "#/$defs/id"}},
+    "observed_by": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[^\\r\\n]+$"},
+    "audit": {"type": "string", "minLength": 1, "maxLength": 4096, "pattern": "^[^\\r\\n]+$"},
+    "idempotency_key": {"$ref": "#/$defs/id"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$", "not": {"pattern": "^[Ll][Aa][Tt][Ee][Ss][Tt]$"}},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "window": {"type": "object", "additionalProperties": false, "required": ["start_inclusive", "end_exclusive"], "properties": {"start_inclusive": {"type": "string", "format": "date-time", "pattern": "Z$"}, "end_exclusive": {"type": "string", "format": "date-time", "pattern": "Z$"}}},
+    "scope": {"type": "object", "additionalProperties": false, "required": ["tenant_id", "organization_id", "repository_id"], "properties": {"tenant_id": {"$ref": "#/$defs/id"}, "organization_id": {"$ref": "#/$defs/id"}, "repository_id": {"$ref": "#/$defs/id"}}},
+    "plan_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["plan_id", "plan_sha256", "activation_at", "calibration_run_id", "calibration_run_sha256", "baseline_review_run_id", "baseline_bundle_sha256", "variant_bundle_sha256", "variant_config_revision_id", "variant_config_revision", "variant_config_revision_sha256", "promotion_variant_id", "promotion_policy_revision"],
+      "properties": {
+        "plan_id": {"$ref": "#/$defs/id"}, "plan_sha256": {"$ref": "#/$defs/sha256"}, "activation_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+        "calibration_run_id": {"$ref": "#/$defs/id"}, "calibration_run_sha256": {"$ref": "#/$defs/sha256"}, "baseline_review_run_id": {"$ref": "#/$defs/id"},
+        "baseline_bundle_sha256": {"$ref": "#/$defs/sha256"}, "variant_bundle_sha256": {"$ref": "#/$defs/sha256"}, "variant_config_revision_id": {"$ref": "#/$defs/id"},
+        "variant_config_revision": {"$ref": "#/$defs/id"}, "variant_config_revision_sha256": {"$ref": "#/$defs/sha256"}, "promotion_variant_id": {"$ref": "#/$defs/id"}, "promotion_policy_revision": {"$ref": "#/$defs/id"}
+      }
+    },
+    "snapshot_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["snapshot_id", "sha256", "scope", "window", "group_by", "built_at"],
+      "properties": {
+        "snapshot_id": {"$ref": "#/$defs/id"}, "sha256": {"$ref": "#/$defs/sha256"}, "scope": {"$ref": "#/$defs/scope"}, "window": {"$ref": "#/$defs/window"},
+        "group_by": {"type": "array", "items": {"enum": ["tenant", "organization", "repository", "language", "rule", "path", "review_dimension", "workflow_revision", "config_revision", "experiment", "experiment_arm", "variant", "repeatability", "evaluation_case", "context_provider", "context_kind", "context_gap_reason"]}},
+        "built_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+      }
+    },
+    "metric_value": {"type": "object", "additionalProperties": false, "required": ["numerator", "denominator"], "properties": {"numerator": {"type": "integer", "minimum": 0}, "denominator": {"type": "integer", "minimum": 0}, "rate_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000}}},
+    "metric": {
+      "type": "object", "additionalProperties": false,
+      "required": ["metric_id", "definition", "direction", "baseline", "observation", "availability", "regression", "reason_codes"],
+      "properties": {
+        "metric_id": {"enum": ["published_adverse_rate", "published_fixed_rate", "published_outcome_coverage_rate", "review_run_complete_rate", "review_run_success_rate"]},
+        "definition": {"type": "string", "minLength": 1}, "direction": {"enum": ["higher_is_better", "lower_is_better"]},
+        "baseline": {"$ref": "#/$defs/metric_value"}, "observation": {"$ref": "#/$defs/metric_value"}, "delta_ppm": {"type": "integer", "minimum": -1000000, "maximum": 1000000},
+        "regression_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000}, "availability": {"enum": ["evaluated", "insufficient_data", "unavailable"]}, "regression": {"type": "boolean"}, "reason_codes": {"type": "array", "items": {"$ref": "#/$defs/id"}}
+      }
+    }
+  }
+}

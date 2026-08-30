@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/normalization-promotion-gate-decision.schema.json",
+  "title": "Argus NormalizationPromotionGateDecision v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "variant_id", "gate", "policy_ref", "quality_run_ref", "quality_run_id", "split", "outcome", "reason_codes", "measured", "thresholds", "evaluated_at"],
+  "properties": {
+    "schema_version": {"const": "argus.normalization_promotion_gate_decision.v1alpha1"},
+    "variant_id": {"$ref": "#/$defs/id"},
+    "gate": {"enum": ["targeted_regression", "fixed_holdout"]},
+    "policy_ref": {"$ref": "#/$defs/artifact_ref"},
+    "quality_run_ref": {"$ref": "#/$defs/artifact_ref"},
+    "quality_run_id": {"$ref": "#/$defs/id"},
+    "split": {"enum": ["test", "holdout"]},
+    "outcome": {"enum": ["pass", "fail", "inconclusive"]},
+    "reason_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "measured": {"$ref": "#/$defs/summary"},
+    "thresholds": {"$ref": "normalization-promotion-policy.schema.json#/$defs/thresholds"},
+    "evaluated_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "contract": {"type": "string", "minLength": 1}
+      }
+    },
+    "ratio": {
+      "type": "object", "additionalProperties": false,
+      "required": ["available", "numerator", "denominator", "value_ppm"],
+      "properties": {
+        "available": {"type": "boolean"}, "numerator": {"type": "integer", "minimum": 0},
+        "denominator": {"type": "integer", "minimum": 0}, "value_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "reason_code": {"$ref": "#/$defs/id"}
+      }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["cases", "eligible_raw_candidates", "oracle_unique_claims", "predicted_unique_claims", "unique_claim_delta", "true_duplicate_pairs", "false_duplicate_pairs", "missed_duplicate_pairs", "true_distinct_pairs", "pairwise_precision", "pairwise_recall", "false_merge_rate", "exact_partition_matches", "policy_exposed_cases", "independent_evidence_cases"],
+      "properties": {
+        "cases": {"type": "integer", "minimum": 1}, "eligible_raw_candidates": {"type": "integer", "minimum": 1},
+        "oracle_unique_claims": {"type": "integer", "minimum": 1}, "predicted_unique_claims": {"type": "integer", "minimum": 1},
+        "unique_claim_delta": {"type": "integer"}, "true_duplicate_pairs": {"type": "integer", "minimum": 0},
+        "false_duplicate_pairs": {"type": "integer", "minimum": 0}, "missed_duplicate_pairs": {"type": "integer", "minimum": 0},
+        "true_distinct_pairs": {"type": "integer", "minimum": 0}, "pairwise_precision": {"$ref": "#/$defs/ratio"},
+        "pairwise_recall": {"$ref": "#/$defs/ratio"}, "false_merge_rate": {"$ref": "#/$defs/ratio"},
+        "exact_partition_matches": {"type": "integer", "minimum": 0}, "policy_exposed_cases": {"type": "integer", "minimum": 0},
+        "independent_evidence_cases": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

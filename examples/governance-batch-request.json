@@ -1,0 +1,35 @@
+{
+  "schema_version": "argus.governance_batch_request.v1alpha1",
+  "batch_id": "governance-assignment-example-1",
+  "operation": "assign",
+  "items": [
+    {
+      "event_id": "governance-assignment-case-a",
+      "assignment": {
+        "schema_version": "argus.evaluation_case_review_assignment.v1alpha1",
+        "case_id": "candidate-case-a",
+        "expected_governance_revision": 1,
+        "expected_label_revision": 1,
+        "reviewer_ids": ["reviewer-a", "reviewer-b"],
+        "blind": true,
+        "reason": "assign an explicit blind review round",
+        "assigned_at": "2026-08-25T09:00:00Z"
+      }
+    },
+    {
+      "event_id": "governance-assignment-case-b",
+      "assignment": {
+        "schema_version": "argus.evaluation_case_review_assignment.v1alpha1",
+        "case_id": "candidate-case-b",
+        "expected_governance_revision": 1,
+        "expected_label_revision": 1,
+        "reviewer_ids": ["reviewer-a", "reviewer-b"],
+        "blind": true,
+        "reason": "assign an explicit blind review round",
+        "assigned_at": "2026-08-25T09:00:00Z"
+      }
+    }
+  ],
+  "terminal_event_id": "governance-assignment-example-terminal",
+  "submitted_at": "2026-08-25T09:00:00Z"
+}

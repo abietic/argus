@@ -1,0 +1,16 @@
+/build/
+/dist/
+/tmp/
+node_modules/
+runtime/pi-review/dist/
+runtime/pi-review/coverage/
+runtime/pi-review/.cache/
+.env
+.env.*
+!.env.example
+/.idea/
+/.vscode/
+*.log
+*.out
+*.test
+.DS_Store

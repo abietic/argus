@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/normalization-promotion-policy.schema.json",
+  "title": "Argus NormalizationPromotionPolicy v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "revision", "test", "holdout", "minimum_shadow_runs", "minimum_canary_runs", "canary_percentage", "created_at"],
+  "properties": {
+    "schema_version": {"const": "argus.normalization_promotion_policy.v1alpha1"},
+    "policy_id": {"$ref": "#/$defs/id"},
+    "revision": {"$ref": "#/$defs/id"},
+    "test": {"$ref": "#/$defs/thresholds"},
+    "holdout": {"$ref": "#/$defs/thresholds"},
+    "minimum_shadow_runs": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+    "minimum_canary_runs": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+    "canary_percentage": {"type": "integer", "minimum": 1, "maximum": 99},
+    "created_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$", "not": {"pattern": "^[Ll][Aa][Tt][Ee][Ss][Tt]$"}},
+    "thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum_cases", "minimum_eligible_candidates", "minimum_oracle_duplicate_pairs", "minimum_oracle_distinct_pairs", "minimum_pairwise_precision_ppm", "minimum_pairwise_recall_ppm", "maximum_false_merge_rate_ppm", "minimum_exact_partition_ppm"],
+      "properties": {
+        "minimum_cases": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "minimum_eligible_candidates": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "minimum_oracle_duplicate_pairs": {"type": "integer", "minimum": 1},
+        "minimum_oracle_distinct_pairs": {"type": "integer", "minimum": 1},
+        "minimum_pairwise_precision_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "minimum_pairwise_recall_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "maximum_false_merge_rate_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "minimum_exact_partition_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000}
+      }
+    }
+  }
+}

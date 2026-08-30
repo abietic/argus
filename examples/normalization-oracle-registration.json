@@ -1,0 +1,85 @@
+{
+  "schema_version": "argus.normalization_oracle_registration.v1alpha1",
+  "oracle": {
+    "schema_version": "argus.normalization_oracle.v1alpha1",
+    "oracle_id": "normalization-oracle-dev-1",
+    "corpus_snapshot_ref": {
+      "uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 1024,
+      "contract": "argus.corpus_snapshot.v1alpha1"
+    },
+    "case_id": "case-dev-1",
+    "split": "dev",
+    "label_revision": 3,
+    "source_review_run_id": "formal-run-dev-1",
+    "source_review_run_ref": {
+      "uri": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "size_bytes": 2048,
+      "contract": "argus.review_run.v1alpha1"
+    },
+    "raw_candidate_collection_ref": {
+      "uri": "artifact://local/sha256/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "size_bytes": 4096,
+      "contract": "argus.agent_review_raw_candidate_collection.v1alpha1"
+    },
+    "target_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "eligible_raw_candidate_ids": ["raw-a", "raw-b", "raw-c", "raw-d"],
+    "equivalence_classes": [
+      {"class_id": "approval-transition", "raw_candidate_ids": ["raw-a", "raw-b", "raw-c"]},
+      {"class_id": "resource-leak", "raw_candidate_ids": ["raw-d"]}
+    ],
+    "adjudication": {
+      "authority": "independent-review-board",
+      "revision": "board-v1",
+      "reviewer_ids": ["reviewer-a", "reviewer-b"],
+      "adjudicator_id": "adjudicator-c",
+      "evidence_refs": [
+        {
+          "uri": "artifact://local/sha256/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "size_bytes": 512,
+          "contract": "argus.external_normalization_oracle_evidence.v1alpha1"
+        }
+      ],
+      "observed_policy_revisions": [],
+      "adjudicated_at": "2026-08-27T02:00:00Z"
+    },
+    "created_at": "2026-08-27T02:01:00Z"
+  },
+  "oracle_ref": {
+    "uri": "artifact://local/sha256/a647cc03da5a42406b857e28ae9954c2378e2ea782e2363969d9a7e2ecd880bc",
+    "sha256": "a647cc03da5a42406b857e28ae9954c2378e2ea782e2363969d9a7e2ecd880bc",
+    "size_bytes": 1848,
+    "contract": "argus.normalization_oracle.v1alpha1+json"
+  },
+  "attestation": {
+    "schema_version": "argus.normalization_oracle_attestation.v1alpha1",
+    "attestation_id": "normalization-attestation-dev-1",
+    "oracle_id": "normalization-oracle-dev-1",
+    "oracle_sha256": "a647cc03da5a42406b857e28ae9954c2378e2ea782e2363969d9a7e2ecd880bc",
+    "authority": "independent-review-board",
+    "key_id": "normalization-oracle-key-1",
+    "key_revision": "key-v1",
+    "policy_revision": "board-v1",
+    "decision": "approved",
+    "issued_at": "2026-08-27T02:02:00Z",
+    "signature_base64": "mAC93JxBDiw7TGyVYpD24BFR/4v4gmBOuBg8AKQeE5WXBkcsDU94oTDkXg2y7t6K0If9PFqGstngTPdiLeTWBA=="
+  },
+  "trusted_key": {
+    "schema_version": "argus.trusted_governance_key.v1alpha1",
+    "authority": "independent-review-board",
+    "key_id": "normalization-oracle-key-1",
+    "revision": "key-v1",
+    "public_key_base64": "TaHemzlBF4vlsIyMCFqVi2sLs0JCwla5ABLFs/O0ypQ=",
+    "repository_ids": ["repo-example"],
+    "allowed_classifications": ["internal"],
+    "valid_from": "2026-08-27T00:00:00Z",
+    "valid_until": "2027-08-27T00:00:00Z"
+  },
+  "expected_current_revision": 0,
+  "expected_current_registered_event_id": "",
+  "registered_at": "2026-08-27T02:03:00Z"
+}

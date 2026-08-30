@@ -1,0 +1,10 @@
+{
+  "schema_version": "argus.evaluation_case_review_assignment.v1alpha1",
+  "case_id": "case-feedback-accepted-1",
+  "expected_governance_revision": 1,
+  "expected_label_revision": 1,
+  "reviewer_ids": ["reviewer-a", "reviewer-b"],
+  "blind": true,
+  "reason": "two independent reviewers must assess the frozen candidate evidence",
+  "assigned_at": "2026-08-25T15:00:00Z"
+}

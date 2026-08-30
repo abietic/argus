@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-config-resolution-query.schema.json",
+  "title": "Argus LocalAPIConfigResolutionQuery v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "context"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_config_resolution_query.v1alpha1"},
+    "context": {"$ref": "#/$defs/resolutionContext"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[\\p{L}\\p{N}._~-]+$"
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\\\:\\x00-\\x1F\\x7F]([^\\\\:\\x00-\\x1F\\x7F]*[^/\\\\:\\x00-\\x1F\\x7F])?$",
+      "not": {"pattern": "(^|/)(\\.|\\.\\.)(/|$)|//"}
+    },
+    "optionalRepositoryPath": {
+      "anyOf": [{"const": ""}, {"$ref": "#/$defs/repositoryPath"}]
+    },
+    "resolutionContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "organization_id", "repository_id", "path", "invocation_id"],
+      "properties": {
+        "tenant_id": {"$ref": "#/$defs/identifier"},
+        "organization_id": {"$ref": "#/$defs/identifier"},
+        "repository_id": {"$ref": "#/$defs/identifier"},
+        "path": {"$ref": "#/$defs/optionalRepositoryPath"},
+        "invocation_id": {"$ref": "#/$defs/identifier"}
+      }
+    }
+  }
+}

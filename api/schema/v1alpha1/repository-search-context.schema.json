@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/repository-search-context.schema.json",
+  "title": "Argus RepositorySearchContext v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "provider_id", "provider_revision", "commit_oid", "target_paths", "target_ranges", "query_halo_lines", "queries", "matches", "coverage", "gaps"],
+  "properties": {
+    "schema_version": {"const": "argus.context.repository_search.v1alpha1"},
+    "provider_id": {"const": "argus-repository-search"},
+    "provider_revision": {"const": "2"},
+    "commit_oid": {"type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"},
+    "target_paths": {"type": "array", "items": {"$ref": "#/$defs/path"}, "uniqueItems": true},
+    "target_ranges": {"type": "array", "items": {"$ref": "#/$defs/target_range"}, "uniqueItems": true},
+    "query_halo_lines": {"enum": [0, 32]},
+    "queries": {"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/query"}},
+    "matches": {"type": "array", "maxItems": 512, "items": {"$ref": "#/$defs/match"}},
+    "coverage": {"$ref": "#/$defs/coverage"},
+    "gaps": {"type": "array", "items": {"$ref": "#/$defs/gap"}, "uniqueItems": true}
+  },
+  "$defs": {
+    "path": {"type": "string", "minLength": 1, "maxLength": 4096, "pattern": "^[^/\\\\][^\\\\]*$"},
+    "term": {"type": "string", "minLength": 4, "maxLength": 64, "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "target_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "start_line", "end_line"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "start_line": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "end_line": {"type": "integer", "minimum": 1, "maximum": 4294967295}
+      }
+    },
+    "query": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["term", "source_paths", "target_occurrences", "repository_occurrences", "matched_files"],
+      "properties": {
+        "term": {"$ref": "#/$defs/term"},
+        "source_paths": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/path"}, "uniqueItems": true},
+        "target_occurrences": {"type": "integer", "minimum": 1},
+        "repository_occurrences": {"type": "integer", "minimum": 1},
+        "matched_files": {"type": "integer", "minimum": 1}
+      }
+    },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["term", "path", "line", "column", "line_sha256", "line_text", "line_text_start_column", "line_text_truncated"],
+      "properties": {
+        "term": {"$ref": "#/$defs/term"},
+        "path": {"$ref": "#/$defs/path"},
+        "line": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "column": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "line_sha256": {"$ref": "#/$defs/sha256"},
+        "line_text": {"type": "string", "minLength": 1, "maxLength": 512},
+        "line_text_start_column": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "line_text_truncated": {"type": "boolean"}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["files_matched", "files_retained", "files_read", "files_unavailable", "files_sensitive_skipped", "target_files_requested", "target_files_found", "candidate_terms", "queries_emitted", "repository_occurrences", "matches_emitted", "truncated"],
+      "properties": {
+        "files_matched": {"type": "integer", "minimum": 0},
+        "files_retained": {"type": "integer", "minimum": 0},
+        "files_read": {"type": "integer", "minimum": 0},
+        "files_unavailable": {"type": "integer", "minimum": 0},
+        "files_sensitive_skipped": {"type": "integer", "minimum": 0},
+        "target_files_requested": {"type": "integer", "minimum": 0},
+        "target_files_found": {"type": "integer", "minimum": 0},
+        "candidate_terms": {"type": "integer", "minimum": 0},
+        "queries_emitted": {"type": "integer", "minimum": 0},
+        "repository_occurrences": {"type": "integer", "minimum": 0},
+        "matches_emitted": {"type": "integer", "minimum": 0},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code"],
+      "properties": {
+        "code": {"enum": ["artifact_budget_exceeded", "file_binary_file", "file_file_size_exceeded", "file_non_canonical_line_endings", "file_non_regular_file", "file_submodule_not_allowed", "file_symlink_not_allowed", "file_target_policy_excluded", "file_unavailable", "file_unsupported_text_encoding", "match_budget_exceeded", "no_repository_matches", "query_budget_exceeded", "query_candidate_budget_exceeded", "sensitive_credential_file", "sensitive_environment_file", "sensitive_key_file", "sensitive_state_file", "source_listing_partial", "target_file_unavailable", "target_no_search_terms"]},
+        "path": {"$ref": "#/$defs/path"},
+        "term": {"$ref": "#/$defs/term"}
+      }
+    }
+  }
+}

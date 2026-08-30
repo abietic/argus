@@ -1,0 +1,9 @@
+{
+  "schema_version": "argus.local_api_principal.v1alpha1",
+  "actor": "local-dataset-curator",
+  "actor_kind": "human",
+  "roles": ["dataset_curator"],
+  "finding_roles": ["finding_reviewer", "publication_approver"],
+  "permissions": ["config_read", "config_write", "dashboard_read", "evaluation_read", "evaluation_write", "review_execute", "review_read", "review_write"],
+  "profile_revision": "local-curator-v1"
+}

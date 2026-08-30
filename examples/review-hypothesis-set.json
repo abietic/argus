@@ -1,0 +1,97 @@
+{
+  "schema_version": "argus.review_hypothesis_set.v1alpha1",
+  "hypothesis_set_id": "hypothesis-set-1",
+  "plan_id": "plan-1",
+  "source_run_id": "source-run-1",
+  "execution_id": "execution-1",
+  "review_run_id": "review-run-1",
+  "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "completeness": "complete",
+  "completeness_reasons": [],
+  "normalization_decisions": [
+    {
+      "raw_candidate_id": "raw-candidate-1",
+      "claim_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "action": "retained",
+      "reason_code": "valid_candidate",
+      "occurrence_id": "occurrence-1"
+    }
+  ],
+  "hypotheses": [
+    {
+      "occurrence_id": "occurrence-1",
+      "cluster_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "group_id": "group-1",
+      "dimension": {
+        "id": "correctness",
+        "revision": "1",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "category": "correctness",
+      "severity": "high",
+      "raw_confidence_available": false,
+      "raw_confidence_ppm": 0,
+      "title": "possible nil dereference",
+      "description": "value may be nil",
+      "impact": "request panic",
+      "anchor": {
+        "path": "internal/review.go",
+        "side": "new",
+        "start_line": 10,
+        "end_line": 11,
+        "source_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "evidence": [
+        {
+          "evidence_id": "evidence-1",
+          "statement": "nil can reach this dereference",
+          "anchor": {
+            "path": "internal/review.go",
+            "side": "new",
+            "start_line": 10,
+            "end_line": 11,
+            "source_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "excerpt": "value.Field()",
+          "evidence_digest": "7d51c58825304460ff84d428ead1d731fb66910a8a318f6ac86f446bb0884f06"
+        }
+      ],
+      "verification_observations": [
+        {
+          "observation_id": "verification-1",
+          "sequence": 1,
+          "verifier": {
+            "id": "independent-verifier",
+            "revision": "1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verdict": "confirmed",
+          "reason_code": "path_reachable",
+          "explanation": "the nil branch reaches the dereference",
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        }
+      ]
+    }
+  ],
+  "dedup_clusters": [
+    {
+      "cluster_id": "cluster-1",
+      "fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "canonical_occurrence_id": "occurrence-1",
+      "occurrence_ids": [
+        "occurrence-1"
+      ]
+    }
+  ],
+  "coverage": {
+    "groups_total": 1,
+    "groups_reviewed": 1,
+    "review_tasks_total": 1,
+    "review_tasks_succeeded": 1,
+    "files_included": 1,
+    "gaps": []
+  },
+  "generated_at": "2026-08-20T10:01:00Z"
+}

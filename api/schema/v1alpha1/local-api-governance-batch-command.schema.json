@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-governance-batch-command.schema.json",
+  "title": "Argus LocalAPIGovernanceBatchCommand v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request", "mutation"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_governance_batch_command.v1alpha1"},
+    "request": {"$ref": "governance-batch-request.schema.json"},
+    "mutation": {"$ref": "local-api-mutation.schema.json"}
+  }
+}

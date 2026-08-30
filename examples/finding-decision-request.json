@@ -1,0 +1,15 @@
+{
+  "schema_version": "argus.finding_decision_request.v1alpha1",
+  "run_id": "run-20260825-001",
+  "finding_id": "finding-001",
+  "action": "publish",
+  "reason_code": "human_confirmed",
+  "evidence_refs": [
+    {
+      "authority": "argus-local",
+      "id": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "occurred_at": "2026-08-25T06:00:00Z"
+}

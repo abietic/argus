@@ -1,0 +1,13 @@
+{
+  "schema_version": "argus.finding_decision_mutation.v1alpha1",
+  "idempotency_key": "decision-approval-001",
+  "actor": {
+    "kind": "human",
+    "id": "reviewer-001"
+  },
+  "roles": [
+    "publication_approver"
+  ],
+  "audit": "Approved after reviewing the frozen finding evidence.",
+  "at": "2026-08-25T06:01:00Z"
+}

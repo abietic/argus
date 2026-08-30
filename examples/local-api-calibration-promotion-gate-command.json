@@ -1,0 +1,9 @@
+{
+  "schema_version": "argus.local_api_calibration_promotion_gate_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.calibration_promotion_gate_request.v1alpha1",
+    "plan_id": "calibration-promotion-20260826-1",
+    "result": {"schema_version": "argus.promotion_gate_result.v1alpha1", "variant_id": "filter-calibrated-20260826-1", "gate": "schema_contract_validation", "outcome": "pass", "evidence": {"refs": ["artifact://local/evidence/calibration-contract-1"], "basis": "deterministic", "checks_passed": true, "holdout_case_ids": [], "safety_event_count": 0, "rollback_verified": false}, "summary": "bound contracts and immutable digests validated"}
+  },
+  "mutation": {"schema_version": "argus.local_api_mutation.v1alpha1", "idempotency_key": "gate-calibration-promotion-1", "audit": "record bound schema gate", "at": "2026-08-26T09:05:00Z"}
+}

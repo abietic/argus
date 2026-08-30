@@ -1,0 +1,37 @@
+{
+  "schema_version": "argus.local_api_experiment_batch_submit_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.experiment_batch_request.v1alpha1",
+    "batch_id": "experiment-batch-platform-1",
+    "baseline_evaluation_run_id": "evaluation-baseline-1",
+    "variant_evaluation_run_id": "evaluation-budget-1",
+    "experiment_run_id": "experiment-budget-1",
+    "experiment_revision": "budget-timeout-120s-v1",
+    "variable": "budget",
+    "executor_revision": "argus-local-formal-pi-replay-1",
+    "max_concurrency": 2,
+    "cases": [
+      {
+        "case_id": "case-example-1",
+        "expected_label_revision": 1,
+        "baseline_review_run_id": "review-baseline-1",
+        "expected_baseline_config_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "expected_variant_config_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "exposure_observations": [
+          {"component": "prompt", "status": "not_seen", "revision": "prompt-1"},
+          {"component": "rule", "status": "not_seen", "revision": "rule-1"},
+          {"component": "model", "status": "not_seen", "revision": "model-1"},
+          {"component": "index", "status": "not_seen", "revision": "index-1"}
+        ]
+      }
+    ],
+    "created_at": "2026-08-26T12:00:00Z"
+  },
+  "budget_timeout_ms": 120000,
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "submit-budget-experiment-001",
+    "audit": "submit a self-contained budget experiment from the configured formal profile",
+    "at": "2026-08-26T12:00:00Z"
+  }
+}

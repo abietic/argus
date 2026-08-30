@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/evaluation-case-activation.schema.json",
+  "title": "Argus EvaluationCaseActivation v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "expected_governance_revision", "split", "eligibility", "license_consent", "reason", "activated_at"],
+  "properties": {
+    "schema_version": { "const": "argus.evaluation_case_activation.v1alpha1" },
+    "case_id": { "$ref": "evaluation-case.schema.json#/$defs/id" },
+    "expected_governance_revision": { "type": "integer", "minimum": 1 },
+    "split": { "enum": ["train", "dev", "test", "holdout"] },
+    "eligibility": { "$ref": "evaluation-case.schema.json#/$defs/eligibility" },
+    "license_consent": { "$ref": "evaluation-case.schema.json#/$defs/license" },
+    "reason": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "activated_at": { "type": "string", "format": "date-time" }
+  }
+}

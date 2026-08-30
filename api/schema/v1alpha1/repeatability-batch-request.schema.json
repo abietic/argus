@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/repeatability-batch-request.schema.json",
+  "title": "Argus RepeatabilityBatchRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "batch_id", "baseline_evaluation_run_id", "replay_evaluation_run_ids", "repeatability_run_id", "repeatability_revision", "executor_revision", "max_concurrency", "cases", "created_at"],
+  "properties": {
+    "schema_version": { "const": "argus.repeatability_batch_request.v1alpha1" },
+    "batch_id": { "$ref": "#/$defs/id" },
+    "baseline_evaluation_run_id": { "$ref": "#/$defs/id" },
+    "replay_evaluation_run_ids": { "type": "array", "minItems": 1, "maxItems": 31, "uniqueItems": true, "items": { "$ref": "#/$defs/id" } },
+    "repeatability_run_id": { "$ref": "#/$defs/id" },
+    "repeatability_revision": { "$ref": "#/$defs/id" },
+    "executor_revision": { "$ref": "#/$defs/id" },
+    "executor_template_ref": { "$ref": "#/$defs/executorTemplateRef" },
+    "max_concurrency": { "type": "integer", "minimum": 1, "maximum": 16 },
+    "cases": { "type": "array", "minItems": 1, "maxItems": 1024, "items": { "$ref": "#/$defs/case" } },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "executorTemplateRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": { "type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "contract": { "const": "argus.replay_executor_template.v1alpha1" }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "status", "revision"],
+      "properties": {
+        "component": { "enum": ["prompt", "rule", "model", "index"] },
+        "status": { "enum": ["seen", "not_seen"] },
+        "revision": { "$ref": "#/$defs/id" }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "expected_label_revision", "baseline_review_run_id", "expected_baseline_config_sha256", "exposure_observations"],
+      "properties": {
+        "case_id": { "$ref": "#/$defs/id" },
+        "expected_label_revision": { "type": "integer", "minimum": 1 },
+        "baseline_review_run_id": { "$ref": "#/$defs/id" },
+        "expected_baseline_config_sha256": { "description": "ConfigBundle embedded semantic SHA-256; distinct from the config artifact byte digest.", "$ref": "#/$defs/sha256" },
+        "exposure_observations": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/observation" }, { "properties": { "component": { "const": "prompt" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/observation" }, { "properties": { "component": { "const": "rule" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/observation" }, { "properties": { "component": { "const": "model" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/observation" }, { "properties": { "component": { "const": "index" } } }] }
+          ],
+          "items": false
+        }
+      }
+    }
+  }
+}

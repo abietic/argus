@@ -1,0 +1,15 @@
+{
+  "schema_version": "argus.local_api_finding_decision_write_command.v1alpha1",
+  "action": "human_review",
+  "reason_code": "manual_review_requested",
+  "evidence_refs": [
+    {"authority": "local-ui", "id": "review-note-1"}
+  ],
+  "occurred_at": "2026-08-26T03:59:00Z",
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "finding-decision-api-1",
+    "audit": "operator reviewed finding evidence",
+    "at": "2026-08-26T04:00:00Z"
+  }
+}

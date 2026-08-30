@@ -1,0 +1,20 @@
+{
+  "schema_version": "argus.evaluation_case_activation.v1alpha1",
+  "case_id": "case-localized-1",
+  "expected_governance_revision": 2,
+  "split": "train",
+  "eligibility": {
+    "evaluation": true,
+    "training": true,
+    "promotion": true,
+    "production_distribution": false
+  },
+  "license_consent": {
+    "license_id": "internal-review-license-v1",
+    "consent": "authorized_internal",
+    "allowed_uses": ["candidate_pool", "evaluation", "promotion", "training"],
+    "restrictions": []
+  },
+  "reason": "curator assigns the governed case after split and license review",
+  "activated_at": "2026-03-01T09:15:00Z"
+}

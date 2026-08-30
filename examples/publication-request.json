@@ -1,0 +1,52 @@
+{
+  "schema_version": "argus.publication_request.v1alpha1",
+  "publication_id": "publication-001",
+  "idempotency_key": "publication-key-001",
+  "grant_id": "publication-grant-001",
+  "grant_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "tenant_id": "tenant-001",
+  "workspace_id": "workspace-001",
+  "run_id": "run-20260825-001",
+  "run_kind": "review",
+  "run_status": "succeeded",
+  "target_mode": "diff",
+  "provider": "github",
+  "repository_id": "org/repository",
+  "change_kind": "pull_request",
+  "change_id": "42",
+  "base_revision": "base-revision-001",
+  "expected_head_revision": "head-revision-001",
+  "target_snapshot_ref": {
+    "uri": "artifact://local/targets/001",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "size_bytes": 1024
+  },
+  "config_bundle_ref": {
+    "uri": "artifact://local/config/001",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "size_bytes": 2048
+  },
+  "finding_source_ref": {
+    "uri": "artifact://local/findings/001",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "size_bytes": 4096
+  },
+  "finding_source_contract": "argus.governed_review_report.v1alpha1+json",
+  "finding_id": "finding-001",
+  "fingerprint": "fingerprint-001",
+  "decision_id": "finding-decision-87f4bc95acf60a73f7d1e738",
+  "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "anchor": {
+    "path": "internal/review.go",
+    "side": "head",
+    "start_line": 42,
+    "end_line": 42,
+    "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "channel": "pull_request_inline",
+  "message": "Possible nil dereference on the changed line.",
+  "remote_writes": "allow",
+  "expected_permission_revision": "single-user-local-v1",
+  "grant_expires_at": "2026-08-25T07:00:00Z",
+  "created_at": "2026-08-25T06:02:00Z"
+}

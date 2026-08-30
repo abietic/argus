@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-calibration-promotion-rollback-command.schema.json",
+  "title": "Argus LocalAPICalibrationPromotionRollbackCommand v1alpha1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "plan_id", "mutation"],
+  "properties": {"schema_version": {"const": "argus.local_api_calibration_promotion_rollback_command.v1alpha1"}, "plan_id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$"}, "mutation": {"$ref": "local-api-mutation.schema.json"}}
+}

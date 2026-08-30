@@ -1,0 +1,11 @@
+{
+  "schema_version": "argus.local_api_training_job_observe_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.training_job_observation_request.v1alpha1",
+    "job_id": "training-job-1",
+    "expected_plan_sha256": "28bfa2bd6925d4f9a773781dcfb4a2aaad5008bee6a9c2cfb8e3a9845c6fd9f0",
+    "receipt": {"schema_version": "argus.training_provider_job_receipt.v1alpha1", "provider_id": "provider-example", "external_job_id": "external-job-1", "status": "submitted", "authority": "operator_recorded_unattested", "contains_secret": false, "observed_at": "2026-08-26T08:03:00Z", "sha256": "ce7476a41bbcbfebc295a59bec445c88fcc2ae820dc3602142bde07c9a433bed"},
+    "observed_at": "2026-08-26T08:03:00Z"
+  },
+  "mutation": {"schema_version": "argus.local_api_mutation.v1alpha1", "idempotency_key": "training-job-observe-1", "audit": "record external training submission", "at": "2026-08-26T08:03:00Z"}
+}

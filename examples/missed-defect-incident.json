@@ -1,0 +1,26 @@
+{
+  "schema_version": "argus.missed_defect_incident.v1alpha1",
+  "incident_id": "incident-100",
+  "review_run_id": "formal-run-100",
+  "defect_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "category": "correctness",
+  "severity": "critical",
+  "anchors": [{
+    "path": "internal/handler.go",
+    "side": "new",
+    "start_line": 84,
+    "end_line": 88,
+    "source_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  }],
+  "evidence_artifacts": [{
+    "uri": "artifact://local/sha256/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "size_bytes": 512,
+    "contract": "argus.external_incident_evidence.v1alpha1"
+  }],
+  "source_authority": "incident-system",
+  "source_id": "INC-100",
+  "source_revision": "revision-1",
+  "occurred_at": "2026-08-25T13:01:00Z",
+  "recorded_at": "2026-08-25T13:02:00Z"
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": "argus.normalization_promotion_prepare_request.v1alpha1",
+  "promotion_variant_id": "normalization-policy-argus-pi-review-workflow-v2",
+  "baseline_review_run_id": "review-run-normalization-v1-baseline",
+  "baseline_config_revision_id": "formal-agent-review-bootstrap",
+  "baseline_config_revision": "normalization-v1",
+  "variant_config_revision_id": "formal-agent-review-normalization",
+  "variant_config_revision": "normalization-v2",
+  "variant_policy_revision": "argus-pi-review-workflow-v2",
+  "rollback_policy_revision": "argus-pi-review-workflow-v1",
+  "variant_implementation": {"id": "candidate-normalization", "revision": "v2", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+  "rollback_implementation": {"id": "candidate-normalization", "revision": "v1", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+  "promotion_policy_revision": "normalization-promotion-policy-v1",
+  "owner": "normalization-promotion-owner",
+  "policy": {
+    "schema_version": "argus.normalization_promotion_policy.v1alpha1",
+    "policy_id": "normalization-quality-gate",
+    "revision": "1",
+    "test": {"minimum_cases": 20, "minimum_eligible_candidates": 100, "minimum_oracle_duplicate_pairs": 30, "minimum_oracle_distinct_pairs": 30, "minimum_pairwise_precision_ppm": 950000, "minimum_pairwise_recall_ppm": 900000, "maximum_false_merge_rate_ppm": 50000, "minimum_exact_partition_ppm": 900000},
+    "holdout": {"minimum_cases": 30, "minimum_eligible_candidates": 150, "minimum_oracle_duplicate_pairs": 50, "minimum_oracle_distinct_pairs": 50, "minimum_pairwise_precision_ppm": 950000, "minimum_pairwise_recall_ppm": 900000, "maximum_false_merge_rate_ppm": 50000, "minimum_exact_partition_ppm": 900000},
+    "minimum_shadow_runs": 20,
+    "minimum_canary_runs": 50,
+    "canary_percentage": 10,
+    "created_at": "2026-08-27T08:00:00Z"
+  },
+  "created_at": "2026-08-27T08:00:00Z"
+}

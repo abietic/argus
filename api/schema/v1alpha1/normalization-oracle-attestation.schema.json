@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/normalization-oracle-attestation.schema.json",
+  "title": "Argus NormalizationOracleAttestation v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "attestation_id", "oracle_id", "oracle_sha256", "authority", "key_id", "key_revision", "policy_revision", "decision", "issued_at", "signature_base64"],
+  "properties": {
+    "schema_version": {"const": "argus.normalization_oracle_attestation.v1alpha1"},
+    "attestation_id": {"$ref": "#/$defs/id"},
+    "oracle_id": {"$ref": "#/$defs/id"},
+    "oracle_sha256": {"$ref": "#/$defs/sha256"},
+    "authority": {"$ref": "#/$defs/id"},
+    "key_id": {"$ref": "#/$defs/id"},
+    "key_revision": {"$ref": "#/$defs/id"},
+    "policy_revision": {"$ref": "#/$defs/id"},
+    "decision": {"const": "approved"},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "signature_base64": {"type": "string", "minLength": 88, "maxLength": 88}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

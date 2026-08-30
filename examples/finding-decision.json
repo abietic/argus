@@ -1,0 +1,31 @@
+{
+  "schema_version": "argus.finding_decision.v1alpha1",
+  "decision_id": "finding-decision-87f4bc95acf60a73f7d1e738",
+  "run_id": "run-20260825-001",
+  "finding_id": "finding-001",
+  "sequence": 2,
+  "prior_decision_id": "initial-decision-001",
+  "initial_decision_id": "initial-decision-001",
+  "source_contract": "argus.governed_review_report.v1alpha1+json",
+  "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "action": "publish",
+  "reason_code": "human_confirmed",
+  "evidence_refs": [
+    {
+      "authority": "argus-local",
+      "id": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "occurred_at": "2026-08-25T06:00:00Z",
+  "recorded_at": "2026-08-25T06:01:00Z",
+  "recorded_by": {
+    "kind": "human",
+    "id": "reviewer-001"
+  },
+  "roles": [
+    "publication_approver"
+  ],
+  "audit": "Approved after reviewing the frozen finding evidence.",
+  "idempotency_key": "decision-approval-001"
+}

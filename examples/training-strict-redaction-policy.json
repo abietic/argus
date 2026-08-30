@@ -1,0 +1,22 @@
+{
+  "schema_version": "argus.training_strict_redaction_policy.v1alpha1",
+  "id": "argus-strict-text",
+  "revision": "1",
+  "rule_ids": [
+    "assignment_secret",
+    "aws_access_key",
+    "bearer_credential",
+    "email_address",
+    "github_token",
+    "ip_address",
+    "jwt",
+    "openai_anthropic_key",
+    "pem_private_key",
+    "slack_token",
+    "url_userinfo",
+    "user_home_path"
+  ],
+  "replacement": "[ARGUS_REDACTED]",
+  "max_artifact_bytes": 1048576,
+  "sha256": "ca57b580c56c10e6a04cd2cf648dfc3b9a09a86cb24810cb2ff9922f83dad87c"
+}

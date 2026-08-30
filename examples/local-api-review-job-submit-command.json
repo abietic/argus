@@ -1,0 +1,21 @@
+{
+  "schema_version": "argus.local_api_review_job_submit_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.review_job_request.v1alpha1",
+    "execution_profile": "deterministic_review_v1",
+    "repository_path": "/absolute/path/to/repository",
+    "mode": "diff",
+    "base_revision": "main",
+    "head_revision": "HEAD",
+    "selection_ranges": null,
+    "include": null,
+    "exclude": null,
+    "execution_timeout_seconds": 1800
+  },
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "submit-review-job-001",
+    "audit": "submit an immutable local review job",
+    "at": "2026-08-25T08:00:00Z"
+  }
+}

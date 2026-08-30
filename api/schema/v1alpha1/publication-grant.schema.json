@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/publication-grant.schema.json",
+  "title": "Argus PublicationGrant v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "grant_sha256", "grant_id", "publication_id", "publication_idempotency_key", "run_id", "finding_id", "change_kind", "change_id", "channel", "expected_permission_revision", "tenant_id", "workspace_id", "decision_id", "provider", "repository_id", "base_revision", "expected_head_revision", "target_snapshot_ref", "config_bundle_ref", "finding_source_ref", "finding_source_contract", "occurred_at", "granted_at", "expires_at", "granted_by", "roles", "audit", "idempotency_key"],
+  "properties": {
+    "schema_version": {"const": "argus.publication_grant.v1alpha1"},
+    "grant_sha256": {"$ref": "#/$defs/sha256"},
+    "grant_id": {"$ref": "#/$defs/id"},
+    "publication_id": {"$ref": "#/$defs/id"},
+    "publication_idempotency_key": {"$ref": "#/$defs/id"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "finding_id": {"$ref": "#/$defs/id"},
+    "change_kind": {"const": "pull_request"},
+    "change_id": {"$ref": "#/$defs/id"},
+    "channel": {"enum": ["pull_request_inline", "pull_request_summary"]},
+    "expected_permission_revision": {"$ref": "#/$defs/id"},
+    "tenant_id": {"$ref": "#/$defs/id"},
+    "workspace_id": {"$ref": "#/$defs/id"},
+    "decision_id": {"$ref": "#/$defs/id"},
+    "provider": {"$ref": "#/$defs/id"},
+    "repository_id": {"$ref": "#/$defs/id"},
+    "base_revision": {"$ref": "#/$defs/id"},
+    "expected_head_revision": {"$ref": "#/$defs/id"},
+    "target_snapshot_ref": {"$ref": "#/$defs/content_ref"},
+    "config_bundle_ref": {"$ref": "#/$defs/content_ref"},
+    "finding_source_ref": {"$ref": "#/$defs/content_ref"},
+    "finding_source_contract": {"enum": ["argus.finding_set.v1alpha1", "argus.governed_review_report.v1alpha1+json"]},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "granted_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "granted_by": {"$ref": "#/$defs/actor"},
+    "roles": {"type": "array", "prefixItems": [{"const": "publication_approver"}], "items": false, "minItems": 1, "maxItems": 1},
+    "audit": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "idempotency_key": {"$ref": "#/$defs/id"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[^\\x00-\\x1F\\x7F]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "content_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^artifact://[^/]+/.+$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0}
+      }
+    },
+    "actor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {"kind": {"enum": ["human", "service"]}, "id": {"$ref": "#/$defs/id"}}
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/model-profile.schema.json",
+  "title": "Argus ModelProfile v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "provider_id",
+    "wire_model"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.model_profile.v1alpha1"},
+    "provider_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+    },
+    "wire_model": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "allOf": [
+        {"pattern": "^\\S(?:[\\s\\S]*\\S)?$"},
+        {"pattern": "^[^\\x00-\\x1F\\x7F]+$"}
+      ]
+    }
+  }
+}

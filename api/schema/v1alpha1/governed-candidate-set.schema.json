@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/governed-candidate-set.schema.json",
+  "title": "Argus GovernedCandidateSet v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "candidate_set_id",
+    "review_run_id",
+    "execution_id",
+    "hypothesis_set_id",
+    "target_digest",
+    "completeness",
+    "summary",
+    "candidates",
+    "generated_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.governed_candidate_set.v1alpha1"},
+    "candidate_set_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "review_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "execution_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "hypothesis_set_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "target_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+    "completeness": {"enum": ["complete", "partial"]},
+    "summary": {"$ref": "#/$defs/summary"},
+    "candidates": {
+      "type": "array",
+      "items": {"$ref": "governed-review-report.schema.json#/$defs/candidate"}
+    },
+    "generated_at": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/utcTimestamp"}
+  },
+  "$defs": {
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidates", "confirmed", "rejected", "inconclusive"],
+      "properties": {
+        "candidates": {"type": "integer", "minimum": 0},
+        "confirmed": {"type": "integer", "minimum": 0},
+        "rejected": {"type": "integer", "minimum": 0},
+        "inconclusive": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

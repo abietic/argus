@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/governed-review-report.schema.json",
+  "title": "Argus GovernedReviewReport v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "report_id",
+    "review_run_id",
+    "execution_id",
+    "hypothesis_set_id",
+    "target_digest",
+    "completeness",
+    "summary",
+    "candidates",
+    "findings",
+    "decisions",
+    "generated_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.governed_review_report.v1alpha1"},
+    "report_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "review_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "execution_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "hypothesis_set_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "target_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+    "completeness": {"enum": ["complete", "partial"]},
+    "summary": {"$ref": "#/$defs/summary"},
+    "candidates": {"type": "array", "items": {"$ref": "#/$defs/candidate"}},
+    "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "decisions": {"type": "array", "items": {"$ref": "#/$defs/decision"}},
+    "generated_at": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/utcTimestamp"}
+  },
+  "$defs": {
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidates", "confirmed", "rejected", "inconclusive", "findings", "queued_for_human"],
+      "properties": {
+        "candidates": {"type": "integer", "minimum": 0},
+        "confirmed": {"type": "integer", "minimum": 0},
+        "rejected": {"type": "integer", "minimum": 0},
+        "inconclusive": {"type": "integer", "minimum": 0},
+        "findings": {"type": "integer", "minimum": 0},
+        "queued_for_human": {"type": "integer", "minimum": 0}
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "hypothesis", "disposition", "reason_code"],
+      "properties": {
+        "candidate_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "hypothesis": {"$ref": "review-hypothesis-set.schema.json#/$defs/hypothesis"},
+        "disposition": {"enum": ["confirmed", "rejected", "inconclusive"]},
+        "reason_code": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_id", "fingerprint", "candidate_id", "occurrence_id", "dimension",
+        "category", "severity", "title", "description", "impact", "anchor", "evidence",
+        "verification", "confidence_available", "confidence_reason_code"
+      ],
+      "properties": {
+        "finding_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "fingerprint": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "candidate_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "occurrence_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "dimension": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+        "category": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "severity": {"enum": ["critical", "high", "medium", "low"]},
+        "title": {"type": "string", "minLength": 1, "maxLength": 8192},
+        "description": {"type": "string", "minLength": 1, "maxLength": 8192},
+        "impact": {"type": "string", "minLength": 1, "maxLength": 8192},
+        "anchor": {"$ref": "review-hypothesis-set.schema.json#/$defs/anchor"},
+        "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "review-hypothesis-set.schema.json#/$defs/evidence"}},
+        "suggestion": {"type": "string", "minLength": 1, "maxLength": 8192},
+        "verification": {"$ref": "review-hypothesis-set.schema.json#/$defs/verificationObservation"},
+        "confidence_available": {"const": false},
+        "confidence_reason_code": {"const": "not_calibrated"}
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision_id", "finding_id", "sequence", "prior_decision_id", "action", "reason_code", "evidence_ids"],
+      "properties": {
+        "decision_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "finding_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "sequence": {"const": 1},
+        "prior_decision_id": {"const": ""},
+        "action": {"const": "queued_for_human"},
+        "reason_code": {"const": "agent_confirmed_requires_human_review"},
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}
+        }
+      }
+    }
+  }
+}

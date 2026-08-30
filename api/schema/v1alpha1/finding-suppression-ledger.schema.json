@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/finding-suppression-ledger.schema.json",
+  "title": "Argus FindingSuppressionLedger v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "suppression_ledger_id", "review_run_id", "execution_id", "report_id", "calibration_ledger_id", "target_digest", "policy_applied", "policy_reason_code", "minimum_confidence_ppm", "max_findings", "summary", "facts", "generated_at"],
+  "properties": {
+    "schema_version": {"const": "argus.finding_suppression_ledger.v1alpha1"},
+    "suppression_ledger_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "review_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "execution_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "report_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "calibration_ledger_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "target_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+    "policy": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+    "policy_applied": {"type": "boolean"},
+    "policy_reason_code": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "minimum_confidence_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+    "max_findings": {"type": "integer", "minimum": 0},
+    "summary": {"$ref": "#/$defs/summary"},
+    "facts": {"type": "array", "items": {"$ref": "#/$defs/fact"}},
+    "generated_at": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/utcTimestamp"}
+  },
+  "$defs": {
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["findings", "not_suppressed", "suppressed"],
+      "properties": {
+        "findings": {"type": "integer", "minimum": 0},
+        "not_suppressed": {"type": "integer", "minimum": 0},
+        "suppressed": {"type": "integer", "minimum": 0}
+      }
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["suppression_fact_id", "finding_id", "candidate_id", "calibration_fact_id", "sequence", "prior_suppression_fact_id", "rank_available", "rank", "action", "reason_code", "evidence_ids"],
+      "properties": {
+        "suppression_fact_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "finding_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "candidate_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "calibration_fact_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "sequence": {"const": 1},
+        "prior_suppression_fact_id": {"type": "string", "maxLength": 0},
+        "rank_available": {"type": "boolean"},
+        "rank": {"type": "integer", "minimum": 0},
+        "action": {"enum": ["not_suppressed", "suppressed"]},
+        "reason_code": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}}
+      }
+    }
+  }
+}

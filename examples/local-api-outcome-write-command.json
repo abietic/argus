@@ -1,0 +1,20 @@
+{
+  "schema_version": "argus.local_api_outcome_write_command.v1alpha1",
+  "outcome_id": "outcome-api-1",
+  "state": "fixed",
+  "source": {"kind": "api", "id": "local-platform-api"},
+  "occurred_at": "2026-08-26T03:59:00Z",
+  "attribution_window": {
+    "start": "2026-08-26T03:00:00Z",
+    "end": "2026-08-26T04:00:00Z"
+  },
+  "source_refs": [
+    {"kind": "change", "authority": "local-git", "id": "fix-change-1"}
+  ],
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "finding-outcome-api-1",
+    "audit": "operator recorded fixed outcome",
+    "at": "2026-08-26T04:00:00Z"
+  }
+}

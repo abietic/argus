@@ -1,0 +1,9 @@
+{
+  "schema_version": "argus.experiment_run_request.v1alpha1",
+  "experiment_run_id": "experiment-run-example-1",
+  "experiment_revision": "experiment-revision-1",
+  "baseline_evaluation_run_id": "evaluation-baseline-1",
+  "variant_evaluation_run_id": "evaluation-variant-1",
+  "variable": "prompt",
+  "created_at": "2026-08-25T09:00:00Z"
+}

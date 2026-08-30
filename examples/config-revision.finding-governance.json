@@ -1,0 +1,29 @@
+{
+  "schema_version": "argus.config_revision.v1alpha1",
+  "id": "repository-finding-governance",
+  "revision": "1",
+  "scope": "repository",
+  "selector": {
+    "tenant_id": "local",
+    "organization_id": "local",
+    "repository_id": "argus"
+  },
+  "patch": {
+    "finding_governance": {
+      "calibration_profile": {
+        "schema_version": "argus.calibration_profile.v1alpha1",
+        "id": "review-confidence",
+        "revision": "1",
+        "points": [
+          {"raw_ppm": 0, "confidence_ppm": 0},
+          {"raw_ppm": 500000, "confidence_ppm": 350000},
+          {"raw_ppm": 800000, "confidence_ppm": 650000},
+          {"raw_ppm": 1000000, "confidence_ppm": 900000}
+        ],
+        "sha256": "cd65d7c017ea54737056f6da8d5d630dc9f77268e977fd846db4017b50b50af5"
+      },
+      "minimum_confidence_ppm": 600000,
+      "max_findings": 12
+    }
+  }
+}

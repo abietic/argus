@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-runtime-file-manifest.schema.json",
+  "title": "LocalRuntimeFileManifest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "authority", "node", "files", "production_packages"],
+  "properties": {
+    "schema_version": {"const": "argus.local_runtime_file_manifest.v1alpha1"},
+    "authority": {"const": "local_host_observation"},
+    "node": {"$ref": "#/$defs/nodeFile"},
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 25000,
+      "items": {"$ref": "#/$defs/packageFile"}
+    },
+    "production_packages": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/package"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "nodeFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "size_bytes", "sha256"],
+      "properties": {
+        "path": {"const": "node"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "packageFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "size_bytes", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1, "pattern": "^[^/\\\\][^\\\\]*$"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "version"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^node_modules/.+"},
+        "version": {"type": "string", "minLength": 1},
+        "integrity": {"type": "string", "minLength": 1, "maxLength": 4096}
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/experiment-run-request.schema.json",
+  "title": "Argus ExperimentRunRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_run_id", "experiment_revision", "baseline_evaluation_run_id", "variant_evaluation_run_id", "variable", "created_at"],
+  "properties": {
+    "schema_version": { "const": "argus.experiment_run_request.v1alpha1" },
+    "experiment_run_id": { "$ref": "#/$defs/id" },
+    "experiment_revision": { "$ref": "#/$defs/id" },
+    "baseline_evaluation_run_id": { "$ref": "#/$defs/id" },
+    "variant_evaluation_run_id": { "$ref": "#/$defs/id" },
+    "variable": { "enum": ["rule_pack", "skill_pack", "knowledge_pack", "prompt", "model", "index", "workflow", "filter_policy", "finding_governance", "budget"] },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$" }
+  }
+}

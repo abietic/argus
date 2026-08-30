@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/agent-review-shadow-defs.schema.json",
+  "title": "Argus Agent Review Shadow Contract Definitions v1alpha1",
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\x00-\\x1F\\x7F]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifactURI": {
+      "type": "string",
+      "pattern": "^artifact://[A-Za-z0-9]([A-Za-z0-9.-]{0,126}[A-Za-z0-9])?/[A-Za-z0-9._~-]+(/[A-Za-z0-9._~-]+)*$",
+      "not": {
+        "pattern": "/(\\.|\\.\\.)(/|$)"
+      }
+    },
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes"],
+      "properties": {
+        "uri": {"$ref": "#/$defs/artifactURI"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 1}
+      }
+    },
+    "artifactBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "contract"],
+      "properties": {
+        "ref": {"$ref": "#/$defs/contentRef"},
+        "contract": {"$ref": "#/$defs/identifier"}
+      }
+    },
+    "versionedRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision", "sha256"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "revision": {"$ref": "#/$defs/identifier"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "resultSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_candidates",
+        "normalization_retained",
+        "merged_duplicates",
+        "rejected_invalid",
+        "excluded_budget",
+        "hypothesis_occurrences",
+        "dedup_clusters",
+        "confirmed",
+        "rejected",
+        "inconclusive",
+        "unverified",
+        "receipts",
+        "tasks_succeeded",
+        "tasks_failed",
+        "tasks_canceled",
+        "model_turns_started",
+        "model_turns_completed",
+        "tool_calls",
+        "usage_completeness",
+        "usage_reported_receipts",
+        "usage_partial_receipts",
+        "usage_unavailable_receipts",
+        "input_tokens",
+        "output_tokens",
+        "cache_read_tokens",
+        "cache_write_tokens",
+        "reasoning_tokens",
+        "reasoning_reported_receipts",
+        "total_tokens"
+      ],
+      "properties": {
+        "raw_candidates": {"type": "integer", "minimum": 0},
+        "normalization_retained": {"type": "integer", "minimum": 0},
+        "merged_duplicates": {"type": "integer", "minimum": 0},
+        "rejected_invalid": {"type": "integer", "minimum": 0},
+        "excluded_budget": {"type": "integer", "minimum": 0},
+        "hypothesis_occurrences": {"type": "integer", "minimum": 0},
+        "dedup_clusters": {"type": "integer", "minimum": 0},
+        "confirmed": {"type": "integer", "minimum": 0},
+        "rejected": {"type": "integer", "minimum": 0},
+        "inconclusive": {"type": "integer", "minimum": 0},
+        "unverified": {"type": "integer", "minimum": 0},
+        "receipts": {"type": "integer", "minimum": 0},
+        "tasks_succeeded": {"type": "integer", "minimum": 0},
+        "tasks_failed": {"type": "integer", "minimum": 0},
+        "tasks_canceled": {"type": "integer", "minimum": 0},
+        "model_turns_started": {"type": "integer", "minimum": 0},
+        "model_turns_completed": {"type": "integer", "minimum": 0},
+        "tool_calls": {"type": "integer", "minimum": 0},
+        "usage_completeness": {"enum": ["provider_reported", "partial", "unavailable"]},
+        "usage_reported_receipts": {"type": "integer", "minimum": 0},
+        "usage_partial_receipts": {"type": "integer", "minimum": 0},
+        "usage_unavailable_receipts": {"type": "integer", "minimum": 0},
+        "input_tokens": {"type": "integer", "minimum": 0},
+        "output_tokens": {"type": "integer", "minimum": 0},
+        "cache_read_tokens": {"type": "integer", "minimum": 0},
+        "cache_write_tokens": {"type": "integer", "minimum": 0},
+        "reasoning_tokens": {"type": "integer", "minimum": 0},
+        "reasoning_reported_receipts": {"type": "integer", "minimum": 0},
+        "total_tokens": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

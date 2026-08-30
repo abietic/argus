@@ -1,0 +1,12 @@
+{
+  "schema_version": "argus.local_api_config_transition_command.v1alpha1",
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "local-api-publish-platform-default-1",
+    "audit": "publish the validated platform configuration revision",
+    "at": "2026-08-25T10:02:00Z"
+  },
+  "rollout": {
+    "percentage": 100
+  }
+}

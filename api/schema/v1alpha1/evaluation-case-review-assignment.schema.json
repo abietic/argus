@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/evaluation-case-review-assignment.schema.json",
+  "title": "Argus EvaluationCaseReviewAssignment v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "expected_governance_revision", "expected_label_revision", "reviewer_ids", "blind", "reason", "assigned_at"],
+  "properties": {
+    "schema_version": {"const": "argus.evaluation_case_review_assignment.v1alpha1"},
+    "case_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "expected_governance_revision": {"type": "integer", "minimum": 1},
+    "expected_label_revision": {"type": "integer", "minimum": 1},
+    "reviewer_ids": {"type": "array", "minItems": 2, "maxItems": 8, "uniqueItems": true, "items": {"$ref": "evaluation-case.schema.json#/$defs/id"}},
+    "blind": {"const": true},
+    "reason": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "assigned_at": {"type": "string", "format": "date-time"}
+  }
+}

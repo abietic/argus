@@ -1,0 +1,12 @@
+{
+  "schema_version": "argus.finding_calibration_ledger.v1alpha1",
+  "calibration_ledger_id": "calibration-ledger-f37a2a289c516232796e0e5f",
+  "review_run_id": "formal-run-example",
+  "execution_id": "execution-example",
+  "report_id": "review-report-example",
+  "verification_ledger_id": "verification-ledger-example",
+  "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "summary": {"findings": 0, "calibrated": 0, "unavailable": 0},
+  "facts": [],
+  "generated_at": "2026-08-25T01:02:03Z"
+}

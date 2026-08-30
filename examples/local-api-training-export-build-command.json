@@ -1,0 +1,30 @@
+{
+  "schema_version": "argus.local_api_training_export_build_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.training_export_request.v1alpha1",
+    "export_id": "training-export-1",
+    "manifest_id": "training-manifest-47c8595539d69eb832e429bc",
+    "manifest_ref": {
+      "uri": "artifact://local/sha256/27ed9604dd686de93966a695c835c8f12dfaef4d15f52d8819ecee59460b9e5a",
+      "sha256": "27ed9604dd686de93966a695c835c8f12dfaef4d15f52d8819ecee59460b9e5a",
+      "size_bytes": 3101,
+      "contract": "argus.training_dataset_manifest.v1alpha1+json"
+    },
+    "policy": {
+      "schema_version": "argus.training_strict_redaction_policy.v1alpha1",
+      "id": "argus-strict-text",
+      "revision": "1",
+      "rule_ids": ["assignment_secret", "aws_access_key", "bearer_credential", "email_address", "github_token", "ip_address", "jwt", "openai_anthropic_key", "pem_private_key", "slack_token", "url_userinfo", "user_home_path"],
+      "replacement": "[ARGUS_REDACTED]",
+      "max_artifact_bytes": 1048576,
+      "sha256": "ca57b580c56c10e6a04cd2cf648dfc3b9a09a86cb24810cb2ff9922f83dad87c"
+    },
+    "created_at": "2026-08-26T08:01:00Z"
+  },
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "training-export-build-1",
+    "audit": "build governed training export",
+    "at": "2026-08-26T08:01:00Z"
+  }
+}

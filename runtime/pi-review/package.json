@@ -1,0 +1,33 @@
+{
+  "name": "@argus/pi-review",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "argus-review": "./dist/cli.js",
+    "argus-review-worker": "./dist/worker.js"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit && prettier --check src test skills README.md package.json tsconfig.json",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "format": "prettier --write src test skills README.md package.json tsconfig.json",
+    "review": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@earendil-works/pi-agent-core": "0.84.1",
+    "@earendil-works/pi-ai": "0.84.1",
+    "typebox": "1.3.7"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "prettier": "3.7.4",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3"
+  }
+}

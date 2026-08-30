@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-principal.schema.json",
+  "title": "Argus LocalAPIPrincipal v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "actor", "roles", "permissions", "profile_revision"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_principal.v1alpha1"},
+    "actor": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "actor_kind": {"enum": ["human", "service"]},
+    "roles": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "dataset_curator",
+          "dataset_reviewer",
+          "dataset_adjudicator",
+          "incident_ingest",
+          "probe_ingest",
+          "feedback_ingest",
+          "holdout_maintainer",
+          "holdout_runner",
+          "promotion_operator",
+          "promotion_approver",
+          "governance_trust_admin"
+        ]
+      }
+    },
+    "finding_roles": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"enum": ["finding_reviewer", "publication_approver"]}
+    },
+    "permissions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["component_write", "config_read", "config_write", "dashboard_read", "evaluation_read", "evaluation_write", "review_execute", "review_read", "review_write"]
+      }
+    },
+	"profile_revision": {"$ref": "evaluation-case.schema.json#/$defs/id"}
+  }
+}

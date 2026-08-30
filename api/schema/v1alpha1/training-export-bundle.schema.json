@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/training-export-bundle.schema.json",
+  "title": "Argus TrainingExportBundle v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "export_id", "dataset_id", "dataset_revision", "repository_id", "manifest_id", "manifest_ref", "policy", "portable_format", "contains_unredacted_source_bytes", "receipts", "samples", "created_by", "created_at", "sha256"],
+  "properties": {
+    "schema_version": {"const": "argus.training_export_bundle.v1alpha1"},
+    "export_id": {"$ref": "#/$defs/id"},
+    "dataset_id": {"$ref": "#/$defs/id"},
+    "dataset_revision": {"$ref": "#/$defs/id"},
+    "repository_id": {"$ref": "#/$defs/id"},
+    "manifest_id": {"type": "string", "pattern": "^training-manifest-[0-9a-f]{24}$"},
+    "manifest_ref": {"$ref": "#/$defs/manifest_ref"},
+    "policy": {"$ref": "training-strict-redaction-policy.schema.json"},
+    "portable_format": {"const": "argus_training_records_jsonl_v1alpha1"},
+    "contains_unredacted_source_bytes": {"const": false},
+    "receipts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100000,
+      "items": {"$ref": "#/$defs/receipt"}
+    },
+    "samples": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100000,
+      "items": {"$ref": "#/$defs/export_sample"}
+    },
+    "created_by": {"$ref": "#/$defs/id"},
+    "created_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/\\-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "contract": {"type": "string", "minLength": 1, "maxLength": 512}
+      }
+    },
+    "manifest_ref": {
+      "allOf": [
+        {"$ref": "#/$defs/artifact_ref"},
+        {"properties": {"contract": {"const": "argus.training_dataset_manifest.v1alpha1+json"}}}
+      ]
+    },
+    "redacted_ref": {
+      "allOf": [
+        {"$ref": "#/$defs/artifact_ref"},
+        {"properties": {"contract": {"const": "argus.training_redacted_text.v1alpha1"}}}
+      ]
+    },
+    "hit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "count"],
+      "properties": {
+        "rule_id": {"enum": ["assignment_secret", "aws_access_key", "bearer_credential", "email_address", "github_token", "ip_address", "jwt", "openai_anthropic_key", "pem_private_key", "slack_token", "url_userinfo", "user_home_path"]},
+        "count": {"type": "integer", "minimum": 1, "maximum": 4294967295}
+      }
+    },
+    "receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_ref", "redacted_ref", "policy_sha256", "encoding", "input_size_bytes", "output_size_bytes", "hits"],
+      "properties": {
+        "source_ref": {"$ref": "#/$defs/artifact_ref"},
+        "redacted_ref": {"$ref": "#/$defs/redacted_ref"},
+        "policy_sha256": {"$ref": "#/$defs/sha256"},
+        "encoding": {"const": "utf-8"},
+        "input_size_bytes": {"type": "integer", "minimum": 0, "maximum": 1048576},
+        "output_size_bytes": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "hits": {"type": "array", "maxItems": 12, "items": {"$ref": "#/$defs/hit"}}
+      }
+    },
+    "export_sample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["governed_sample", "redacted_refs"],
+      "properties": {
+        "governed_sample": {"$ref": "training-dataset-manifest.schema.json#/$defs/sample"},
+        "redacted_refs": {"type": "array", "minItems": 1, "maxItems": 10000, "items": {"$ref": "#/$defs/redacted_ref"}}
+      }
+    }
+  }
+}

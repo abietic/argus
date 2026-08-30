@@ -1,0 +1,101 @@
+{
+  "schema_version": "argus.agent_review_result_manifest.v1alpha1",
+  "manifest_id": "manifest-1",
+  "plan_id": "plan-1",
+  "hypothesis_set_id": "hypothesis-set-1",
+  "source_run_id": "source-run-1",
+  "execution_id": "execution-1",
+  "review_run_id": "review-run-1",
+  "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "execution_snapshot_ref": {
+    "ref": {
+      "uri": "artifact://local/execution-snapshot",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.execution_snapshot.v1alpha1"
+  },
+  "review_input_ref": {
+    "ref": {
+      "uri": "artifact://local/review-input",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.review_input.v1alpha1"
+  },
+  "agent_review_plan_ref": {
+    "ref": {
+      "uri": "artifact://local/agent-review-plan",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.agent_review_plan.v1alpha1"
+  },
+  "hypothesis_set_ref": {
+    "ref": {
+      "uri": "artifact://local/hypothesis-set",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.review_hypothesis_set.v1alpha1"
+  },
+  "raw_candidate_collection_ref": {
+    "ref": {
+      "uri": "artifact://local/raw-candidates",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.agent_review_raw_candidate_collection.v1alpha1"
+  },
+  "agent_task_evidence_ref": {
+    "ref": {
+      "uri": "artifact://local/task-evidence",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.agent_review_task_evidence_collection.v1alpha1"
+  },
+  "agent_execution_receipt_ref": {
+    "ref": {
+      "uri": "artifact://local/agent-receipts",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.agent_execution_receipt_collection.v1alpha1"
+  },
+  "producer_class": "argus_go_host",
+  "disposition": "shadow_only",
+  "status": "complete",
+  "summary": {
+    "raw_candidates": 1,
+    "normalization_retained": 1,
+    "merged_duplicates": 0,
+    "rejected_invalid": 0,
+    "excluded_budget": 0,
+    "hypothesis_occurrences": 1,
+    "dedup_clusters": 1,
+    "confirmed": 1,
+    "rejected": 0,
+    "inconclusive": 0,
+    "unverified": 0,
+    "receipts": 3,
+    "tasks_succeeded": 3,
+    "tasks_failed": 0,
+    "tasks_canceled": 0,
+    "model_turns_started": 3,
+    "model_turns_completed": 3,
+    "tool_calls": 6,
+    "usage_completeness": "provider_reported",
+    "usage_reported_receipts": 3,
+    "usage_partial_receipts": 0,
+    "usage_unavailable_receipts": 0,
+    "input_tokens": 300,
+    "output_tokens": 150,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "reasoning_tokens": 30,
+    "reasoning_reported_receipts": 3,
+    "total_tokens": 450
+  },
+  "recorded_at": "2026-08-20T10:02:00Z"
+}

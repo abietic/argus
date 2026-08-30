@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-training-export-build-command.schema.json",
+  "title": "Argus LocalAPITrainingExportBuildCommand v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request", "mutation"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_training_export_build_command.v1alpha1"},
+    "request": {"$ref": "training-export-request.schema.json"},
+    "mutation": {"$ref": "local-api-mutation.schema.json"}
+  }
+}

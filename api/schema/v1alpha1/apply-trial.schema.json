@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/apply-trial.schema.json",
+  "title": "Argus ApplyTrial v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "trial_id", "case_id", "label_revision", "review_run_id", "finding_id", "finding_fingerprint", "input_snapshot_ref", "governed_report_ref", "suggestion_sha256", "edit_script_ref", "authority", "completeness", "reason_codes", "checks", "executed_at"],
+  "properties": {
+    "schema_version": { "const": "argus.apply_trial.v1alpha1" },
+    "trial_id": { "$ref": "#/$defs/id" },
+    "case_id": { "$ref": "#/$defs/id" },
+    "label_revision": { "type": "integer", "minimum": 1 },
+    "review_run_id": { "$ref": "#/$defs/id" },
+    "finding_id": { "$ref": "#/$defs/id" },
+    "finding_fingerprint": { "$ref": "#/$defs/sha256" },
+    "input_snapshot_ref": { "allOf": [{ "$ref": "#/$defs/artifact_ref" }, { "properties": { "contract": { "const": "argus.materialized_target.v1alpha1" } } }] },
+    "governed_report_ref": { "allOf": [{ "$ref": "#/$defs/artifact_ref" }, { "properties": { "contract": { "const": "argus.governed_review_report.v1alpha1+json" } } }] },
+    "suggestion_sha256": { "$ref": "#/$defs/sha256" },
+    "edit_script_ref": { "allOf": [{ "$ref": "#/$defs/artifact_ref" }, { "properties": { "contract": { "const": "argus.edit_script.v1alpha1" } } }] },
+    "authority": { "const": "local_host_unattested" },
+    "completeness": { "enum": ["conclusive", "partial"] },
+    "reason_codes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/id" } },
+    "checks": {
+      "type": "array", "minItems": 1, "maxItems": 3,
+      "prefixItems": [
+        { "$ref": "#/$defs/dry_run_check" },
+        { "$ref": "#/$defs/compile_check" },
+        { "$ref": "#/$defs/test_check" }
+      ],
+      "items": false
+    },
+    "executed_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "artifact_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": { "type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "contract": { "type": "string", "minLength": 1 }
+      }
+    },
+    "dry_run_check": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "status", "command_sha256", "evidence_ref", "duration_ms"],
+      "properties": {
+        "kind": { "const": "dry_run" }, "status": { "enum": ["passed", "failed"] },
+        "command_sha256": { "$ref": "#/$defs/sha256" }, "evidence_ref": { "allOf": [{ "$ref": "#/$defs/artifact_ref" }, { "properties": { "contract": { "const": "argus.apply_check_evidence.v1alpha1" } } }] },
+        "duration_ms": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "compile_check": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "status", "command_sha256", "evidence_ref", "duration_ms"],
+      "properties": {
+        "kind": { "const": "compile" }, "status": { "enum": ["passed", "failed"] },
+        "command_sha256": { "$ref": "#/$defs/sha256" }, "evidence_ref": { "allOf": [{ "$ref": "#/$defs/artifact_ref" }, { "properties": { "contract": { "const": "argus.apply_check_evidence.v1alpha1" } } }] },
+        "duration_ms": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "test_check": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "status", "command_sha256", "evidence_ref", "duration_ms"],
+      "properties": {
+        "kind": { "const": "test" }, "status": { "enum": ["passed", "failed"] },
+        "command_sha256": { "$ref": "#/$defs/sha256" }, "evidence_ref": { "allOf": [{ "$ref": "#/$defs/artifact_ref" }, { "properties": { "contract": { "const": "argus.apply_check_evidence.v1alpha1" } } }] },
+        "duration_ms": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

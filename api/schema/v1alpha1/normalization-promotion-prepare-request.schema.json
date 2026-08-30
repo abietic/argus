@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/normalization-promotion-prepare-request.schema.json",
+  "title": "Argus NormalizationPromotionPrepareRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "promotion_variant_id", "baseline_review_run_id", "baseline_config_revision_id", "baseline_config_revision", "variant_config_revision_id", "variant_config_revision", "variant_policy_revision", "rollback_policy_revision", "variant_implementation", "rollback_implementation", "promotion_policy_revision", "owner", "policy", "created_at"],
+  "properties": {
+    "schema_version": {"const": "argus.normalization_promotion_prepare_request.v1alpha1"},
+    "promotion_variant_id": {"$ref": "#/$defs/id"},
+    "baseline_review_run_id": {"$ref": "#/$defs/id"},
+    "baseline_config_revision_id": {"$ref": "#/$defs/id"},
+    "baseline_config_revision": {"$ref": "#/$defs/id"},
+    "variant_config_revision_id": {"$ref": "#/$defs/id"},
+    "variant_config_revision": {"$ref": "#/$defs/id"},
+    "variant_policy_revision": {"$ref": "#/$defs/id"},
+    "rollback_policy_revision": {"$ref": "#/$defs/id"},
+    "variant_implementation": {"$ref": "#/$defs/normalizationImplementation"},
+    "rollback_implementation": {"$ref": "#/$defs/normalizationImplementation"},
+    "promotion_policy_revision": {"$ref": "#/$defs/id"},
+    "owner": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[^\\r\\n]+$"},
+    "policy": {"$ref": "normalization-promotion-policy.schema.json"},
+    "created_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$", "not": {"pattern": "^[Ll][Aa][Tt][Ee][Ss][Tt]$"}},
+    "normalizationImplementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision", "sha256"],
+      "properties": {
+        "id": {"const": "candidate-normalization"},
+        "revision": {"enum": ["v0", "v1", "v2"]},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

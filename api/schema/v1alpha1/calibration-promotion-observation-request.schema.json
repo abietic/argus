@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/calibration-promotion-observation-request.schema.json",
+  "title": "Argus CalibrationPromotionObservationRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "observation_id", "plan_id", "baseline_snapshot_id", "observation_snapshot_id", "policy", "observed_at"],
+  "properties": {
+    "schema_version": {"const": "argus.calibration_promotion_observation_request.v1alpha1"},
+    "observation_id": {"$ref": "#/$defs/id"},
+    "plan_id": {"$ref": "#/$defs/id"},
+    "baseline_snapshot_id": {"$ref": "#/$defs/id"},
+    "observation_snapshot_id": {"$ref": "#/$defs/id"},
+    "observed_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "policy_id", "revision", "rules"],
+      "properties": {
+        "schema_version": {"const": "argus.calibration_promotion_monitor_policy.v1alpha1"},
+        "policy_id": {"$ref": "#/$defs/id"},
+        "revision": {"$ref": "#/$defs/id"},
+        "rules": {
+          "type": "array", "minItems": 5, "maxItems": 5,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["metric_id", "direction", "minimum_baseline_sample_size", "minimum_observation_sample_size", "maximum_regression_ppm"],
+            "properties": {
+              "metric_id": {"enum": ["published_adverse_rate", "published_fixed_rate", "published_outcome_coverage_rate", "review_run_complete_rate", "review_run_success_rate"]},
+              "direction": {"enum": ["higher_is_better", "lower_is_better"]},
+              "minimum_baseline_sample_size": {"type": "integer", "minimum": 1},
+              "minimum_observation_sample_size": {"type": "integer", "minimum": 1},
+              "maximum_regression_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000}
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$", "not": {"pattern": "^[Ll][Aa][Tt][Ee][Ss][Tt]$"}}
+  }
+}

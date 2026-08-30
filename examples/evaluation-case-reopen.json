@@ -1,0 +1,11 @@
+{
+  "schema_version": "argus.evaluation_case_reopen.v1alpha1",
+  "case_id": "case-feedback-accepted-1",
+  "expected_governance_revision": 4,
+  "reason": "new independently collected evidence requires a fresh blind review round",
+  "evidence_refs": [
+    "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  ],
+  "affected_experiment_ids": [],
+  "reopened_at": "2026-08-25T16:00:00Z"
+}

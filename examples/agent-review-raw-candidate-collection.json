@@ -1,0 +1,50 @@
+{
+  "schema_version": "argus.agent_review_raw_candidate_collection.v1alpha1",
+  "plan_id": "plan-example-1",
+  "source_run_id": "source-run-example-1",
+  "execution_id": "execution-example-1",
+  "review_run_id": "review-run-example-1",
+  "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "authority": "worker_self_report",
+  "disposition": "shadow_only",
+  "raw_candidates": [
+    {
+      "raw_candidate_id": "raw-candidate-1",
+      "group_id": "group-1",
+      "dimension": {
+        "id": "correctness",
+        "revision": "builtin-v1",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "ordinal": 0,
+      "claim_digest": "b2a12c3ba2c6ac51eac98f42cbd5d57c8de396ee4ec3c25731029168ca6e4c46",
+      "action": "rejected_invalid",
+      "reason_code": "invalid_candidate",
+      "claim": {
+        "category": "correctness",
+        "severity": "high",
+        "title": "candidate with an invalid anchor",
+        "description": "the worker proposed a claim whose anchor cannot be admitted",
+        "impact": "the claim could become a noisy review comment",
+        "anchor": {
+          "path": "outside/change.go",
+          "side": "new",
+          "start_line": 7,
+          "end_line": 7
+        },
+        "evidence": [
+          {
+            "statement": "worker supplied this source excerpt",
+            "anchor": {
+              "path": "outside/change.go",
+              "side": "new",
+              "start_line": 7,
+              "end_line": 7
+            },
+            "excerpt": "value.Field()"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-config-create-command.schema.json",
+  "title": "Argus LocalAPIConfigCreateCommand v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "revision", "mutation"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_config_create_command.v1alpha1"},
+    "revision": {"$ref": "config-revision.schema.json"},
+    "mutation": {"$ref": "local-api-mutation.schema.json"}
+  }
+}

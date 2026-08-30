@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/evaluation-candidate-derivation-request.schema.json",
+  "title": "Argus EvaluationCandidateDerivationRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "case_id", "run_id", "source", "source_id",
+    "license_id", "consent", "classification", "owner", "label_policy_revision",
+    "restrictions", "collected_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.evaluation_candidate_derivation_request.v1alpha1"},
+    "case_id": {"$ref": "#/$defs/id"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "finding_id": {"$ref": "#/$defs/id"},
+    "source": {"enum": ["human_decision", "production_feedback", "reviewed_bug_fix_pair", "incident_missed_defect", "mutation_probe", "synthetic_probe", "workflow_invariant_probe"]},
+    "source_id": {"$ref": "#/$defs/id"},
+    "fix_run_id": {"$ref": "#/$defs/id"},
+    "license_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "consent": {"enum": ["explicit", "contractual", "authorized_internal", "public_license", "synthetic"]},
+    "classification": {"enum": ["public", "internal", "confidential", "restricted"]},
+    "owner": {"type": "string", "minLength": 1, "maxLength": 256},
+    "label_policy_revision": {"$ref": "#/$defs/id"},
+    "restrictions": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1, "maxLength": 1024}
+    },
+    "collected_at": {"type": "string", "format": "date-time"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"source": {"const": "reviewed_bug_fix_pair"}}},
+      "then": {"required": ["fix_run_id"]},
+      "else": {"not": {"required": ["fix_run_id"]}}
+    },
+    {
+      "if": {"properties": {"source": {"enum": ["incident_missed_defect", "mutation_probe", "synthetic_probe", "workflow_invariant_probe"]}}},
+      "then": {"not": {"required": ["finding_id"]}},
+      "else": {"required": ["finding_id"]}
+    }
+  ],
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$"}
+  }
+}

@@ -1,0 +1,393 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/review-input.schema.json",
+  "title": "Argus ReviewInput v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "target_id",
+    "target_mode",
+    "canonical_patch",
+    "regions",
+    "files",
+    "contexts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "argus.review_input.v1alpha1"
+    },
+    "target_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "target_mode": {
+      "enum": [
+        "diff",
+        "selection",
+        "scope"
+      ]
+    },
+    "canonical_patch": {
+      "type": "string"
+    },
+    "regions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reviewRegion"
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fileManifestEntry"
+      }
+    },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/contextBinding"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "target_mode": {
+            "const": "diff"
+          }
+        },
+        "required": [
+          "target_mode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "canonical_patch": {
+            "minLength": 1
+          },
+          "regions": {
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "target_mode": {
+            "const": "selection"
+          }
+        },
+        "required": [
+          "target_mode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "canonical_patch": {
+            "const": ""
+          },
+          "regions": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "target_mode": {
+            "const": "scope"
+          }
+        },
+        "required": [
+          "target_mode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "canonical_patch": {
+            "const": ""
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^[^\\s].*[^\\s]$|^[^\\s]$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifactURI": {
+      "type": "string",
+      "pattern": "^artifact://[A-Za-z0-9]([A-Za-z0-9.-]{0,126}[A-Za-z0-9])?/[A-Za-z0-9._~-]+(/[A-Za-z0-9._~-]+)*$",
+      "not": {
+        "pattern": "/(\\.|\\.\\.)(/|$)"
+      }
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\\\:\\x00-\\x1F\\x7F]([^\\\\:\\x00-\\x1F\\x7F]*[^/\\\\:\\x00-\\x1F\\x7F])?$",
+      "not": {
+        "pattern": "(^|/)(\\.|\\.\\.)(/|$)|//"
+      }
+    },
+    "reviewRegion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "start_line",
+        "end_line",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/repositoryPath"
+        },
+        "start_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "end_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "fileManifestEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "size_bytes",
+        "content"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/repositoryPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "content": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "contextBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/contextRef"
+        },
+        "gap": {
+          "$ref": "#/$defs/contextGap"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "ref"
+          ],
+          "not": {
+            "required": [
+              "gap"
+            ]
+          }
+        },
+        {
+          "required": [
+            "gap"
+          ],
+          "not": {
+            "required": [
+              "ref"
+            ]
+          }
+        }
+      ]
+    },
+    "contextRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "context_id",
+        "kind",
+        "revision",
+        "digest",
+        "coverage",
+        "provenance",
+        "artifact_uri",
+        "contract",
+        "size_bytes"
+      ],
+      "properties": {
+        "context_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "kind": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "coverage": {
+          "$ref": "#/$defs/contextCoverage"
+        },
+        "provenance": {
+          "$ref": "#/$defs/contextProvenance"
+        },
+        "artifact_uri": {
+          "$ref": "#/$defs/artifactURI"
+        },
+        "contract": {
+          "$ref": "#/$defs/identifier"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "contextGap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "context_id",
+        "kind",
+        "revision",
+        "digest",
+        "coverage",
+        "provenance",
+        "reason_code"
+      ],
+      "properties": {
+        "context_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "kind": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "coverage": {
+          "$ref": "#/$defs/contextCoverage"
+        },
+        "provenance": {
+          "$ref": "#/$defs/contextProvenance"
+        },
+        "reason_code": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "contextCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spans",
+        "symbols"
+      ],
+      "properties": {
+        "spans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/contextSpan"
+          }
+        },
+        "symbols": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "spans": {
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "symbols": {
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    },
+    "contextSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "start_line",
+        "end_line"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/repositoryPath"
+        },
+        "start_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "end_line": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "contextProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "producer_id",
+        "producer_revision"
+      ],
+      "properties": {
+        "provider": {
+          "$ref": "#/$defs/identifier"
+        },
+        "producer_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "producer_revision": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    }
+  }
+}

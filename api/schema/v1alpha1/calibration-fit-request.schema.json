@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/calibration-fit-request.schema.json",
+  "title": "Argus CalibrationFitRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "profile_id", "profile_revision", "training", "validation", "gate_policy", "created_at"],
+  "properties": {
+    "schema_version": {"const": "argus.calibration_fit_request.v1alpha1"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "profile_id": {"$ref": "#/$defs/id"},
+    "profile_revision": {"$ref": "#/$defs/id"},
+    "training": {"type": "array", "minItems": 2, "maxItems": 100000, "items": {"$ref": "#/$defs/observation"}},
+    "validation": {"type": "array", "minItems": 1, "maxItems": 100000, "items": {"$ref": "#/$defs/observation"}},
+    "gate_policy": {"$ref": "#/$defs/gate_policy"},
+    "created_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$", "not": {"pattern": "^[Ll][Aa][Tt][Ee][Ss][Tt]$"}},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_uri": {"type": "string", "pattern": "^artifact://[^/]+/.+"},
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "reviewer_ids", "adjudicator_id", "evidence_refs", "statement"],
+      "properties": {
+        "kind": {"enum": ["human_adjudication", "external_governance"]},
+        "reviewer_ids": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "adjudicator_id": {"$ref": "#/$defs/id"},
+        "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/artifact_uri"}},
+        "statement": {"const": "independently_adjudicated_not_argus_output"}
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observation_id", "case_id", "case_governance_revision", "case_label_revision", "review_run_id", "candidate_id", "cluster_fingerprint", "repository_id", "dimension_id", "dimension_revision", "dimension_sha256", "raw_confidence_ppm", "truth", "authority"],
+      "properties": {
+        "observation_id": {"$ref": "#/$defs/id"},
+        "case_id": {"$ref": "#/$defs/id"},
+        "case_governance_revision": {"type": "integer", "minimum": 1},
+        "case_label_revision": {"type": "integer", "minimum": 1},
+        "review_run_id": {"$ref": "#/$defs/id"},
+        "candidate_id": {"$ref": "#/$defs/id"},
+        "cluster_fingerprint": {"$ref": "#/$defs/sha256"},
+        "repository_id": {"$ref": "#/$defs/id"},
+        "dimension_id": {"$ref": "#/$defs/id"},
+        "dimension_revision": {"$ref": "#/$defs/id"},
+        "dimension_sha256": {"$ref": "#/$defs/sha256"},
+        "raw_confidence_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "truth": {"enum": ["valid_defect", "false_positive"]},
+        "authority": {"$ref": "#/$defs/authority"}
+      }
+    },
+    "gate_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum_training_samples", "minimum_validation_samples", "minimum_slice_samples", "maximum_validation_brier_ppm", "maximum_validation_ece_ppm", "maximum_slice_ece_ppm", "maximum_label_rate_drift_ppm", "maximum_mean_raw_drift_ppm"],
+      "properties": {
+        "minimum_training_samples": {"type": "integer", "minimum": 2},
+        "minimum_validation_samples": {"type": "integer", "minimum": 1},
+        "minimum_slice_samples": {"type": "integer", "minimum": 1},
+        "maximum_validation_brier_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "maximum_validation_ece_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "maximum_slice_ece_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "maximum_label_rate_drift_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "maximum_mean_raw_drift_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000}
+      }
+    }
+  }
+}

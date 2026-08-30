@@ -1,0 +1,1986 @@
+{
+  "schema_version": "argus.config_bundle.v1alpha1",
+  "bundle_id": "bundle-0f032c7f9fb0366c42949381",
+  "sha256": "0f032c7f9fb0366c42949381d5d79b1f00ebb9a04d11799dba2f5b4c0f4bb509",
+  "context": {
+    "tenant_id": "tenant-example",
+    "organization_id": "organization-example",
+    "repository_id": "repository-example",
+    "path": "internal/reviewcore/pipeline.go",
+    "invocation_id": "review-example-1"
+  },
+  "applied_revisions": [
+    {
+      "scope": "platform",
+      "selector": "*",
+      "id": "example-platform-agent-review",
+      "revision": "1",
+      "operation": "applied"
+    }
+  ],
+  "target": {
+    "allowed_modes": [
+      "diff",
+      "scope",
+      "selection"
+    ],
+    "include": [
+      "**"
+    ],
+    "exclude": [],
+    "max_files": 200,
+    "max_patch_bytes": 16777216
+  },
+  "rule_pack": {
+    "schema_version": "argus.rule_pack.v1alpha1",
+    "id": "effective",
+    "revision": "resolved",
+    "rules": [
+      {
+        "id": "unfinished-work",
+        "revision": "1",
+        "kind": "deterministic",
+        "detector": {
+          "id": "argus.fixture-marker",
+          "revision": "1",
+          "sha256": "d742902328ed20f4052267b22128275f2b54d0c9b8b9b4636f99e726ca1e45ae"
+        },
+        "languages": [
+          "go"
+        ],
+        "path_prefixes": [],
+        "evidence_kinds": [
+          "file_content",
+          "patch_line",
+          "target_line"
+        ],
+        "severity": "info",
+        "enabled": true
+      },
+      {
+        "id": "explicit-bug-marker",
+        "revision": "1",
+        "kind": "deterministic",
+        "detector": {
+          "id": "argus.fixture-marker",
+          "revision": "1",
+          "sha256": "d742902328ed20f4052267b22128275f2b54d0c9b8b9b4636f99e726ca1e45ae"
+        },
+        "languages": [
+          "go"
+        ],
+        "path_prefixes": [],
+        "evidence_kinds": [
+          "file_content",
+          "patch_line",
+          "target_line"
+        ],
+        "severity": "high",
+        "enabled": true
+      },
+      {
+        "id": "go-context-cancel-discarded",
+        "revision": "1",
+        "kind": "deterministic",
+        "detector": {
+          "id": "argus.go-ast",
+          "revision": "1",
+          "sha256": "684c4cada46ff501f551f4f0d93b23e77f08ee8a01ba934a0c4b1aa083a5467f"
+        },
+        "languages": [
+          "go"
+        ],
+        "path_prefixes": [],
+        "evidence_kinds": [
+          "file_content",
+          "patch_line",
+          "target_line"
+        ],
+        "severity": "high",
+        "enabled": true
+      }
+    ],
+    "sha256": "cb10c5b5e8f2f9ef99c6fdd480d7e679e0b60b8594fa65c699bacf67b93603cf"
+  },
+  "workflow": {
+    "definition": {
+      "id": "local-deterministic-review",
+      "revision": "2",
+      "sha256": "88cac3fad347ae1d3de54d7d463fd27768cd6cde228d3d0690bc7d08fcc1eb5c"
+    }
+  },
+  "execution": {
+    "agent_profile": {
+      "id": "deterministic-local",
+      "revision": "1",
+      "sha256": "c7b67e9c3b4a32055dac0274f2061c342adda986ae2fae617f971a86e3bec762"
+    },
+    "model_profile": {
+      "id": "none",
+      "revision": "1",
+      "sha256": "f167723cff28bb023126140c9a26ba81946c41d7c3eda2966b2c9b0e14ade18a"
+    },
+    "allowed_tools": [
+      "codegraph"
+    ],
+    "context_providers": [],
+    "context_provider_max_concurrency": 4
+  },
+  "agent_review": {
+    "schema_version": "argus.agent_review_policy.v1alpha1",
+    "id": "effective",
+    "revision": "resolved",
+    "agent": {
+      "id": "pi-agent",
+      "revision": "1",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "normalization": {
+      "id": "candidate-normalization",
+      "revision": "v2",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "provider": {
+      "id": "anthropic-compatible",
+      "revision": "1",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "model": {
+      "id": "deepseek-chat",
+      "revision": "2026-08-01",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "prompt": {
+      "id": "review-prompt",
+      "revision": "1",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "model_credential_ref": {
+      "uri": "secret://env/deepseek-anthropic-key"
+    },
+    "skill_packs": [
+      {
+        "id": "group-changes",
+        "phase": "grouping",
+        "ref": {
+          "id": "skill-group-changes",
+          "revision": "1",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      {
+        "id": "review-core",
+        "phase": "review",
+        "ref": {
+          "id": "skill-review-core",
+          "revision": "1",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      {
+        "id": "verify-candidates",
+        "phase": "verification",
+        "ref": {
+          "id": "skill-verify-candidates",
+          "revision": "1",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      }
+    ],
+    "knowledge_packs": [
+      {
+        "id": "business-default",
+        "ref": {
+          "id": "knowledge-business-default",
+          "revision": "1",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      }
+    ],
+    "api_protocol": {
+      "id": "anthropic-messages",
+      "revision": "2023-06-01",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "authority": {
+      "model_egress": "provider_broker_only",
+      "tool_network": "deny",
+      "workspace_reads": "frozen_input_only",
+      "workspace_writes": "deny",
+      "remote_writes": "deny",
+      "max_delegation_depth": 0,
+      "tools": [
+        "codegraph"
+      ]
+    },
+    "budget": {
+      "max_files": 100,
+      "max_groups": 16,
+      "max_hypotheses": 64,
+      "max_model_calls": 32,
+      "max_tool_calls": 64,
+      "max_target_bytes": 524288,
+      "max_group_bytes": 131072,
+      "max_output_bytes": 131072,
+      "max_output_tokens": 10000,
+      "max_cost_micros": 500000,
+      "timeout_ms": 20000,
+      "max_concurrency": 1
+    },
+    "sha256": "f8916ee88041611666c2ab9e406d333d6a8042b02d3ac30b9c2bf72711a7dae0"
+  },
+  "budget": {
+    "max_input_bytes": 16777216,
+    "max_output_bytes": 16777216,
+    "max_tokens": 100000,
+    "max_cost_micros": 1000000,
+    "stage_timeout_ms": 30000,
+    "max_attempts": 2,
+    "max_concurrency": 1
+  },
+  "verification": {
+    "required_evidence_kinds": [
+      "file_content",
+      "patch_line",
+      "target_line"
+    ],
+    "minimum_independent_evidence": 1,
+    "partial_evidence": "deny"
+  },
+  "adjudication": {
+    "minimum_severity": "info",
+    "human_review_inconclusive": true,
+    "automatic_publication": "deny"
+  },
+  "publication": {
+    "remote_writes": "deny",
+    "channels": [],
+    "max_comments": 0
+  },
+  "data": {
+    "retention_days": 30,
+    "redaction": "strict",
+    "training": "deny",
+    "export": "deny"
+  },
+  "field_sources": [
+    {
+      "field": "adjudication.automatic_publication",
+      "strategy": "deny_wins",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "deny"
+        }
+      ]
+    },
+    {
+      "field": "adjudication.human_review_inconclusive",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "adjudication.minimum_severity",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.agent",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.api_protocol",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.authority.max_delegation_depth",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.authority.model_egress",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.authority.remote_writes",
+      "strategy": "deny_wins",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "deny"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.authority.tool_network",
+      "strategy": "deny_wins",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "deny"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.authority.tools",
+      "strategy": "set_union_subtract",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "union_subtract"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.authority.workspace_reads",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.authority.workspace_writes",
+      "strategy": "deny_wins",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "deny"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_concurrency",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_cost_micros",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_files",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_group_bytes",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_groups",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_hypotheses",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_model_calls",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_output_bytes",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_output_tokens",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_target_bytes",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.max_tool_calls",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.budget.timeout_ms",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.knowledge_packs",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "ordered_stable_id_override"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.knowledge_packs[business-default]",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "upsert"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.model",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.model_credential_ref",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.normalization",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.prompt",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.provider",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.skill_packs",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "ordered_stable_id_override"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.skill_packs[group-changes]",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "upsert"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.skill_packs[review-core]",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "upsert"
+        }
+      ]
+    },
+    {
+      "field": "agent_review.skill_packs[verify-candidates]",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "upsert"
+        }
+      ]
+    },
+    {
+      "field": "budget.max_attempts",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "budget.max_concurrency",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "budget.max_cost_micros",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "budget.max_input_bytes",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "budget.max_output_bytes",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "budget.max_tokens",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "budget.stage_timeout_ms",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "data.export",
+      "strategy": "deny_wins",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "deny"
+        }
+      ]
+    },
+    {
+      "field": "data.redaction",
+      "strategy": "deny_wins",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "strict"
+        }
+      ]
+    },
+    {
+      "field": "data.retention_days",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "data.training",
+      "strategy": "deny_wins",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "deny"
+        }
+      ]
+    },
+    {
+      "field": "execution.agent_profile",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "execution.allowed_tools",
+      "strategy": "set_union_subtract",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "union_subtract"
+        }
+      ]
+    },
+    {
+      "field": "execution.context_provider_max_concurrency",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "execution.context_providers",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "ordered_stable_id_override"
+        }
+      ]
+    },
+    {
+      "field": "execution.model_profile",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "publication.channels",
+      "strategy": "set_union_subtract",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "union_subtract"
+        }
+      ]
+    },
+    {
+      "field": "publication.max_comments",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "publication.remote_writes",
+      "strategy": "deny_wins",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "deny"
+        }
+      ]
+    },
+    {
+      "field": "rule_pack.rules",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "ordered_stable_id_override"
+        }
+      ]
+    },
+    {
+      "field": "rule_pack.rules[explicit-bug-marker]",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "upsert"
+        }
+      ]
+    },
+    {
+      "field": "rule_pack.rules[go-context-cancel-discarded]",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "upsert"
+        }
+      ]
+    },
+    {
+      "field": "rule_pack.rules[unfinished-work]",
+      "strategy": "ordered_stable_id_override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "upsert"
+        }
+      ]
+    },
+    {
+      "field": "target.allowed_modes",
+      "strategy": "set_union_subtract",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "union_subtract"
+        }
+      ]
+    },
+    {
+      "field": "target.exclude",
+      "strategy": "set_union_subtract",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "union_subtract"
+        }
+      ]
+    },
+    {
+      "field": "target.include",
+      "strategy": "set_union_subtract",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "union_subtract"
+        }
+      ]
+    },
+    {
+      "field": "target.max_files",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "target.max_patch_bytes",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "verification.minimum_independent_evidence",
+      "strategy": "override",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    },
+    {
+      "field": "verification.partial_evidence",
+      "strategy": "deny_wins",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "deny"
+        }
+      ]
+    },
+    {
+      "field": "verification.required_evidence_kinds",
+      "strategy": "set_union_subtract",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "union_subtract"
+        }
+      ]
+    },
+    {
+      "field": "workflow.definition",
+      "strategy": "replace_only",
+      "sources": [
+        {
+          "scope": "platform",
+          "selector": "*",
+          "id": "example-platform-agent-review",
+          "revision": "1",
+          "operation": "replace"
+        }
+      ]
+    }
+  ],
+  "explain": [
+    {
+      "field": "target.allowed_modes",
+      "strategy": "set_union_subtract",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "union_subtract"
+      },
+      "action": "merged set",
+      "detail": "add=diff,scope,selection remove="
+    },
+    {
+      "field": "target.include",
+      "strategy": "set_union_subtract",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "union_subtract"
+      },
+      "action": "merged set",
+      "detail": "add=** remove="
+    },
+    {
+      "field": "target.exclude",
+      "strategy": "set_union_subtract",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "union_subtract"
+      },
+      "action": "merged set",
+      "detail": "add= remove="
+    },
+    {
+      "field": "target.max_files",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "target.max_patch_bytes",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "rule_pack.rules[unfinished-work]",
+      "strategy": "ordered_stable_id_override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "upsert"
+      },
+      "action": "appended stable-id entry",
+      "detail": "rule_id=unfinished-work"
+    },
+    {
+      "field": "rule_pack.rules[explicit-bug-marker]",
+      "strategy": "ordered_stable_id_override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "upsert"
+      },
+      "action": "appended stable-id entry",
+      "detail": "rule_id=explicit-bug-marker"
+    },
+    {
+      "field": "rule_pack.rules[go-context-cancel-discarded]",
+      "strategy": "ordered_stable_id_override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "upsert"
+      },
+      "action": "appended stable-id entry",
+      "detail": "rule_id=go-context-cancel-discarded"
+    },
+    {
+      "field": "workflow.definition",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced atomic versioned reference"
+    },
+    {
+      "field": "execution.agent_profile",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced atomic versioned reference"
+    },
+    {
+      "field": "execution.model_profile",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced atomic versioned reference"
+    },
+    {
+      "field": "execution.allowed_tools",
+      "strategy": "set_union_subtract",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "union_subtract"
+      },
+      "action": "merged set",
+      "detail": "add=codegraph remove="
+    },
+    {
+      "field": "execution.context_provider_max_concurrency",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode bounded Context Provider concurrency"
+    },
+    {
+      "field": "agent_review.agent",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced exact versioned reference"
+    },
+    {
+      "field": "agent_review.normalization",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced exact versioned reference"
+    },
+    {
+      "field": "agent_review.provider",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced exact versioned reference"
+    },
+    {
+      "field": "agent_review.model",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced exact versioned reference"
+    },
+    {
+      "field": "agent_review.prompt",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced exact versioned reference"
+    },
+    {
+      "field": "agent_review.api_protocol",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced exact versioned reference"
+    },
+    {
+      "field": "agent_review.model_credential_ref",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced secret reference without resolving secret material"
+    },
+    {
+      "field": "agent_review.skill_packs[group-changes]",
+      "strategy": "ordered_stable_id_override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "upsert"
+      },
+      "action": "appended stable-id entry",
+      "detail": "skill_pack_id=group-changes phase=grouping"
+    },
+    {
+      "field": "agent_review.skill_packs[review-core]",
+      "strategy": "ordered_stable_id_override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "upsert"
+      },
+      "action": "appended stable-id entry",
+      "detail": "skill_pack_id=review-core phase=review"
+    },
+    {
+      "field": "agent_review.skill_packs[verify-candidates]",
+      "strategy": "ordered_stable_id_override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "upsert"
+      },
+      "action": "appended stable-id entry",
+      "detail": "skill_pack_id=verify-candidates phase=verification"
+    },
+    {
+      "field": "agent_review.skill_packs",
+      "strategy": "ordered_stable_id_override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "ordered_stable_id_override"
+      },
+      "action": "merged ordered stable-id entries",
+      "detail": "upsert=3 remove=0"
+    },
+    {
+      "field": "agent_review.knowledge_packs[business-default]",
+      "strategy": "ordered_stable_id_override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "upsert"
+      },
+      "action": "appended stable-id entry",
+      "detail": "knowledge_pack_id=business-default"
+    },
+    {
+      "field": "agent_review.knowledge_packs",
+      "strategy": "ordered_stable_id_override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "ordered_stable_id_override"
+      },
+      "action": "merged ordered stable-id entries",
+      "detail": "upsert=1 remove=0"
+    },
+    {
+      "field": "agent_review.authority.model_egress",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced brokered model egress authority"
+    },
+    {
+      "field": "agent_review.authority.tool_network",
+      "strategy": "deny_wins",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "deny"
+      },
+      "action": "initialized permission",
+      "detail": "effective=deny"
+    },
+    {
+      "field": "agent_review.authority.workspace_reads",
+      "strategy": "replace_only",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced workspace read authority"
+    },
+    {
+      "field": "agent_review.authority.workspace_writes",
+      "strategy": "deny_wins",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "deny"
+      },
+      "action": "initialized permission",
+      "detail": "effective=deny"
+    },
+    {
+      "field": "agent_review.authority.remote_writes",
+      "strategy": "deny_wins",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "deny"
+      },
+      "action": "initialized permission",
+      "detail": "effective=deny"
+    },
+    {
+      "field": "agent_review.authority.max_delegation_depth",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "replaced delegation depth"
+    },
+    {
+      "field": "agent_review.authority.tools",
+      "strategy": "set_union_subtract",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "union_subtract"
+      },
+      "action": "merged set",
+      "detail": "add=codegraph remove="
+    },
+    {
+      "field": "agent_review.budget.max_files",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.max_groups",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.max_hypotheses",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.max_model_calls",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.max_tool_calls",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.max_concurrency",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.max_target_bytes",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.max_group_bytes",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.max_output_bytes",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.max_output_tokens",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.max_cost_micros",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "agent_review.budget.timeout_ms",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode agent budget limit"
+    },
+    {
+      "field": "budget.max_input_bytes",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "budget.max_output_bytes",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "budget.max_tokens",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "budget.max_cost_micros",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "budget.stage_timeout_ms",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "budget.max_concurrency",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "budget.max_attempts",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "verification.required_evidence_kinds",
+      "strategy": "set_union_subtract",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "union_subtract"
+      },
+      "action": "merged set",
+      "detail": "add=file_content,patch_line,target_line remove="
+    },
+    {
+      "field": "verification.minimum_independent_evidence",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "verification.partial_evidence",
+      "strategy": "deny_wins",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "deny"
+      },
+      "action": "initialized permission",
+      "detail": "effective=deny"
+    },
+    {
+      "field": "adjudication.minimum_severity",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "adjudication.human_review_inconclusive",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "adjudication.automatic_publication",
+      "strategy": "deny_wins",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "deny"
+      },
+      "action": "initialized permission",
+      "detail": "effective=deny"
+    },
+    {
+      "field": "publication.remote_writes",
+      "strategy": "deny_wins",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "deny"
+      },
+      "action": "initialized permission",
+      "detail": "effective=deny"
+    },
+    {
+      "field": "publication.channels",
+      "strategy": "set_union_subtract",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "union_subtract"
+      },
+      "action": "merged set",
+      "detail": "add= remove="
+    },
+    {
+      "field": "publication.max_comments",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "data.retention_days",
+      "strategy": "override",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "replace"
+      },
+      "action": "replaced effective value",
+      "detail": "overrode scalar value"
+    },
+    {
+      "field": "data.redaction",
+      "strategy": "deny_wins",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "strict"
+      },
+      "action": "initialized redaction",
+      "detail": "effective=strict"
+    },
+    {
+      "field": "data.training",
+      "strategy": "deny_wins",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "deny"
+      },
+      "action": "initialized permission",
+      "detail": "effective=deny"
+    },
+    {
+      "field": "data.export",
+      "strategy": "deny_wins",
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "deny"
+      },
+      "action": "initialized permission",
+      "detail": "effective=deny"
+    }
+  ]
+}

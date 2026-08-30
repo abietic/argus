@@ -1,0 +1,5 @@
+{
+  "schema_version": "argus.model_profile.v1alpha1",
+  "provider_id": "deepseek-anthropic",
+  "wire_model": "deepseek-v4-pro[1m]"
+}

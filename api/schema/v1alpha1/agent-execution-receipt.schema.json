@@ -1,0 +1,268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/agent-execution-receipt.schema.json",
+  "title": "Argus AgentExecutionReceipt v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "plan_id",
+    "source_run_id",
+    "execution_id",
+    "review_run_id",
+    "task_id",
+    "group_id",
+    "task_role",
+    "dimension",
+    "runtime",
+    "profile",
+    "agent",
+    "provider",
+    "model",
+    "api_protocol",
+    "provenance_class",
+    "authority",
+    "status",
+    "started_at",
+    "finished_at",
+    "model_turns_started",
+    "model_turns_completed",
+    "tool_calls",
+    "tool_usage",
+    "usage"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.agent_execution_receipt.v1alpha1"},
+    "receipt_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "plan_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "source_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "execution_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "review_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "task_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "group_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "hypothesis_occurrence_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "task_role": {"enum": ["context", "review", "verification"]},
+    "dimension": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+    "runtime": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+    "profile": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+    "agent": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+    "provider": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+    "model": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+    "api_protocol": {"const": "anthropic_messages"},
+    "provenance_class": {"const": "worker_self_report"},
+    "authority": {"const": "diagnostic_only"},
+    "status": {"enum": ["succeeded", "failed", "canceled"]},
+    "failure_reason_code": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "prompt_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+    "output_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+    "started_at": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/utcTimestamp"},
+    "finished_at": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/utcTimestamp"},
+    "model_turns_started": {"type": "integer", "minimum": 0},
+    "model_turns_completed": {"type": "integer", "minimum": 0},
+    "tool_calls": {"type": "integer", "minimum": 0},
+    "tool_usage": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/toolUsage"}
+    },
+    "usage": {"$ref": "#/$defs/tokenUsage"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"task_role": {"const": "verification"}}},
+      "then": {"required": ["hypothesis_occurrence_id"]},
+      "else": {"not": {"required": ["hypothesis_occurrence_id"]}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "succeeded"}}},
+      "then": {
+        "required": ["prompt_digest", "output_digest"],
+        "not": {"required": ["failure_reason_code"]}
+      },
+      "else": {
+        "required": ["failure_reason_code"],
+        "not": {"required": ["output_digest"]}
+      }
+    },
+    {
+      "if": {
+        "required": ["model_turns_started"],
+        "properties": {"model_turns_started": {"minimum": 1}}
+      },
+      "then": {"required": ["prompt_digest"]}
+    },
+    {
+      "if": {"properties": {"task_role": {"const": "context"}}},
+      "then": {
+        "properties": {
+          "tool_usage": {
+            "not": {
+              "contains": {
+                "required": ["tool_id"],
+                "properties": {"tool_id": {"enum": ["submit_candidates", "submit_verdict"]}}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"task_role": {"const": "review"}}},
+      "then": {
+        "properties": {
+          "tool_usage": {
+            "not": {
+              "contains": {
+                "required": ["tool_id"],
+                "properties": {"tool_id": {"enum": ["submit_context", "submit_verdict"]}}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"task_role": {"const": "verification"}}},
+      "then": {
+        "properties": {
+          "tool_usage": {
+            "not": {
+              "contains": {
+                "required": ["tool_id"],
+                "properties": {"tool_id": {"enum": ["submit_context", "submit_candidates"]}}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "task_role": {"const": "context"},
+          "status": {"const": "succeeded"}
+        }
+      },
+      "then": {
+        "properties": {
+          "tool_usage": {
+            "contains": {
+              "required": ["tool_id"],
+              "properties": {
+                "tool_id": {"const": "submit_context"}
+              }
+            },
+            "minContains": 1,
+            "maxContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "task_role": {"const": "review"},
+          "status": {"const": "succeeded"}
+        }
+      },
+      "then": {
+        "properties": {
+          "tool_usage": {
+            "contains": {
+              "required": ["tool_id"],
+              "properties": {
+                "tool_id": {"const": "submit_candidates"}
+              }
+            },
+            "minContains": 1,
+            "maxContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "task_role": {"const": "verification"},
+          "status": {"const": "succeeded"}
+        }
+      },
+      "then": {
+        "properties": {
+          "tool_usage": {
+            "contains": {
+              "required": ["tool_id"],
+              "properties": {
+                "tool_id": {"const": "submit_verdict"}
+              }
+            },
+            "minContains": 1,
+            "maxContains": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "toolUsage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool_id", "invocation_count", "failure_count"],
+      "properties": {
+        "tool_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "invocation_count": {"type": "integer", "minimum": 0},
+        "failure_count": {"type": "integer", "minimum": 0}
+      },
+      "description": "For the role-matching terminal tool, a succeeded receipt requires invocation_count - failure_count = 1. Failed schema-validation attempts may precede the one accepted terminal submission. Other cross-field constraints are enforced by the strict decoder Validate method."
+    },
+    "tokenUsage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "completeness",
+        "input_tokens",
+        "output_tokens",
+        "cache_read_tokens",
+        "cache_write_tokens",
+        "total_tokens"
+      ],
+      "properties": {
+        "completeness": {"enum": ["provider_reported", "partial", "unavailable"]},
+        "unavailable_reason_code": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "input_tokens": {"type": "integer", "minimum": 0},
+        "output_tokens": {"type": "integer", "minimum": 0},
+        "cache_read_tokens": {"type": "integer", "minimum": 0},
+        "cache_write_tokens": {"type": "integer", "minimum": 0},
+        "reasoning_tokens": {"type": "integer", "minimum": 0},
+        "total_tokens": {"type": "integer", "minimum": 0}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"completeness": {"const": "provider_reported"}}},
+          "then": {"not": {"required": ["unavailable_reason_code"]}}
+        },
+        {
+          "if": {"properties": {"completeness": {"const": "partial"}}},
+          "then": {
+            "required": ["unavailable_reason_code"],
+            "properties": {"total_tokens": {"minimum": 1}}
+          }
+        },
+        {
+          "if": {"properties": {"completeness": {"const": "unavailable"}}},
+          "then": {
+            "required": ["unavailable_reason_code"],
+            "properties": {
+              "input_tokens": {"const": 0},
+              "output_tokens": {"const": 0},
+              "cache_read_tokens": {"const": 0},
+              "cache_write_tokens": {"const": 0},
+              "total_tokens": {"const": 0}
+            },
+            "not": {"required": ["reasoning_tokens"]}
+          }
+        }
+      ]
+    }
+  }
+}

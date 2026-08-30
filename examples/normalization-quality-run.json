@@ -1,0 +1,74 @@
+{
+  "schema_version": "argus.normalization_quality_run.v1alpha1",
+  "quality_run_id": "normalization-quality-dev-1",
+  "policy_revision": "argus-pi-review-workflow-v2",
+  "authority": "independent_oracle_evaluation",
+  "cases": [
+    {
+      "case_id": "case-dev-1",
+      "oracle_id": "normalization-oracle-dev-1",
+      "oracle_binding": {
+        "oracle_id": "normalization-oracle-dev-1",
+        "case_id": "case-dev-1",
+        "revision": 1,
+        "registered_event_id": "register-normalization-oracle-dev-1",
+        "oracle_ref": {
+          "uri": "artifact://local/sha256/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "size_bytes": 2048,
+          "contract": "argus.normalization_oracle.v1alpha1+json"
+        },
+        "attestation_id": "normalization-attestation-dev-1",
+        "trust_authority": "independent-review-board",
+        "trust_key_id": "normalization-oracle-key-1",
+        "trust_key_revision": "key-v1",
+        "trust_key_registered_event_id": "register-normalization-oracle-key-1"
+      },
+      "source_review_run_id": "formal-run-dev-1",
+      "source_review_run_ref": {
+        "uri": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "size_bytes": 2048,
+        "contract": "argus.review_run.v1alpha1"
+      },
+      "raw_candidate_collection_ref": {
+        "uri": "artifact://local/sha256/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "size_bytes": 4096,
+        "contract": "argus.agent_review_raw_candidate_collection.v1alpha1"
+      },
+      "split": "dev",
+      "eligible_raw_candidates": 4,
+      "oracle_unique_claims": 2,
+      "predicted_unique_claims": 1,
+      "unique_claim_delta": -1,
+      "true_duplicate_pairs": 3,
+      "false_duplicate_pairs": 3,
+      "missed_duplicate_pairs": 0,
+      "true_distinct_pairs": 0,
+      "pairwise_precision": {"available": true, "numerator": 3, "denominator": 6, "value_ppm": 500000},
+      "pairwise_recall": {"available": true, "numerator": 3, "denominator": 3, "value_ppm": 1000000},
+      "false_merge_rate": {"available": true, "numerator": 3, "denominator": 6, "value_ppm": 500000},
+      "exact_partition_match": false,
+      "policy_exposed": false
+    }
+  ],
+  "summary": {
+    "cases": 1,
+    "eligible_raw_candidates": 4,
+    "oracle_unique_claims": 2,
+    "predicted_unique_claims": 1,
+    "unique_claim_delta": -1,
+    "true_duplicate_pairs": 3,
+    "false_duplicate_pairs": 3,
+    "missed_duplicate_pairs": 0,
+    "true_distinct_pairs": 0,
+    "pairwise_precision": {"available": true, "numerator": 3, "denominator": 6, "value_ppm": 500000},
+    "pairwise_recall": {"available": true, "numerator": 3, "denominator": 3, "value_ppm": 1000000},
+    "false_merge_rate": {"available": true, "numerator": 3, "denominator": 6, "value_ppm": 500000},
+    "exact_partition_matches": 0,
+    "policy_exposed_cases": 0,
+    "independent_evidence_cases": 1
+  },
+  "created_at": "2026-08-27T03:00:00Z"
+}

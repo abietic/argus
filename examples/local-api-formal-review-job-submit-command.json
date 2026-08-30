@@ -1,0 +1,15 @@
+{
+  "schema_version": "argus.local_api_review_job_submit_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.review_job_request.v1alpha1",
+    "execution_profile": "formal_pi_review_v1",
+    "source_run_id": "run-succeeded-source",
+    "execution_timeout_seconds": 1800
+  },
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "submit-formal-review-job-001",
+    "audit": "submit an immutable formal Pi review job",
+    "at": "2026-08-25T08:05:00Z"
+  }
+}

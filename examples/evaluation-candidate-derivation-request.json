@@ -1,0 +1,15 @@
+{
+  "schema_version": "argus.evaluation_candidate_derivation_request.v1alpha1",
+  "case_id": "candidate-feedback-001",
+  "run_id": "review-run-001",
+  "finding_id": "finding-001",
+  "source": "production_feedback",
+  "source_id": "feedback-001",
+  "license_id": "internal-review-data-policy-1",
+  "consent": "authorized_internal",
+  "classification": "internal",
+  "owner": "evaluation-governance",
+  "label_policy_revision": "candidate-label-policy-1",
+  "restrictions": ["candidate review required before activation"],
+  "collected_at": "2026-08-25T11:05:00Z"
+}

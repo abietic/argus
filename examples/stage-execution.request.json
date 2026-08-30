@@ -1,0 +1,81 @@
+{
+  "schema_version": "argus.stage_execution_request.v1alpha1",
+  "request_sha256": "993f05d1e500fa9e40561a9a7d03341755dffe3787d5b3274f7c863575c8eeb0",
+  "execution_id": "execution-1",
+  "review_run_id": "run-1",
+  "tenant_id": "tenant-1",
+  "workspace_id": "workspace-1",
+  "workload_id": "workload-1",
+  "lease_id": "lease-1",
+  "lease_worker_id": "worker-1",
+  "stage": {
+    "id": "detect",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "attempt": 1,
+  "generation": 1,
+  "fencing_token": 1,
+  "idempotency_key": "execution-1-detect-1",
+  "plan": {
+    "ref": {
+      "uri": "artifact://argus/tenants/tenant-1/workspaces/workspace-1/objects/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.agent_stage_plan.v1alpha1"
+  },
+  "execution_snapshot": {
+    "ref": {
+      "uri": "artifact://argus/tenants/tenant-1/workspaces/workspace-1/objects/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.execution_snapshot.v1alpha1"
+  },
+  "review_input": {
+    "ref": {
+      "uri": "artifact://argus/tenants/tenant-1/workspaces/workspace-1/objects/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.review_input.v1alpha1"
+  },
+  "upstream": [],
+  "output_contract": "argus.review_hypothesis_set.v1alpha1",
+  "capability": {
+    "runtime_kind": "pi-agent-sdk",
+    "runtime_id": "pi-runtime",
+    "runtime_revision": "1",
+    "runtime_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "build_identity": "pi-runtime-build-1",
+    "authority": {
+      "allowed_tools": [
+        "read_file",
+        "search_symbols"
+      ],
+      "model_egress": "provider_broker_only",
+      "tool_network": "deny",
+      "workspace_reads": "frozen_input_only",
+      "workspace_writes": "deny",
+      "remote_writes": "deny",
+      "max_delegation_depth": 0
+    },
+    "trust": {
+      "authority": "platform",
+      "capability_verifier": {
+        "id": "hailix-platform-capability-verifier",
+        "revision": "v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "callback_verifier": {
+        "id": "hailix-platform-callback-verifier",
+        "revision": "v1",
+        "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      }
+    },
+    "sha256": "ea305d3be6ff16a3aab0f2b96fc9080d7113807ff1f94437cc50cab1edcbab14"
+  },
+  "deadline": "2026-08-24T10:00:00Z",
+  "side_effects": "deny"
+}

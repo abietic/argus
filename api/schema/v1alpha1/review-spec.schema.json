@@ -1,0 +1,457 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/review-spec.schema.json",
+  "title": "Argus ReviewSpec v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "idempotency_key",
+    "tenant_id",
+    "workspace_id",
+    "repository",
+    "target",
+    "config_bundle_ref",
+    "workflow_ref",
+    "requested_outputs",
+    "remote_writes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "argus.review_spec.v1alpha1"
+    },
+    "request_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "idempotency_key": {
+      "$ref": "#/$defs/identifier"
+    },
+    "tenant_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "workspace_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "repository": {
+      "$ref": "#/$defs/repositoryRef"
+    },
+    "target": {
+      "$ref": "#/$defs/reviewTarget"
+    },
+    "config_bundle_ref": {
+      "$ref": "#/$defs/versionedRef"
+    },
+    "workflow_ref": {
+      "$ref": "#/$defs/versionedRef"
+    },
+    "requested_outputs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "report",
+          "findings",
+          "trace"
+        ]
+      }
+    },
+    "remote_writes": {
+      "const": "deny"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\s].*[^\\s]$|^[^\\s]$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "repositoryRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "repository_id"
+      ],
+      "properties": {
+        "provider": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repository_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uri",
+        "sha256",
+        "size_bytes"
+      ],
+      "properties": {
+        "uri": {
+          "$ref": "#/$defs/artifactURI"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "artifactURI": {
+      "type": "string",
+      "pattern": "^artifact://[A-Za-z0-9]([A-Za-z0-9.-]{0,126}[A-Za-z0-9])?/[A-Za-z0-9._~-]+(/[A-Za-z0-9._~-]+)*$",
+      "not": {
+        "pattern": "/(\\.|\\.\\.)(/|$)"
+      }
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\\\:\\x00-\\x1F\\x7F]([^\\\\:\\x00-\\x1F\\x7F]*[^/\\\\:\\x00-\\x1F\\x7F])?$",
+      "not": {
+        "pattern": "(^|/)(\\.|\\.\\.)(/|$)|//"
+      }
+    },
+    "repositoryPattern": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^[^/\\\\:\\x00-\\x1F\\x7F]([^\\\\:\\x00-\\x1F\\x7F]*[^/\\\\:\\x00-\\x1F\\x7F])?$",
+      "not": {
+        "pattern": "(^|/)(\\.|\\.\\.)(/|$)|//|\\*\\*\\*|[?\\[\\]]"
+      }
+    },
+    "versionedRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "diffTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "base_revision",
+        "head_revision",
+        "patch"
+      ],
+      "properties": {
+        "base_revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "head_revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "patch": {
+          "$ref": "#/$defs/contentRef"
+        }
+      }
+    },
+    "selectionTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "path",
+        "content"
+      ],
+      "properties": {
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "path": {
+          "$ref": "#/$defs/repositoryPath"
+        },
+        "start_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "end_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ranges": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/selectionRange"
+          }
+        },
+        "symbol": {
+          "$ref": "#/$defs/symbolSelector"
+        },
+        "content": {
+          "$ref": "#/$defs/contentRef"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "start_line",
+            "end_line"
+          ],
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "ranges"
+                ]
+              },
+              {
+                "required": [
+                  "symbol"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "required": [
+            "ranges"
+          ],
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "start_line"
+                ]
+              },
+              {
+                "required": [
+                  "end_line"
+                ]
+              },
+              {
+                "required": [
+                  "symbol"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "required": [
+            "symbol"
+          ],
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "start_line"
+                ]
+              },
+              {
+                "required": [
+                  "end_line"
+                ]
+              },
+              {
+                "required": [
+                  "ranges"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "selectionRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_line",
+        "end_line"
+      ],
+      "properties": {
+        "start_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "end_line": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "symbolSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "language",
+        "kind",
+        "qualified_name"
+      ],
+      "properties": {
+        "language": {
+          "const": "go"
+        },
+        "kind": {
+          "enum": [
+            "function",
+            "method",
+            "type"
+          ]
+        },
+        "qualified_name": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)?$"
+        }
+      }
+    },
+    "scopeTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "include",
+        "exclude"
+      ],
+      "properties": {
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "include": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/repositoryPattern"
+          }
+        },
+        "exclude": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/repositoryPattern"
+          }
+        }
+      }
+    },
+    "reviewTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "diff",
+            "selection",
+            "scope"
+          ]
+        },
+        "diff": {
+          "$ref": "#/$defs/diffTarget"
+        },
+        "selection": {
+          "$ref": "#/$defs/selectionTarget"
+        },
+        "scope": {
+          "$ref": "#/$defs/scopeTarget"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "diff"
+          ],
+          "properties": {
+            "mode": {
+              "const": "diff"
+            }
+          },
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "selection"
+                ]
+              },
+              {
+                "required": [
+                  "scope"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "required": [
+            "selection"
+          ],
+          "properties": {
+            "mode": {
+              "const": "selection"
+            }
+          },
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "diff"
+                ]
+              },
+              {
+                "required": [
+                  "scope"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "required": [
+            "scope"
+          ],
+          "properties": {
+            "mode": {
+              "const": "scope"
+            }
+          },
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "diff"
+                ]
+              },
+              {
+                "required": [
+                  "selection"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

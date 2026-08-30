@@ -1,0 +1,28 @@
+{
+  "schema_version": "argus.evaluation_probe_receipt.v1alpha1",
+  "probe_id": "synthetic-clean-probe-1",
+  "kind": "synthetic_clean",
+  "review_run_id": "review-run-synthetic-clean-1",
+  "input_target_ref": {
+    "uri": "artifact://local/sha256/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "size_bytes": 4096,
+    "contract": "argus.materialized_target.v1alpha1"
+  },
+  "oracle_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "method_id": "synthetic-clean-corpus-builder",
+  "method_revision": "builder-v1",
+  "executor_authority": "independent-probe-verifier",
+  "executor_revision": "verifier-v1",
+  "observed_outcome": "clean",
+  "evidence_artifacts": [
+    {
+      "uri": "artifact://local/sha256/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "size_bytes": 256,
+      "contract": "argus.probe_execution_evidence.v1alpha1"
+    }
+  ],
+  "remote_writes": "deny",
+  "completed_at": "2026-08-25T14:01:00Z"
+}

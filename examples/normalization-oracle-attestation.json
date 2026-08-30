@@ -1,0 +1,13 @@
+{
+  "schema_version": "argus.normalization_oracle_attestation.v1alpha1",
+  "attestation_id": "normalization-attestation-dev-1",
+  "oracle_id": "normalization-oracle-dev-1",
+  "oracle_sha256": "a647cc03da5a42406b857e28ae9954c2378e2ea782e2363969d9a7e2ecd880bc",
+  "authority": "independent-review-board",
+  "key_id": "normalization-oracle-key-1",
+  "key_revision": "key-v1",
+  "policy_revision": "board-v1",
+  "decision": "approved",
+  "issued_at": "2026-08-27T02:02:00Z",
+  "signature_base64": "mAC93JxBDiw7TGyVYpD24BFR/4v4gmBOuBg8AKQeE5WXBkcsDU94oTDkXg2y7t6K0If9PFqGstngTPdiLeTWBA=="
+}

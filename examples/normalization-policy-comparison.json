@@ -1,0 +1,80 @@
+{
+  "schema_version": "argus.normalization_policy_comparison.v1alpha1",
+  "comparison_id": "normalization-dev-comparison-1",
+  "authority": "diagnostic_only",
+  "disposition": "comparison_only",
+  "baseline_policy": "recorded_execution_decisions",
+  "variant_policy": "argus-pi-review-workflow-v2",
+  "cases": [
+    {
+      "case_id": "case-dev-1",
+      "source_review_run_id": "formal-run-dev-1",
+      "source_review_run_ref": {
+        "uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size_bytes": 512,
+        "contract": "argus.review_run.v1alpha1"
+      },
+      "raw_candidate_collection_ref": {
+        "uri": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "size_bytes": 1024,
+        "contract": "argus.agent_review_raw_candidate_collection.v1alpha1"
+      },
+      "target_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "baseline": {
+        "raw_candidates": 3,
+        "eligible_candidates": 3,
+        "retained": 2,
+        "merged_exact": 0,
+        "merged_semantic": 1,
+        "ineligible": 0
+      },
+      "variant": {
+        "raw_candidates": 3,
+        "eligible_candidates": 3,
+        "retained": 1,
+        "merged_exact": 0,
+        "merged_semantic": 2,
+        "ineligible": 0
+      },
+      "retained_delta": -1,
+      "merged_exact_delta": 0,
+      "merged_semantic_delta": 1,
+      "changed_decisions": [
+        {
+          "raw_candidate_id": "raw-candidate-2",
+          "baseline_action": "retained",
+          "baseline_reason_code": "normalized_candidate_retained",
+          "variant_action": "merged_duplicate",
+          "variant_reason_code": "semantic_duplicate",
+          "canonical_raw_candidate_id": "raw-candidate-1"
+        }
+      ],
+      "variant_clusters": [
+        {
+          "canonical_raw_candidate_id": "raw-candidate-1",
+          "fingerprint": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "raw_candidate_ids": ["raw-candidate-1", "raw-candidate-2", "raw-candidate-3"],
+          "dimension_ids": ["correctness", "error-contract", "transaction-state"]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "cases": 1,
+    "raw_candidates": 3,
+    "eligible_candidates": 3,
+    "baseline_retained": 2,
+    "variant_retained": 1,
+    "retained_delta": -1,
+    "baseline_merged_exact": 0,
+    "variant_merged_exact": 0,
+    "merged_exact_delta": 0,
+    "baseline_merged_semantic": 1,
+    "variant_merged_semantic": 2,
+    "merged_semantic_delta": 1,
+    "changed_decisions": 1
+  },
+  "created_at": "2026-08-27T02:00:00Z"
+}

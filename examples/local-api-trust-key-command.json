@@ -1,0 +1,24 @@
+{
+  "schema_version": "argus.local_api_trust_key_command.v1alpha1",
+  "registration": {
+    "schema_version": "argus.governance_trust_key_registration.v1alpha1",
+    "key": {
+      "schema_version": "argus.trusted_governance_key.v1alpha1",
+      "authority": "example-governance-authority",
+      "key_id": "example-key-1",
+      "revision": "example-trust-v1",
+      "public_key_base64": "ym9lBpEgxplEXs0FvUT4WbfcOobZp3JDVM8CD86fM7U=",
+      "repository_ids": ["repo-example"],
+      "allowed_classifications": ["internal"],
+      "valid_from": "2026-08-25T00:00:00Z",
+      "valid_until": "2027-08-25T00:00:00Z"
+    },
+    "registered_at": "2026-08-25T07:04:30Z"
+  },
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "local-api-register-example-key-1",
+    "audit": "register independently governed review authority",
+    "at": "2026-08-25T07:04:30Z"
+  }
+}

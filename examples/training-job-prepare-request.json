@@ -1,0 +1,12 @@
+{
+  "schema_version": "argus.training_job_prepare_request.v1alpha1",
+  "job_id": "training-job-1",
+  "export_id": "training-export-1",
+  "export_bundle_ref": {"uri": "artifact://local/sha256/2523d98c7dcf0915ba9639d41423e109050dab486775e03b6d394e4433621614", "sha256": "2523d98c7dcf0915ba9639d41423e109050dab486775e03b6d394e4433621614", "size_bytes": 6040, "contract": "argus.training_export_bundle.v1alpha1+json"},
+  "provider_id": "provider-example",
+  "provider_profile_revision": "profile-1",
+  "base_model": {"id": "base-model", "revision": "revision-1", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+  "objective": "supervised_fine_tuning",
+  "hyperparameters": {"epochs": 3, "batch_size": 8, "learning_rate_micros": 2000, "seed": 42},
+  "created_at": "2026-08-26T08:02:00Z"
+}

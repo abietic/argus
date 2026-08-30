@@ -1,0 +1,9 @@
+{
+  "schema_version": "argus.local_api_evaluation_batch_resume_command.v1alpha1",
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "resume-experiment-batch-001",
+    "audit": "resume an admitted experiment batch from its frozen executor template",
+    "at": "2026-08-26T10:00:00Z"
+  }
+}

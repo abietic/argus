@@ -1,0 +1,42 @@
+{
+  "schema_version": "argus.config_resolution_receipt.v1alpha1",
+  "receipt_id": "config-resolution-4d58f6c37a4350d8e584c5aa",
+  "sha256": "4d58f6c37a4350d8e584c5aadc7bcef8af14c7c96c63cfb96fe1025ed8adf0de",
+  "origin": "replay_variant_derived",
+  "context": {
+    "tenant_id": "tenant-example",
+    "organization_id": "organization-example",
+    "repository_id": "repository-example",
+    "path": "internal/reviewcore/pipeline.go",
+    "invocation_id": "review-example-1"
+  },
+  "bundle_id": "bundle-b18c91d4a3ce125dacc473fb",
+  "bundle_sha256": "b18c91d4a3ce125dacc473fb70eedb4f3d9d09dd0962bcfe886bd65fbe2fcdad",
+  "published_revisions": [
+    {
+      "source": {
+        "scope": "platform",
+        "selector": "*",
+        "id": "example-platform-agent-review",
+        "revision": "1",
+        "operation": "applied"
+      },
+      "revision_sha256": "d5d5ea2015e7fe844388fe2be431cc866301bd8183bdb02580acec12c5b0d898",
+      "publish_event_id": "publish-event-example-1",
+      "publish_sequence": 1,
+      "published_at": "2026-08-24T01:02:03Z",
+      "assignment_sha256": "120ec1131937369d897f4424f8a575760fbef5ecf9eccea27b1c5759c83b5446"
+    }
+  ],
+  "replay_variant": {
+    "source_receipt_id": "config-resolution-f5a5138ae669eb5d912a57e4",
+    "source_receipt_sha256": "f5a5138ae669eb5d912a57e42647563e03aa540aa53f7381f73582a9319dee41",
+    "baseline_bundle_id": "bundle-0f032c7f9fb0366c42949381",
+    "baseline_sha256": "0f032c7f9fb0366c42949381d5d79b1f00ebb9a04d11799dba2f5b4c0f4bb509",
+    "variable": "budget",
+    "changed_fields": [
+      "agent_review.budget.timeout_ms",
+      "budget.stage_timeout_ms"
+    ]
+  }
+}

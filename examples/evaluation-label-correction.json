@@ -1,0 +1,22 @@
+{
+  "schema_version": "argus.evaluation_label_correction.v1alpha1",
+  "case_id": "case-localized-1",
+  "expected_label_revision": 1,
+  "label": {
+    "expected_outcome": "defect_present",
+    "category": "correctness",
+    "severity": "critical",
+    "anchors": [{
+      "path": "internal/review.go",
+      "side": "new",
+      "start_line": 10,
+      "end_line": 13,
+      "source_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }],
+    "anchor_refs": ["artifact://local/sha256/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"],
+    "suppression_targets": []
+  },
+  "label_policy_revision": "label-policy-2",
+  "reason": "independent adjudication expanded the affected range",
+  "affected_experiment_ids": []
+}

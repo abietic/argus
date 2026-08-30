@@ -1,0 +1,15 @@
+{
+  "schema_version": "argus.agent_review_task_evidence_collection.v1alpha1",
+  "plan_id": "plan-1",
+  "source_run_id": "source-run-1",
+  "execution_id": "execution-1",
+  "review_run_id": "review-run-1",
+  "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "authority": "diagnostic_only",
+  "provenance_class": "worker_self_report",
+  "disposition": "shadow_only",
+  "content_policy": "exact_local_sensitive",
+  "completeness": "partial",
+  "reason_codes": ["task_evidence_unavailable"],
+  "task_executions": []
+}

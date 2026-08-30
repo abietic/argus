@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/governance-trust-key-registration.schema.json",
+  "title": "Argus GovernanceTrustKeyRegistration v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "key", "registered_at"],
+  "properties": {
+    "schema_version": {"const": "argus.governance_trust_key_registration.v1alpha1"},
+    "key": {"$ref": "external-governed-case-import.schema.json#/$defs/trusted_key"},
+    "registered_at": {"type": "string", "format": "date-time"}
+  }
+}

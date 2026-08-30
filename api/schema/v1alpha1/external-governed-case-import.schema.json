@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/external-governed-case-import.schema.json",
+  "title": "Argus ExternalGovernedCaseImport v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case", "attestation", "trusted_key", "imported_at"],
+  "properties": {
+    "schema_version": {"const": "argus.external_governed_case_import.v1alpha1"},
+    "case": {"$ref": "evaluation-case.schema.json"},
+    "attestation": {"$ref": "#/$defs/attestation"},
+    "trusted_key": {"$ref": "#/$defs/trusted_key"},
+    "imported_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "attestation_id", "case_id", "case_sha256", "authority", "key_id", "policy_revision", "reviewer_ids", "adjudicator_id", "evidence_refs", "decision", "reviewed_at", "issued_at", "signature_base64"],
+      "properties": {
+        "schema_version": {"const": "argus.external_governance_attestation.v1alpha1"},
+        "attestation_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+        "case_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+        "case_sha256": {"$ref": "evaluation-case.schema.json#/$defs/sha256"},
+        "authority": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+        "key_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+        "policy_revision": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+        "reviewer_ids": {"type": "array", "minItems": 2, "maxItems": 8, "uniqueItems": true, "items": {"$ref": "evaluation-case.schema.json#/$defs/id"}},
+        "adjudicator_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+        "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "evaluation-case.schema.json#/$defs/artifact_uri"}},
+        "decision": {"const": "approved"},
+        "reviewed_at": {"type": "string", "format": "date-time"},
+        "issued_at": {"type": "string", "format": "date-time"},
+        "signature_base64": {"type": "string", "minLength": 88, "maxLength": 88}
+      }
+    },
+    "trusted_key": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "authority", "key_id", "revision", "public_key_base64", "repository_ids", "allowed_classifications", "valid_from", "valid_until"],
+      "properties": {
+        "schema_version": {"const": "argus.trusted_governance_key.v1alpha1"},
+        "authority": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+        "key_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+        "revision": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+        "public_key_base64": {"type": "string", "minLength": 44, "maxLength": 44},
+        "repository_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "evaluation-case.schema.json#/$defs/id"}},
+        "allowed_classifications": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["public", "internal", "confidential", "restricted"]}},
+        "valid_from": {"type": "string", "format": "date-time"},
+        "valid_until": {"type": "string", "format": "date-time"}
+      }
+    }
+  }
+}

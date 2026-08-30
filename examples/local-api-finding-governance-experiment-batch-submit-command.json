@@ -1,0 +1,56 @@
+{
+  "schema_version": "argus.local_api_experiment_batch_submit_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.experiment_batch_request.v1alpha1",
+    "batch_id": "experiment-batch-platform-governance-1",
+    "baseline_evaluation_run_id": "evaluation-baseline-1",
+    "variant_evaluation_run_id": "evaluation-governance-1",
+    "experiment_run_id": "experiment-governance-1",
+    "experiment_revision": "finding-governance-v2",
+    "variable": "finding_governance",
+    "executor_revision": "argus-local-formal-pi-replay-1",
+    "max_concurrency": 2,
+    "cases": [
+      {
+        "case_id": "case-example-1",
+        "expected_label_revision": 1,
+        "baseline_review_run_id": "review-baseline-1",
+        "expected_baseline_config_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "expected_variant_config_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "exposure_observations": [
+          {"component": "prompt", "status": "not_seen", "revision": "prompt-1"},
+          {"component": "rule", "status": "not_seen", "revision": "rule-1"},
+          {"component": "model", "status": "not_seen", "revision": "model-1"},
+          {"component": "index", "status": "not_seen", "revision": "index-1"}
+        ]
+      }
+    ],
+    "created_at": "2026-08-26T12:08:00Z"
+  },
+  "finding_governance": {
+    "schema_version": "argus.finding_governance_policy.v1alpha1",
+    "id": "effective",
+    "revision": "resolved",
+    "calibration_profile": {
+      "schema_version": "argus.calibration_profile.v1alpha1",
+      "id": "review-confidence",
+      "revision": "1",
+      "points": [
+        {"raw_ppm": 0, "confidence_ppm": 0},
+        {"raw_ppm": 500000, "confidence_ppm": 350000},
+        {"raw_ppm": 800000, "confidence_ppm": 650000},
+        {"raw_ppm": 1000000, "confidence_ppm": 900000}
+      ],
+      "sha256": "cd65d7c017ea54737056f6da8d5d630dc9f77268e977fd846db4017b50b50af5"
+    },
+    "minimum_confidence_ppm": 700000,
+    "max_findings": 5,
+    "sha256": "e05611b556736407a653e538bd0ba6737640f9664e0fc317d83e6f152d3dc8c3"
+  },
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "submit-finding-governance-experiment-001",
+    "audit": "submit a pure post-processing finding governance experiment",
+    "at": "2026-08-26T12:08:00Z"
+  }
+}

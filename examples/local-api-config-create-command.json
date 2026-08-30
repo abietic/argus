@@ -1,0 +1,21 @@
+{
+  "schema_version": "argus.local_api_config_create_command.v1alpha1",
+  "revision": {
+    "schema_version": "argus.config_revision.v1alpha1",
+    "id": "local-api-platform-default",
+    "revision": "1",
+    "scope": "platform",
+    "selector": {},
+    "patch": {
+      "target": {
+        "max_files": 200
+      }
+    }
+  },
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "local-api-create-platform-default-1",
+    "audit": "create a governed platform configuration revision",
+    "at": "2026-08-25T10:00:00Z"
+  }
+}

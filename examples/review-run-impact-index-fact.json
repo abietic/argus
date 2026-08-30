@@ -1,0 +1,35 @@
+{
+  "schema_version": "argus.review_run_impact_index_fact.v1alpha1",
+  "run_id": "run-impact-example",
+  "execution_snapshot_id": "snapshot-impact-example",
+  "bindings": [
+    {
+      "kind": "config_bundle",
+      "id": "bundle-local-default",
+      "revision": "3cc4fdcad44d98d3",
+      "sha256": "3cc4fdcad44d98d328ef46f082d30a97a73d470d998f9607e5212afa7543faf9",
+      "source": "execution_snapshot.config"
+    },
+    {
+      "kind": "model",
+      "id": "deterministic-local",
+      "revision": "1",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source": "config_bundle.execution.model_profile"
+    },
+    {
+      "kind": "rule_pack",
+      "id": "default-review-rules",
+      "revision": "1",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "source": "config_bundle.rule_pack"
+    },
+    {
+      "kind": "workflow",
+      "id": "argus-default-review",
+      "revision": "1",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "source": "execution_snapshot.workflow"
+    }
+  ]
+}

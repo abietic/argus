@@ -1,0 +1,315 @@
+{
+  "schema_version": "argus.workflow.v1alpha1",
+  "workflow_id": "local-deterministic-review",
+  "revision": "2",
+  "stages": [
+    {
+      "stage_id": "materialize_target",
+      "kind": "materialize_target",
+      "implementation_revision": "1",
+      "input_contract": "argus.review_input.v1alpha1",
+      "output_contract": "argus.reviewcore_artifact.v1alpha1",
+      "depends_on": [],
+      "executor": "deterministic-local",
+      "required_capabilities": [],
+      "budget": {
+        "timeout_ms": 30000,
+        "max_input_bytes": 16777216,
+        "max_output_bytes": 16777216,
+        "max_concurrency": 1
+      },
+      "retry": {
+        "max_attempts": 2,
+        "backoff_ms": 0,
+        "jitter": false,
+        "retryable_codes": [
+          "stage_timeout",
+          "temporary"
+        ],
+        "unknown_outcome": "fail"
+      },
+      "failure_policy": "fail_run",
+      "side_effect": "none",
+      "replay_policy": "checkpoint"
+    },
+    {
+      "stage_id": "plan_context",
+      "kind": "plan_context",
+      "implementation_revision": "1",
+      "input_contract": "argus.reviewcore_artifact.v1alpha1",
+      "output_contract": "argus.reviewcore_artifact.v1alpha1",
+      "depends_on": [
+        "materialize_target"
+      ],
+      "executor": "deterministic-local",
+      "required_capabilities": [],
+      "budget": {
+        "timeout_ms": 30000,
+        "max_input_bytes": 16777216,
+        "max_output_bytes": 16777216,
+        "max_concurrency": 1
+      },
+      "retry": {
+        "max_attempts": 2,
+        "backoff_ms": 0,
+        "jitter": false,
+        "retryable_codes": [
+          "stage_timeout",
+          "temporary"
+        ],
+        "unknown_outcome": "fail"
+      },
+      "failure_policy": "fail_run",
+      "side_effect": "none",
+      "replay_policy": "checkpoint"
+    },
+    {
+      "stage_id": "detect",
+      "kind": "detect",
+      "implementation_revision": "1",
+      "input_contract": "argus.reviewcore_artifact.v1alpha1",
+      "output_contract": "argus.reviewcore_artifact.v1alpha1",
+      "depends_on": [
+        "plan_context"
+      ],
+      "executor": "deterministic-local",
+      "required_capabilities": [],
+      "budget": {
+        "timeout_ms": 30000,
+        "max_input_bytes": 16777216,
+        "max_output_bytes": 16777216,
+        "max_concurrency": 1
+      },
+      "retry": {
+        "max_attempts": 2,
+        "backoff_ms": 0,
+        "jitter": false,
+        "retryable_codes": [
+          "stage_timeout",
+          "temporary"
+        ],
+        "unknown_outcome": "fail"
+      },
+      "failure_policy": "fail_run",
+      "side_effect": "none",
+      "replay_policy": "checkpoint"
+    },
+    {
+      "stage_id": "normalize",
+      "kind": "normalize",
+      "implementation_revision": "1",
+      "input_contract": "argus.reviewcore_artifact.v1alpha1",
+      "output_contract": "argus.reviewcore_artifact.v1alpha1",
+      "depends_on": [
+        "detect"
+      ],
+      "executor": "deterministic-local",
+      "required_capabilities": [],
+      "budget": {
+        "timeout_ms": 30000,
+        "max_input_bytes": 16777216,
+        "max_output_bytes": 16777216,
+        "max_concurrency": 1
+      },
+      "retry": {
+        "max_attempts": 2,
+        "backoff_ms": 0,
+        "jitter": false,
+        "retryable_codes": [
+          "stage_timeout",
+          "temporary"
+        ],
+        "unknown_outcome": "fail"
+      },
+      "failure_policy": "fail_run",
+      "side_effect": "none",
+      "replay_policy": "checkpoint"
+    },
+    {
+      "stage_id": "verify",
+      "kind": "verify",
+      "implementation_revision": "1",
+      "input_contract": "argus.reviewcore_artifact.v1alpha1",
+      "output_contract": "argus.reviewcore_artifact.v1alpha1",
+      "depends_on": [
+        "normalize"
+      ],
+      "executor": "deterministic-local",
+      "required_capabilities": [],
+      "budget": {
+        "timeout_ms": 30000,
+        "max_input_bytes": 16777216,
+        "max_output_bytes": 16777216,
+        "max_concurrency": 1
+      },
+      "retry": {
+        "max_attempts": 2,
+        "backoff_ms": 0,
+        "jitter": false,
+        "retryable_codes": [
+          "stage_timeout",
+          "temporary"
+        ],
+        "unknown_outcome": "fail"
+      },
+      "failure_policy": "fail_run",
+      "side_effect": "none",
+      "replay_policy": "checkpoint"
+    },
+    {
+      "stage_id": "adjudicate",
+      "kind": "adjudicate",
+      "implementation_revision": "1",
+      "input_contract": "argus.reviewcore_artifact.v1alpha1",
+      "output_contract": "argus.reviewcore_artifact.v1alpha1",
+      "depends_on": [
+        "verify"
+      ],
+      "executor": "deterministic-local",
+      "required_capabilities": [],
+      "budget": {
+        "timeout_ms": 30000,
+        "max_input_bytes": 16777216,
+        "max_output_bytes": 16777216,
+        "max_concurrency": 1
+      },
+      "retry": {
+        "max_attempts": 2,
+        "backoff_ms": 0,
+        "jitter": false,
+        "retryable_codes": [
+          "stage_timeout",
+          "temporary"
+        ],
+        "unknown_outcome": "fail"
+      },
+      "failure_policy": "fail_run",
+      "side_effect": "none",
+      "replay_policy": "checkpoint"
+    },
+    {
+      "stage_id": "report",
+      "kind": "report",
+      "implementation_revision": "1",
+      "input_contract": "argus.reviewcore_artifact.v1alpha1",
+      "output_contract": "argus.reviewcore_artifact.v1alpha1",
+      "depends_on": [
+        "adjudicate"
+      ],
+      "executor": "deterministic-local",
+      "required_capabilities": [],
+      "budget": {
+        "timeout_ms": 30000,
+        "max_input_bytes": 16777216,
+        "max_output_bytes": 16777216,
+        "max_concurrency": 1
+      },
+      "retry": {
+        "max_attempts": 2,
+        "backoff_ms": 0,
+        "jitter": false,
+        "retryable_codes": [
+          "stage_timeout",
+          "temporary"
+        ],
+        "unknown_outcome": "fail"
+      },
+      "failure_policy": "fail_run",
+      "side_effect": "none",
+      "replay_policy": "checkpoint"
+    },
+    {
+      "stage_id": "publish",
+      "kind": "publish",
+      "implementation_revision": "1",
+      "input_contract": "argus.reviewcore_artifact.v1alpha1",
+      "output_contract": "argus.reviewcore_artifact.v1alpha1",
+      "depends_on": [
+        "report"
+      ],
+      "executor": "deterministic-local",
+      "required_capabilities": [],
+      "budget": {
+        "timeout_ms": 30000,
+        "max_input_bytes": 16777216,
+        "max_output_bytes": 16777216,
+        "max_concurrency": 1
+      },
+      "retry": {
+        "max_attempts": 2,
+        "backoff_ms": 0,
+        "jitter": false,
+        "retryable_codes": [
+          "stage_timeout",
+          "temporary"
+        ],
+        "unknown_outcome": "fail"
+      },
+      "failure_policy": "fail_run",
+      "side_effect": "none",
+      "replay_policy": "checkpoint"
+    },
+    {
+      "stage_id": "capture_feedback",
+      "kind": "capture_feedback",
+      "implementation_revision": "1",
+      "input_contract": "argus.reviewcore_artifact.v1alpha1",
+      "output_contract": "argus.reviewcore_artifact.v1alpha1",
+      "depends_on": [
+        "publish"
+      ],
+      "executor": "deterministic-local",
+      "required_capabilities": [],
+      "budget": {
+        "timeout_ms": 30000,
+        "max_input_bytes": 16777216,
+        "max_output_bytes": 16777216,
+        "max_concurrency": 1
+      },
+      "retry": {
+        "max_attempts": 2,
+        "backoff_ms": 0,
+        "jitter": false,
+        "retryable_codes": [
+          "stage_timeout",
+          "temporary"
+        ],
+        "unknown_outcome": "fail"
+      },
+      "failure_policy": "fail_run",
+      "side_effect": "none",
+      "replay_policy": "checkpoint"
+    },
+    {
+      "stage_id": "export_evaluation",
+      "kind": "export_evaluation",
+      "implementation_revision": "1",
+      "input_contract": "argus.reviewcore_artifact.v1alpha1",
+      "output_contract": "argus.reviewcore_artifact.v1alpha1",
+      "depends_on": [
+        "capture_feedback"
+      ],
+      "executor": "deterministic-local",
+      "required_capabilities": [],
+      "budget": {
+        "timeout_ms": 30000,
+        "max_input_bytes": 16777216,
+        "max_output_bytes": 16777216,
+        "max_concurrency": 1
+      },
+      "retry": {
+        "max_attempts": 2,
+        "backoff_ms": 0,
+        "jitter": false,
+        "retryable_codes": [
+          "stage_timeout",
+          "temporary"
+        ],
+        "unknown_outcome": "fail"
+      },
+      "failure_policy": "fail_run",
+      "side_effect": "none",
+      "replay_policy": "checkpoint"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/finding-decision-request.schema.json",
+  "title": "Argus FindingDecisionRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "finding_id", "action", "reason_code", "evidence_refs", "occurred_at"],
+  "properties": {
+    "schema_version": {"const": "argus.finding_decision_request.v1alpha1"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "finding_id": {"$ref": "#/$defs/id"},
+    "action": {"enum": ["publish", "reject", "human_review"]},
+    "reason_code": {"$ref": "#/$defs/id"},
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/evidence_ref"}
+    },
+    "occurred_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[^/\\\\\\x00-\\x1F\\x7F]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "id"],
+      "properties": {
+        "authority": {"$ref": "#/$defs/id"},
+        "id": {"type": "string", "minLength": 1, "maxLength": 2048},
+        "revision": {"type": "string", "minLength": 1, "maxLength": 512},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

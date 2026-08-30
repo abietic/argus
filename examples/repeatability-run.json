@@ -1,0 +1,160 @@
+{
+  "schema_version": "argus.repeatability_run.v1alpha1",
+  "repeatability_run_id": "repeatability-run-example-1",
+  "repeatability_revision": "finding-set-stability-v1",
+  "baseline_evaluation_run_id": "evaluation-run-example-1",
+  "replay_evaluation_run_ids": ["evaluation-run-example-replay-1"],
+  "evaluator_revision": "defect-presence-1",
+  "comparisons": [
+    {
+      "case_id": "case-example-1",
+      "case_type": "positive_localized",
+      "label_revision": 1,
+      "label_policy_revision": "label-policy-1",
+      "expected_outcome": "defect_present",
+      "expected_category": "correctness",
+      "expected_anchor_count": 1,
+      "samples": [
+        {
+          "evaluation_run_id": "evaluation-run-example-1",
+          "review_run_id": "review-run-example-1",
+          "review_run_ref": { "uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "size_bytes": 1024, "contract": "argus.review_run.v1alpha1" },
+          "governed_report_ref": { "uri": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "size_bytes": 768, "contract": "argus.governed_review_report.v1alpha1+json" },
+          "report_completeness": "complete",
+          "finding_ids": ["finding-example-1"],
+          "finding_count": 1,
+          "matched_anchor_count": 1,
+          "localization": { "available": true },
+          "verdict": "pass"
+        },
+        {
+          "evaluation_run_id": "evaluation-run-example-replay-1",
+          "review_run_id": "review-run-example-replay-1",
+          "review_run_ref": { "uri": "artifact://local/sha256/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "size_bytes": 1024, "contract": "argus.review_run.v1alpha1" },
+          "governed_report_ref": { "uri": "artifact://local/sha256/dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "size_bytes": 768, "contract": "argus.governed_review_report.v1alpha1+json" },
+          "report_completeness": "complete",
+          "finding_ids": ["finding-example-1"],
+          "finding_count": 1,
+          "matched_anchor_count": 1,
+          "localization": { "available": true },
+          "verdict": "pass"
+        }
+      ],
+      "dimensions": [
+        {
+          "dimension": {
+            "id": "correctness",
+            "revision": "v1",
+            "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          },
+          "samples": [
+            {
+              "evaluation_run_id": "evaluation-run-example-1",
+              "review_run_id": "review-run-example-1",
+              "dimension": {
+                "id": "correctness",
+                "revision": "v1",
+                "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+              },
+              "report_completeness": "complete",
+              "finding_ids": ["finding-example-1"],
+              "finding_count": 1,
+              "candidate_count": 1,
+              "raw_candidate_count": 1,
+              "context_gap_count": 0,
+              "tasks_succeeded": 2,
+              "tasks_failed": 0,
+              "tasks_canceled": 0,
+              "cumulative_duration_ms": 2500,
+              "total_tokens": 1200,
+              "execution_coverage": { "available": true },
+              "usage": { "available": true },
+              "verdict": "pass"
+            },
+            {
+              "evaluation_run_id": "evaluation-run-example-replay-1",
+              "review_run_id": "review-run-example-replay-1",
+              "dimension": {
+                "id": "correctness",
+                "revision": "v1",
+                "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+              },
+              "report_completeness": "complete",
+              "finding_ids": ["finding-example-1"],
+              "finding_count": 1,
+              "candidate_count": 1,
+              "raw_candidate_count": 1,
+              "context_gap_count": 0,
+              "tasks_succeeded": 2,
+              "tasks_failed": 0,
+              "tasks_canceled": 0,
+              "cumulative_duration_ms": 2700,
+              "total_tokens": 1250,
+              "execution_coverage": { "available": true },
+              "usage": { "available": true },
+              "verdict": "pass"
+            }
+          ],
+          "sample_count": 2,
+          "pair_count": 1,
+          "finding_set_comparison": { "available": true },
+          "pairwise_jaccard_ppm": 1000000,
+          "exact_finding_set_pair_count": 1,
+          "exact_finding_set_pair_rate_ppm": 1000000,
+          "finding_presence_sample_count": 2,
+          "finding_presence_rate_ppm": 1000000,
+          "verdict_flip_pair_count": 0,
+          "verdict_flip_pair_rate_ppm": 0,
+          "candidate_count_min": 1,
+          "candidate_count_max": 1,
+          "raw_candidate_count_min": 1,
+          "raw_candidate_count_max": 1,
+          "context_gap_count_min": 0,
+          "context_gap_count_max": 0,
+          "tasks_failed_min": 0,
+          "tasks_failed_max": 0,
+          "cumulative_duration_ms_min": 2500,
+          "cumulative_duration_ms_max": 2700,
+          "total_tokens_min": 1200,
+          "total_tokens_max": 1250,
+          "execution_comparison": { "available": true },
+          "usage_comparison": { "available": true },
+          "stable": true
+        }
+      ],
+      "sample_count": 2,
+      "pair_count": 1,
+      "finding_set_comparison": { "available": true },
+      "pairwise_jaccard_ppm": 1000000,
+      "exact_finding_set_pair_count": 1,
+      "exact_finding_set_pair_rate_ppm": 1000000,
+      "finding_presence_sample_count": 2,
+      "finding_presence_rate_ppm": 1000000,
+      "expected_anchor_hit": { "available": true },
+      "expected_anchor_hit_sample_count": 2,
+      "expected_anchor_hit_rate_ppm": 1000000,
+      "finding_count_min": 1,
+      "finding_count_max": 1,
+      "verdict_flip_pair_count": 0,
+      "verdict_flip_pair_rate_ppm": 0,
+      "stable": true
+    }
+  ],
+  "summary": {
+    "cases": 1,
+    "samples_per_case": 2,
+    "pairs_per_case": 1,
+    "stable_cases": 1,
+    "unstable_cases": 0,
+    "indeterminate_cases": 0,
+    "finding_set_stability": { "available": true },
+    "pairwise_jaccard_ppm": 1000000,
+    "exact_finding_set_pair_count": 1,
+    "exact_finding_set_pair_rate_ppm": 1000000,
+    "verdict_flip_pair_count": 0,
+    "verdict_flip_pair_rate_ppm": 0
+  },
+  "created_at": "2026-08-25T09:00:00Z",
+  "recorded_at": "2026-08-25T09:01:00Z",
+  "recorded_by": "evaluation-runner"
+}

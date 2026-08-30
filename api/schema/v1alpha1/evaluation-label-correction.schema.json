@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/evaluation-label-correction.schema.json",
+  "title": "Argus EvaluationLabelCorrection v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "expected_label_revision", "label", "label_policy_revision", "reason", "affected_experiment_ids"],
+  "properties": {
+    "schema_version": { "const": "argus.evaluation_label_correction.v1alpha1" },
+    "case_id": { "$ref": "evaluation-case.schema.json#/$defs/id" },
+    "expected_label_revision": { "type": "integer", "minimum": 1 },
+    "label": { "$ref": "evaluation-case.schema.json#/$defs/label" },
+    "label_policy_revision": { "$ref": "evaluation-case.schema.json#/$defs/id" },
+    "reason": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "affected_experiment_ids": {
+      "type": "array", "uniqueItems": true,
+      "items": { "$ref": "evaluation-case.schema.json#/$defs/id" }
+    }
+  }
+}

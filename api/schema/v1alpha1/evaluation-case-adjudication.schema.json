@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/evaluation-case-adjudication.schema.json",
+  "title": "Argus EvaluationCaseAdjudication v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "expected_governance_revision", "expected_label_revision", "annotation_event_ids", "outcome", "rationale", "evidence_refs", "adjudicated_at"],
+  "properties": {
+    "schema_version": { "const": "argus.evaluation_case_adjudication.v1alpha1" },
+    "case_id": { "$ref": "evaluation-case.schema.json#/$defs/id" },
+    "expected_governance_revision": { "type": "integer", "minimum": 1 },
+    "expected_label_revision": { "type": "integer", "minimum": 1 },
+    "annotation_event_ids": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "$ref": "evaluation-case.schema.json#/$defs/id" } },
+    "outcome": { "enum": ["approve", "reject"] },
+    "selected_label": { "$ref": "evaluation-case.schema.json#/$defs/label" },
+    "label_policy_revision": { "$ref": "evaluation-case.schema.json#/$defs/id" },
+    "rationale": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "evaluation-case.schema.json#/$defs/artifact_uri" } },
+    "adjudicated_at": { "type": "string", "format": "date-time" }
+  },
+  "oneOf": [
+    { "properties": { "outcome": { "const": "approve" } }, "required": ["selected_label", "label_policy_revision"] },
+    { "properties": { "outcome": { "const": "reject" } }, "not": { "anyOf": [{ "required": ["selected_label"] }, { "required": ["label_policy_revision"] }] } }
+  ]
+}

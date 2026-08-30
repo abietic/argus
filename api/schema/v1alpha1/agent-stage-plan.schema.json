@@ -1,0 +1,356 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/agent-stage-plan.schema.json",
+  "title": "Argus AgentStagePlan v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "sha256",
+    "behavior_sha256",
+    "review_run_id",
+    "stage",
+    "target_digest",
+    "build_identity",
+    "execution_snapshot",
+    "config_bundle",
+    "config_resolution_receipt_ref",
+    "workflow",
+    "review_spec",
+    "review_input",
+    "agent_review_policy",
+    "rule_pack",
+    "normalization",
+    "rule_pack_base64",
+    "agent",
+    "provider",
+    "model",
+    "runtime",
+    "prompt",
+    "skills",
+    "knowledge",
+    "context_providers",
+    "model_authority",
+    "tool_authority",
+    "budget",
+    "retry",
+    "output_contract",
+    "disposition",
+    "side_effects"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.agent_stage_plan.v1alpha1"},
+    "plan_id": {"type": "string", "pattern": "^agent-stage-plan-[0-9a-f]{24}$"},
+    "sha256": {"$ref": "#/$defs/sha256"},
+    "behavior_sha256": {"$ref": "#/$defs/sha256"},
+    "review_run_id": {"$ref": "#/$defs/identifier"},
+    "stage": {"$ref": "#/$defs/versionedRef"},
+    "target_digest": {"$ref": "#/$defs/sha256"},
+    "build_identity": {"$ref": "#/$defs/identifier"},
+    "execution_snapshot": {
+      "allOf": [
+        {"$ref": "#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.execution_snapshot.v1alpha1"}}}
+      ]
+    },
+    "config_bundle": {
+      "allOf": [
+        {"$ref": "#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.config_bundle.v1alpha1"}}}
+      ]
+    },
+    "config_resolution_receipt_ref": {
+      "allOf": [
+        {"$ref": "#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.config_resolution_receipt.v1alpha1"}}}
+      ]
+    },
+    "workflow": {
+      "allOf": [
+        {"$ref": "#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.workflow.v1alpha1"}}}
+      ]
+    },
+    "review_spec": {
+      "allOf": [
+        {"$ref": "#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.review_spec.v1alpha1"}}}
+      ]
+    },
+    "review_input": {
+      "allOf": [
+        {"$ref": "#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.review_input.v1alpha1"}}}
+      ]
+    },
+    "agent_review_policy": {"$ref": "#/$defs/versionedRef"},
+    "rule_pack": {"$ref": "#/$defs/versionedRef"},
+    "normalization": {
+      "allOf": [
+        {"$ref": "#/$defs/versionedRef"},
+        {"properties": {
+          "id": {"const": "candidate-normalization"},
+          "revision": {"enum": ["v0", "v1", "v2"]}
+        }}
+      ]
+    },
+    "rule_pack_base64": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 349528,
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+    },
+    "agent": {"$ref": "#/$defs/agentComponent"},
+    "provider": {"$ref": "#/$defs/providerComponent"},
+    "model": {"$ref": "#/$defs/modelComponent"},
+    "runtime": {"$ref": "#/$defs/runtimeComponent"},
+    "prompt": {"$ref": "#/$defs/promptComponent"},
+    "skills": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/skillBinding"},
+      "contains": {
+        "type": "object",
+        "properties": {"phase": {"const": "review"}},
+        "required": ["phase"]
+      }
+    },
+    "knowledge": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/knowledgeBinding"}
+    },
+    "context_providers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/contextProviderBinding"}
+    },
+    "model_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_egress", "api_protocol"],
+      "properties": {
+        "model_egress": {"const": "provider_broker_only"},
+        "api_protocol": {"$ref": "#/$defs/apiProtocolComponent"}
+      }
+    },
+    "tool_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tools",
+        "tool_network",
+        "workspace_reads",
+        "workspace_writes",
+        "remote_writes",
+        "max_delegation_depth"
+      ],
+      "properties": {
+        "tools": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "tool_network": {"const": "deny"},
+        "workspace_reads": {"const": "frozen_input_only"},
+        "workspace_writes": {"const": "deny"},
+        "remote_writes": {"const": "deny"},
+        "max_delegation_depth": {"const": 0}
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_files",
+        "max_groups",
+        "max_hypotheses",
+        "max_model_calls",
+        "max_tool_calls",
+        "max_target_bytes",
+        "max_group_bytes",
+        "max_output_bytes",
+        "max_output_tokens",
+        "max_cost_micros",
+        "timeout_ms",
+        "max_concurrency"
+      ],
+      "properties": {
+        "max_files": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_groups": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_hypotheses": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_model_calls": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_tool_calls": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_target_bytes": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_group_bytes": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_output_bytes": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_output_tokens": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_cost_micros": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "timeout_ms": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_concurrency": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+      }
+    },
+    "retry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_attempts", "backoff_ms", "retryable_codes", "unknown_outcome"],
+      "properties": {
+        "max_attempts": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "backoff_ms": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "retryable_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "unknown_outcome": {"enum": ["fail", "reconcile"]}
+      },
+      "allOf": [{
+        "if": {"properties": {"max_attempts": {"minimum": 2}}},
+        "then": {"properties": {"retryable_codes": {"minItems": 1}}}
+      }]
+    },
+    "output_contract": {"const": "argus.review_hypothesis_set.v1alpha1"},
+    "disposition": {"const": "hypothesis_only"},
+    "side_effects": {"const": "deny"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\x00-\\x1F\\x7F]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifactURI": {
+      "type": "string",
+      "pattern": "^artifact://[A-Za-z0-9]([A-Za-z0-9.-]{0,126}[A-Za-z0-9])?/[A-Za-z0-9._~-]+(/[A-Za-z0-9._~-]+)*$",
+      "not": {"pattern": "/(\\.|\\.\\.)(/|$)"}
+    },
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes"],
+      "properties": {
+        "uri": {"$ref": "#/$defs/artifactURI"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+      }
+    },
+    "artifactBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "contract"],
+      "properties": {
+        "ref": {"$ref": "#/$defs/contentRef"},
+        "contract": {"$ref": "#/$defs/identifier"}
+      }
+    },
+    "versionedRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision", "sha256"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "revision": {"$ref": "#/$defs/identifier"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "componentBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "artifact"],
+      "properties": {
+        "ref": {"$ref": "#/$defs/versionedRef"},
+        "artifact": {"$ref": "#/$defs/artifactBinding"}
+      }
+    },
+    "agentComponent": {
+      "allOf": [
+        {"$ref": "#/$defs/componentBinding"},
+        {"properties": {"artifact": {"properties": {"contract": {"const": "argus.agent_profile.v1alpha1"}}}}}
+      ]
+    },
+    "providerComponent": {
+      "allOf": [
+        {"$ref": "#/$defs/componentBinding"},
+        {"properties": {"artifact": {"properties": {"contract": {"const": "argus.provider_profile.v1alpha1"}}}}}
+      ]
+    },
+    "modelComponent": {
+      "allOf": [
+        {"$ref": "#/$defs/componentBinding"},
+        {"properties": {"artifact": {"properties": {"contract": {"const": "argus.model_profile.v1alpha1"}}}}}
+      ]
+    },
+    "runtimeComponent": {
+      "allOf": [
+        {"$ref": "#/$defs/componentBinding"},
+        {"properties": {"artifact": {"properties": {"contract": {"const": "argus.runtime_profile.v1alpha1"}}}}}
+      ]
+    },
+    "promptComponent": {
+      "allOf": [
+        {"$ref": "#/$defs/componentBinding"},
+        {"properties": {"artifact": {"properties": {"contract": {"const": "argus.prompt_bundle.v1alpha1"}}}}}
+      ]
+    },
+    "apiProtocolComponent": {
+      "allOf": [
+        {"$ref": "#/$defs/componentBinding"},
+        {"properties": {"artifact": {"properties": {"contract": {"const": "argus.model_api_protocol.v1alpha1"}}}}}
+      ]
+    },
+    "knowledgeBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "ref", "artifact"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "ref": {"$ref": "#/$defs/versionedRef"},
+        "artifact": {
+          "allOf": [
+            {"$ref": "#/$defs/artifactBinding"},
+            {"properties": {"contract": {"const": "argus.knowledge_pack.v1alpha1"}}}
+          ]
+        }
+      }
+    },
+    "contextProviderBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision", "kind", "adapter"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "revision": {"$ref": "#/$defs/identifier"},
+        "kind": {"enum": ["repository_search", "codegraph", "lsp", "dependency", "artifact", "go_ast", "compile"]},
+        "adapter": {
+          "allOf": [
+            {"$ref": "#/$defs/componentBinding"},
+            {"properties": {"artifact": {"properties": {"contract": {"const": "argus.context_provider_adapter.v1alpha1"}}}}}
+          ]
+        }
+      }
+    },
+    "skillBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "phase", "ref", "artifact"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "phase": {"enum": ["grouping", "context", "review", "verification"]},
+        "ref": {"$ref": "#/$defs/versionedRef"},
+        "artifact": {
+          "allOf": [
+            {"$ref": "#/$defs/artifactBinding"},
+            {"properties": {"contract": {"const": "argus.skill_pack.v1alpha1"}}}
+          ]
+        }
+      }
+    }
+  }
+}

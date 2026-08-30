@@ -1,0 +1,16 @@
+{
+  "schema_version": "argus.artifact_integrity_change.v1alpha1",
+  "ref": {
+    "uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "size_bytes": 128,
+    "contract": "argus.governed_review_report.v1alpha1"
+  },
+  "reason": "checksum verification failed",
+  "mutation": {
+    "idempotency_key": "artifact-integrity-change-001",
+    "actor": "integrity-operator-1",
+    "audit": "incident INC-2026-0825",
+    "at": "2026-08-25T08:00:00Z"
+  }
+}

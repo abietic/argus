@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/config-resolution-receipt.schema.json",
+  "title": "Argus ConfigResolutionReceipt v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "sha256",
+    "origin",
+    "context",
+    "bundle_id",
+    "bundle_sha256",
+    "published_revisions"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.config_resolution_receipt.v1alpha1"},
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^config-resolution-[0-9a-f]{24}$"
+    },
+    "sha256": {"$ref": "#/$defs/sha256"},
+    "origin": {"enum": ["lifecycle_published", "replay_variant_derived"]},
+    "context": {"$ref": "#/$defs/resolutionContext"},
+    "bundle_id": {"type": "string", "pattern": "^bundle-[0-9a-f]{24}$"},
+    "bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "published_revisions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/publishedRevisionBinding"}
+    },
+    "replay_variant": {"$ref": "#/$defs/replayVariantBinding"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"origin": {"const": "lifecycle_published"}}},
+      "then": {"not": {"required": ["replay_variant"]}},
+      "else": {"required": ["replay_variant"]}
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[\\p{L}\\p{N}._~-]+$"
+    },
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "scope": {
+      "enum": ["platform", "tenant", "organization", "repository", "path", "invocation"]
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\\\:\\x00-\\x1F\\x7F]([^\\\\:\\x00-\\x1F\\x7F]*[^/\\\\:\\x00-\\x1F\\x7F])?$",
+      "not": {"pattern": "(^|/)(\\.|\\.\\.)(/|$)|//"}
+    },
+    "optionalRepositoryPath": {
+      "anyOf": [{"const": ""}, {"$ref": "#/$defs/repositoryPath"}]
+    },
+    "resolutionContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "organization_id", "repository_id", "path", "invocation_id"],
+      "properties": {
+        "tenant_id": {"$ref": "#/$defs/identifier"},
+        "organization_id": {"$ref": "#/$defs/identifier"},
+        "repository_id": {"$ref": "#/$defs/identifier"},
+        "path": {"$ref": "#/$defs/optionalRepositoryPath"},
+        "invocation_id": {"$ref": "#/$defs/identifier"}
+      }
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "selector", "id", "revision", "operation"],
+      "properties": {
+        "scope": {"$ref": "#/$defs/scope"},
+        "selector": {"type": "string", "minLength": 1, "maxLength": 2048},
+        "id": {"$ref": "#/$defs/identifier"},
+        "revision": {"$ref": "#/$defs/identifier"},
+        "operation": {"const": "applied"}
+      }
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "publishedRevisionBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "revision_sha256",
+        "publish_event_id",
+        "publish_sequence",
+        "published_at",
+        "assignment_sha256"
+      ],
+      "properties": {
+        "source": {"$ref": "#/$defs/sourceRef"},
+        "revision_sha256": {"$ref": "#/$defs/sha256"},
+        "publish_event_id": {"$ref": "#/$defs/identifier"},
+        "publish_sequence": {"type": "integer", "minimum": 1},
+        "published_at": {"$ref": "#/$defs/utcTimestamp"},
+        "assignment_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "replayVariantBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_receipt_id",
+        "source_receipt_sha256",
+        "baseline_bundle_id",
+        "baseline_sha256",
+        "variable",
+        "changed_fields"
+      ],
+      "properties": {
+        "source_receipt_id": {"type": "string", "pattern": "^config-resolution-[0-9a-f]{24}$"},
+        "source_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "baseline_bundle_id": {"type": "string", "pattern": "^bundle-[0-9a-f]{24}$"},
+        "baseline_sha256": {"$ref": "#/$defs/sha256"},
+        "variable": {"$ref": "#/$defs/identifier"},
+        "changed_fields": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        }
+      }
+    }
+  }
+}

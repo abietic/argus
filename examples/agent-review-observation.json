@@ -1,0 +1,62 @@
+{
+  "schema_version": "argus.agent_review_observation.v1alpha1",
+  "observation_id": "observation-1",
+  "manifest_id": "manifest-1",
+  "source_run_id": "source-run-1",
+  "execution_id": "execution-1",
+  "review_run_id": "review-run-1",
+  "sequence": 1,
+  "kind": "shadow_result_recorded",
+  "producer_class": "argus_go_host",
+  "disposition": "shadow_only",
+  "status": "complete",
+  "agent": {
+    "id": "pi-agent",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "provider": {
+    "id": "deepseek-anthropic-env",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "model": {
+    "id": "deepseek-v4-pro-1m",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "summary": {
+    "raw_candidates": 1,
+    "normalization_retained": 1,
+    "merged_duplicates": 0,
+    "rejected_invalid": 0,
+    "excluded_budget": 0,
+    "hypothesis_occurrences": 1,
+    "dedup_clusters": 1,
+    "confirmed": 1,
+    "rejected": 0,
+    "inconclusive": 0,
+    "unverified": 0,
+    "receipts": 3,
+    "tasks_succeeded": 3,
+    "tasks_failed": 0,
+    "tasks_canceled": 0,
+    "model_turns_started": 3,
+    "model_turns_completed": 3,
+    "tool_calls": 6,
+    "usage_completeness": "provider_reported",
+    "usage_reported_receipts": 3,
+    "usage_partial_receipts": 0,
+    "usage_unavailable_receipts": 0,
+    "input_tokens": 300,
+    "output_tokens": 150,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "reasoning_tokens": 30,
+    "reasoning_reported_receipts": 3,
+    "total_tokens": 450
+  },
+  "duration_ms": 120000,
+  "reason_codes": [],
+  "recorded_at": "2026-08-20T10:03:00Z"
+}

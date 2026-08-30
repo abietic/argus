@@ -1,0 +1,16 @@
+{
+  "schema_version": "argus.finding_suppression_ledger.v1alpha1",
+  "suppression_ledger_id": "suppression-ledger-38f2b897cddb1d9a854f14c2",
+  "review_run_id": "formal-run-example",
+  "execution_id": "execution-example",
+  "report_id": "review-report-example",
+  "calibration_ledger_id": "calibration-ledger-example",
+  "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "policy_applied": false,
+  "policy_reason_code": "not_configured",
+  "minimum_confidence_ppm": 0,
+  "max_findings": 0,
+  "summary": {"findings": 0, "not_suppressed": 0, "suppressed": 0},
+  "facts": [],
+  "generated_at": "2026-08-25T01:02:03Z"
+}

@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/stage-execution-result.schema.json",
+  "title": "Argus StageExecutionResult v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_sha256",
+    "execution_id",
+    "attempt",
+    "generation",
+    "fencing_token",
+    "idempotency_key",
+    "status",
+    "completeness",
+    "completeness_notes",
+    "capability_sha256",
+    "recorded_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "argus.stage_execution_result.v1alpha1"
+    },
+    "request_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "execution_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "fencing_token": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "idempotency_key": {
+      "$ref": "#/$defs/identifier"
+    },
+    "status": {
+      "enum": [
+        "succeeded",
+        "failed",
+        "canceled"
+      ]
+    },
+    "output": {
+      "$ref": "#/$defs/artifactBinding"
+    },
+    "trace_manifest": {
+      "$ref": "#/$defs/traceManifestBinding"
+    },
+    "agent_raw_candidates": {
+      "$ref": "#/$defs/agentRawCandidateBinding"
+    },
+    "agent_task_evidence": {
+      "$ref": "#/$defs/agentTaskEvidenceBinding"
+    },
+    "agent_execution_receipts": {
+      "$ref": "#/$defs/agentExecutionReceiptBinding"
+    },
+    "failure": {
+      "$ref": "#/$defs/failure"
+    },
+    "completeness": {
+      "enum": [
+        "complete",
+        "partial"
+      ]
+    },
+    "completeness_notes": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "capability_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "succeeded"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "output"
+        ],
+        "not": {
+          "required": [
+            "failure"
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "failure"
+        ],
+        "not": {
+          "anyOf": [
+            {"required": ["output"]},
+            {"required": ["agent_raw_candidates"]}
+          ]
+        },
+        "dependentRequired": {
+          "agent_task_evidence": ["agent_execution_receipts"],
+          "agent_execution_receipts": ["agent_task_evidence"]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "completeness": {
+            "const": "complete"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "completeness_notes": {
+            "maxItems": 0
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "completeness_notes": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\x00-\\x1F\\x7F]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifactURI": {
+      "type": "string",
+      "pattern": "^artifact://[A-Za-z0-9]([A-Za-z0-9.-]{0,126}[A-Za-z0-9])?/[A-Za-z0-9._~-]+(/[A-Za-z0-9._~-]+)*$",
+      "not": {
+        "pattern": "/(\\.|\\.\\.)(/|$)"
+      }
+    },
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uri",
+        "sha256",
+        "size_bytes"
+      ],
+      "properties": {
+        "uri": {
+          "$ref": "#/$defs/artifactURI"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "artifactBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "contract"
+      ],
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/contentRef"
+        },
+        "contract": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "traceManifestBinding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/artifactBinding"
+        },
+        {
+          "properties": {
+            "contract": {
+              "const": "hailix.trace_manifest.v1alpha1"
+            }
+          }
+        }
+      ]
+    },
+    "agentTaskEvidenceBinding": {
+      "allOf": [
+        {"$ref": "#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.agent_review_task_evidence_collection.v1alpha1"}}}
+      ]
+    },
+    "agentRawCandidateBinding": {
+      "allOf": [
+        {"$ref": "#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.agent_review_raw_candidate_collection.v1alpha1"}}}
+      ]
+    },
+    "agentExecutionReceiptBinding": {
+      "allOf": [
+        {"$ref": "#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.agent_execution_receipt_collection.v1alpha1"}}}
+      ]
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/identifier"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "retryable": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/workload-pressure-snapshot.schema.json",
+  "title": "Argus WorkloadPressureSnapshot v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_revision", "policy_sha256", "ledger_sequence", "observed_at", "global", "classes", "tenants", "admissions", "states", "stale"],
+  "properties": {
+    "schema_version": {"const": "argus.workload_pressure_snapshot.v1alpha1"},
+    "policy_revision": {"$ref": "#/$defs/id"},
+    "policy_sha256": {"$ref": "#/$defs/sha256"},
+    "ledger_sequence": {"type": "integer", "minimum": 0},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "global": {"$ref": "#/$defs/capacity"},
+    "classes": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/classPressure"}},
+    "tenants": {"type": "array", "items": {"$ref": "#/$defs/tenantPressure"}},
+    "admissions": {"$ref": "#/$defs/admissions"},
+    "states": {"$ref": "#/$defs/states"},
+    "stale": {"$ref": "#/$defs/stale"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "counter": {"type": "integer", "minimum": 0},
+    "capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue_limit", "queue_depth", "active_limit", "active_depth", "oldest_pending_wait_ms", "state"],
+      "properties": {
+        "queue_limit": {"type": "integer", "minimum": 1},
+        "queue_depth": {"$ref": "#/$defs/counter"},
+        "active_limit": {"type": "integer", "minimum": 1},
+        "active_depth": {"$ref": "#/$defs/counter"},
+        "oldest_pending_wait_ms": {"type": "integer", "minimum": 0},
+        "state": {"enum": ["available", "busy", "queue_full"]}
+      }
+    },
+    "classPressure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class", "base_priority", "capacity"],
+      "properties": {
+        "class": {"enum": ["incremental_mr", "interactive", "full_scan", "eval_replay"]},
+        "base_priority": {"type": "integer", "minimum": -1000, "maximum": 1000},
+        "capacity": {"$ref": "#/$defs/capacity"}
+      }
+    },
+    "tenantPressure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "priority_bias", "capacity"],
+      "properties": {
+        "tenant_id": {"$ref": "#/$defs/id"},
+        "priority_bias": {"type": "integer", "minimum": -1000, "maximum": 1000},
+        "capacity": {"$ref": "#/$defs/capacity"}
+      }
+    },
+    "admissions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["admitted", "queued", "rejected", "throttled"],
+      "properties": {"admitted": {"$ref": "#/$defs/counter"}, "queued": {"$ref": "#/$defs/counter"}, "rejected": {"$ref": "#/$defs/counter"}, "throttled": {"$ref": "#/$defs/counter"}}
+    },
+    "states": {
+      "type": "object", "additionalProperties": false,
+      "required": ["pending", "leased", "unknown", "succeeded", "failed", "canceled", "rejected", "throttled"],
+      "properties": {"pending": {"$ref": "#/$defs/counter"}, "leased": {"$ref": "#/$defs/counter"}, "unknown": {"$ref": "#/$defs/counter"}, "succeeded": {"$ref": "#/$defs/counter"}, "failed": {"$ref": "#/$defs/counter"}, "canceled": {"$ref": "#/$defs/counter"}, "rejected": {"$ref": "#/$defs/counter"}, "throttled": {"$ref": "#/$defs/counter"}}
+    },
+    "stale": {
+      "type": "object", "additionalProperties": false,
+      "required": ["pending_requires_reconcile", "active_requires_reconcile"],
+      "properties": {"pending_requires_reconcile": {"$ref": "#/$defs/counter"}, "active_requires_reconcile": {"$ref": "#/$defs/counter"}}
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/go-dependencies-context.schema.json",
+  "title": "Argus GoDependenciesContext v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "provider_id", "provider_revision", "commit_oid", "module_path", "target_paths", "packages", "imports", "coverage", "gaps"],
+  "properties": {
+    "schema_version": {"const": "argus.context.go_dependencies.v1alpha1"},
+    "provider_id": {"const": "argus-go-dependencies"},
+    "provider_revision": {"const": "1"},
+    "commit_oid": {"type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"},
+    "module_path": {"type": "string", "maxLength": 512, "pattern": "^[^\\n\\r\\t]*$"},
+    "target_paths": {"type": "array", "items": {"$ref": "#/$defs/path"}, "uniqueItems": true},
+    "packages": {"type": "array", "maxItems": 2048, "items": {"$ref": "#/$defs/package"}},
+    "imports": {"type": "array", "maxItems": 8192, "items": {"$ref": "#/$defs/import"}},
+    "coverage": {"$ref": "#/$defs/coverage"},
+    "gaps": {"type": "array", "items": {"$ref": "#/$defs/gap"}}
+  },
+  "$defs": {
+    "text": {"type": "string", "minLength": 1, "maxLength": 4096, "pattern": "^[^\\n\\r\\t]+$"},
+    "path": {"type": "string", "minLength": 1, "maxLength": 4096, "pattern": "^[^\\\\/:\\n\\r\\t]+(?:/[^\\\\/:\\n\\r\\t]+)*$"},
+    "directory": {"oneOf": [{"const": "."}, {"$ref": "#/$defs/path"}]},
+    "positive_line": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+    "package": {
+      "type": "object", "additionalProperties": false,
+      "required": ["directory", "name", "files", "target"],
+      "properties": {
+        "directory": {"$ref": "#/$defs/directory"},
+        "name": {"type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[\\p{L}\\p{N}_]+$"},
+        "files": {"type": "array", "items": {"$ref": "#/$defs/path"}, "uniqueItems": true},
+        "target": {"type": "boolean"}
+      }
+    },
+    "import": {
+      "type": "object", "additionalProperties": false,
+      "required": ["from_package", "import_path", "resolution", "path", "line", "target"],
+      "properties": {
+        "from_package": {"$ref": "#/$defs/directory"},
+        "import_path": {"$ref": "#/$defs/text"},
+        "resolved_directory": {"$ref": "#/$defs/directory"},
+        "resolution": {"enum": ["internal_exact", "internal_unresolved", "stdlib", "external"]},
+        "path": {"$ref": "#/$defs/path"},
+        "line": {"$ref": "#/$defs/positive_line"},
+        "target": {"type": "boolean"}
+      }
+    },
+    "coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["go_files_discovered", "go_files_parsed", "go_files_failed", "target_files_requested", "target_go_files_found", "packages_emitted", "imports_emitted", "truncated"],
+      "properties": {
+        "go_files_discovered": {"type": "integer", "minimum": 0},
+        "go_files_parsed": {"type": "integer", "minimum": 0},
+        "go_files_failed": {"type": "integer", "minimum": 0},
+        "target_files_requested": {"type": "integer", "minimum": 0},
+        "target_go_files_found": {"type": "integer", "minimum": 0},
+        "packages_emitted": {"type": "integer", "minimum": 0},
+        "imports_emitted": {"type": "integer", "minimum": 0},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "gap": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code"],
+      "properties": {
+        "code": {"$ref": "#/$defs/text"},
+        "path": {"$ref": "#/$defs/path"},
+        "line": {"type": "integer", "minimum": 0, "maximum": 4294967295}
+      }
+    }
+  }
+}

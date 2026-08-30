@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/missed-defect-incident.schema.json",
+  "title": "Argus MissedDefectIncident v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "incident_id", "review_run_id", "defect_fingerprint", "category", "severity", "anchors", "evidence_artifacts", "source_authority", "source_id", "source_revision", "occurred_at", "recorded_at"],
+  "properties": {
+    "schema_version": {"const": "argus.missed_defect_incident.v1alpha1"},
+    "incident_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "review_run_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "defect_fingerprint": {"$ref": "evaluation-case.schema.json#/$defs/sha256"},
+    "category": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "severity": {"enum": ["low", "medium", "high", "critical"]},
+    "anchors": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "evaluation-case.schema.json#/$defs/anchor"}},
+    "evidence_artifacts": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/artifact_ref"}},
+    "source_authority": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "source_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "source_revision": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "prior_incident_id": {"$ref": "evaluation-case.schema.json#/$defs/id"}
+  },
+  "$defs": {
+    "artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"$ref": "evaluation-case.schema.json#/$defs/artifact_uri"},
+        "sha256": {"$ref": "evaluation-case.schema.json#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "contract": {"$ref": "evaluation-case.schema.json#/$defs/id"}
+      }
+    }
+  }
+}

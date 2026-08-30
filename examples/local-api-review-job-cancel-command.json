@@ -1,0 +1,10 @@
+{
+  "schema_version": "argus.local_api_review_job_cancel_command.v1alpha1",
+  "reason": "operator canceled obsolete review target",
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "cancel-review-job-001",
+    "audit": "cancel obsolete local review job",
+    "at": "2026-08-25T08:05:00Z"
+  }
+}

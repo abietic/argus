@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/agent-review-prompt-bundle.schema.json",
+  "title": "Argus AgentReviewPromptBundle v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "revision",
+    "context_system_prompt",
+    "review_system_prompt",
+    "verification_system_prompt",
+    "terminal_finalizer_prompt"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.agent_review_prompt_bundle.v1alpha1"},
+    "revision": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "context_system_prompt": {"$ref": "#/$defs/prompt"},
+    "review_system_prompt": {"$ref": "#/$defs/prompt"},
+    "verification_system_prompt": {"$ref": "#/$defs/prompt"},
+    "terminal_finalizer_prompt": {"$ref": "#/$defs/prompt"}
+  },
+  "$defs": {
+    "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16384,
+      "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+    }
+  }
+}

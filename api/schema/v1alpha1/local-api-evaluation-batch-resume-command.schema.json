@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-evaluation-batch-resume-command.schema.json",
+  "title": "Argus LocalAPIEvaluationBatchResumeCommand v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mutation"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_evaluation_batch_resume_command.v1alpha1"},
+    "mutation": {"$ref": "local-api-mutation.schema.json"}
+  }
+}

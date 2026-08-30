@@ -1,0 +1,5 @@
+{
+  "schema_version": "argus.local_api_normalization_promotion_lifecycle_command.v1alpha1",
+  "variant_id": "normalization-policy-argus-pi-review-workflow-v2",
+  "mutation": {"schema_version": "argus.local_api_mutation.v1alpha1", "idempotency_key": "normalization-activate-1", "audit": "expand approved normalization canary to full rollout", "at": "2026-08-27T11:00:00Z"}
+}

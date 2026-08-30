@@ -1,0 +1,15 @@
+{
+  "schema_version": "argus.config_revision.v1alpha1",
+  "id": "invalid-selector-scope",
+  "revision": "1",
+  "scope": "tenant",
+  "selector": {
+    "tenant_id": "tenant-example",
+    "repository_id": "repository-not-allowed-at-tenant-scope"
+  },
+  "patch": {
+    "target": {
+      "max_files": 1
+    }
+  }
+}

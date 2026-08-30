@@ -1,0 +1,279 @@
+{
+  "schema_version": "argus.config_revision.v1alpha1",
+  "id": "example-platform-agent-review",
+  "revision": "1",
+  "scope": "platform",
+  "selector": {},
+  "patch": {
+    "target": {
+      "allowed_modes": {
+        "add": [
+          "diff",
+          "scope",
+          "selection"
+        ],
+        "remove": []
+      },
+      "include": {
+        "add": [
+          "**"
+        ],
+        "remove": []
+      },
+      "exclude": {
+        "add": [],
+        "remove": []
+      },
+      "max_files": 200,
+      "max_patch_bytes": 16777216
+    },
+    "rule_pack": {
+      "rules": {
+        "upsert": [
+          {
+            "id": "unfinished-work",
+            "revision": "1",
+            "kind": "deterministic",
+            "detector": {
+              "id": "argus.fixture-marker",
+              "revision": "1",
+              "sha256": "d742902328ed20f4052267b22128275f2b54d0c9b8b9b4636f99e726ca1e45ae"
+            },
+            "languages": [
+              "go"
+            ],
+            "path_prefixes": [],
+            "evidence_kinds": [
+              "file_content",
+              "patch_line",
+              "target_line"
+            ],
+            "severity": "info",
+            "enabled": true
+          },
+          {
+            "id": "explicit-bug-marker",
+            "revision": "1",
+            "kind": "deterministic",
+            "detector": {
+              "id": "argus.fixture-marker",
+              "revision": "1",
+              "sha256": "d742902328ed20f4052267b22128275f2b54d0c9b8b9b4636f99e726ca1e45ae"
+            },
+            "languages": [
+              "go"
+            ],
+            "path_prefixes": [],
+            "evidence_kinds": [
+              "file_content",
+              "patch_line",
+              "target_line"
+            ],
+            "severity": "high",
+            "enabled": true
+          },
+          {
+            "id": "go-context-cancel-discarded",
+            "revision": "1",
+            "kind": "deterministic",
+            "detector": {
+              "id": "argus.go-ast",
+              "revision": "1",
+              "sha256": "684c4cada46ff501f551f4f0d93b23e77f08ee8a01ba934a0c4b1aa083a5467f"
+            },
+            "languages": [
+              "go"
+            ],
+            "path_prefixes": [],
+            "evidence_kinds": [
+              "file_content",
+              "patch_line",
+              "target_line"
+            ],
+            "severity": "high",
+            "enabled": true
+          }
+        ],
+        "remove": []
+      }
+    },
+    "workflow": {
+      "definition": {
+        "id": "local-deterministic-review",
+        "revision": "2",
+        "sha256": "88cac3fad347ae1d3de54d7d463fd27768cd6cde228d3d0690bc7d08fcc1eb5c"
+      }
+    },
+    "execution": {
+      "agent_profile": {
+        "id": "deterministic-local",
+        "revision": "1",
+        "sha256": "c7b67e9c3b4a32055dac0274f2061c342adda986ae2fae617f971a86e3bec762"
+      },
+      "model_profile": {
+        "id": "none",
+        "revision": "1",
+        "sha256": "f167723cff28bb023126140c9a26ba81946c41d7c3eda2966b2c9b0e14ade18a"
+      },
+      "allowed_tools": {
+        "add": [
+          "codegraph"
+        ],
+        "remove": []
+      },
+      "context_providers": {
+        "upsert": [],
+        "remove": []
+      },
+      "context_provider_max_concurrency": 4
+    },
+    "agent_review": {
+      "agent": {
+        "id": "pi-agent",
+        "revision": "1",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "normalization": {
+        "id": "candidate-normalization",
+        "revision": "v2",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "provider": {
+        "id": "anthropic-compatible",
+        "revision": "1",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "model": {
+        "id": "deepseek-chat",
+        "revision": "2026-08-01",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "prompt": {
+        "id": "review-prompt",
+        "revision": "1",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "model_credential_ref": {
+        "uri": "secret://env/deepseek-anthropic-key"
+      },
+      "skill_packs": {
+        "upsert": [
+          {
+            "id": "group-changes",
+            "phase": "grouping",
+            "ref": {
+              "id": "skill-group-changes",
+              "revision": "1",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          },
+          {
+            "id": "review-core",
+            "phase": "review",
+            "ref": {
+              "id": "skill-review-core",
+              "revision": "1",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          },
+          {
+            "id": "verify-candidates",
+            "phase": "verification",
+            "ref": {
+              "id": "skill-verify-candidates",
+              "revision": "1",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          }
+        ],
+        "remove": []
+      },
+      "knowledge_packs": {
+        "upsert": [
+          {
+            "id": "business-default",
+            "ref": {
+              "id": "knowledge-business-default",
+              "revision": "1",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          }
+        ],
+        "remove": []
+      },
+      "api_protocol": {
+        "id": "anthropic-messages",
+        "revision": "2023-06-01",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "authority": {
+        "model_egress": "provider_broker_only",
+        "tool_network": "deny",
+        "workspace_reads": "frozen_input_only",
+        "workspace_writes": "deny",
+        "remote_writes": "deny",
+        "max_delegation_depth": 0,
+        "tools": {
+          "add": [
+            "codegraph"
+          ],
+          "remove": []
+        }
+      },
+      "budget": {
+        "max_files": 100,
+        "max_groups": 16,
+        "max_hypotheses": 64,
+        "max_model_calls": 32,
+        "max_tool_calls": 64,
+        "max_target_bytes": 524288,
+        "max_group_bytes": 131072,
+        "max_output_bytes": 131072,
+        "max_output_tokens": 10000,
+        "max_cost_micros": 500000,
+        "timeout_ms": 20000,
+        "max_concurrency": 1
+      }
+    },
+    "budget": {
+      "max_input_bytes": 16777216,
+      "max_output_bytes": 16777216,
+      "max_tokens": 100000,
+      "max_cost_micros": 1000000,
+      "stage_timeout_ms": 30000,
+      "max_attempts": 2,
+      "max_concurrency": 1
+    },
+    "verification": {
+      "required_evidence_kinds": {
+        "add": [
+          "file_content",
+          "patch_line",
+          "target_line"
+        ],
+        "remove": []
+      },
+      "minimum_independent_evidence": 1,
+      "partial_evidence": "deny"
+    },
+    "adjudication": {
+      "minimum_severity": "info",
+      "human_review_inconclusive": true,
+      "automatic_publication": "deny"
+    },
+    "publication": {
+      "remote_writes": "deny",
+      "channels": {
+        "add": [],
+        "remove": []
+      },
+      "max_comments": 0
+    },
+    "data": {
+      "retention_days": 30,
+      "redaction": "strict",
+      "training": "deny",
+      "export": "deny"
+    }
+  }
+}

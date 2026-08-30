@@ -1,0 +1,26 @@
+{
+  "schema_version": "hailix.platform_execution_http.v1alpha1",
+  "canonical_result": {
+    "schema_version": "argus.stage_execution_result.v1alpha1",
+    "request_sha256": "993f05d1e500fa9e40561a9a7d03341755dffe3787d5b3274f7c863575c8eeb0",
+    "execution_id": "execution-1",
+    "attempt": 1,
+    "generation": 1,
+    "fencing_token": 1,
+    "idempotency_key": "execution-1-detect-1",
+    "status": "succeeded",
+    "output": {
+      "ref": {
+        "uri": "artifact://argus/tenants/tenant-1/workspaces/workspace-1/objects/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size_bytes": 10
+      },
+      "contract": "argus.review_hypothesis_set.v1alpha1"
+    },
+    "completeness": "complete",
+    "completeness_notes": [],
+    "capability_sha256": "ea305d3be6ff16a3aab0f2b96fc9080d7113807ff1f94437cc50cab1edcbab14",
+    "recorded_at": "2026-08-24T09:59:00Z"
+  },
+  "callback_proof_base64": "c2lnbmVkLWhhaWxpeC1jYWxsYmFjay1wcm9vZg=="
+}

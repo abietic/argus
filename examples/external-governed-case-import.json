@@ -1,0 +1,100 @@
+{
+  "schema_version": "argus.external_governed_case_import.v1alpha1",
+  "case": {
+    "schema_version": "argus.evaluation_case.v1alpha1",
+    "case_id": "case-localized-1",
+    "type": "positive_localized",
+    "provenance": {
+      "kind": "human_confirmed_finding",
+      "repository_id": "repo-example",
+      "source_id": "review-comment-1",
+      "finding_id": "finding-confirmed-1",
+      "observed_at": "2026-08-25T07:00:00Z",
+      "collected_at": "2026-08-25T07:01:00Z",
+      "evidence_refs": [
+        "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ]
+    },
+    "license_consent": {
+      "license_id": "internal-license",
+      "consent": "authorized_internal",
+      "allowed_uses": [
+        "evaluation",
+        "promotion",
+        "training"
+      ],
+      "restrictions": []
+    },
+    "classification": "internal",
+    "owner": "quality-team",
+    "input_snapshot_ref": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "label": {
+      "expected_outcome": "defect_present",
+      "category": "correctness",
+      "severity": "high",
+      "anchors": [
+        {
+          "path": "internal/review.go",
+          "side": "new",
+          "start_line": 10,
+          "end_line": 12,
+          "source_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        }
+      ],
+      "anchor_refs": [
+        "artifact://local/sha256/dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      ],
+      "suppression_targets": []
+    },
+    "label_policy_revision": "label-policy-1",
+    "review_state": "approved",
+    "dataset_state": "active",
+    "split": "test",
+    "clone_group_id": "clone-localized-1",
+    "eligibility": {
+      "evaluation": true,
+      "training": true,
+      "promotion": true,
+      "production_distribution": true
+    },
+    "created_at": "2026-08-25T07:02:00Z"
+  },
+  "attestation": {
+    "schema_version": "argus.external_governance_attestation.v1alpha1",
+    "attestation_id": "external-governance-example-1",
+    "case_id": "case-localized-1",
+    "case_sha256": "f6c90027db61312ff2316ef65858d1911a1bf01c40c58599303ab55d4b5305df",
+    "authority": "example-governance-authority",
+    "key_id": "example-key-1",
+    "policy_revision": "external-review-policy-1",
+    "reviewer_ids": [
+      "external-reviewer-a",
+      "external-reviewer-b"
+    ],
+    "adjudicator_id": "external-adjudicator-c",
+    "evidence_refs": [
+      "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    ],
+    "decision": "approved",
+    "reviewed_at": "2026-08-25T07:03:00Z",
+    "issued_at": "2026-08-25T07:04:00Z",
+    "signature_base64": "C3CkQJBSPH9kD3EUl+8/7gFwXML/CMje02BUQdc5Y5+B3mtXy3ll464oOUYe0W9koKt/uG/bh4ZgiFcNs3zcAw=="
+  },
+  "trusted_key": {
+    "schema_version": "argus.trusted_governance_key.v1alpha1",
+    "authority": "example-governance-authority",
+    "key_id": "example-key-1",
+    "revision": "example-trust-v1",
+    "public_key_base64": "ym9lBpEgxplEXs0FvUT4WbfcOobZp3JDVM8CD86fM7U=",
+    "repository_ids": [
+      "repo-example"
+    ],
+    "allowed_classifications": [
+      "internal"
+    ],
+    "valid_from": "2026-08-25T00:00:00Z",
+    "valid_until": "2027-08-25T00:00:00Z"
+  },
+  "imported_at": "2026-08-25T07:05:00Z"
+}

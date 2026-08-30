@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/normalization-quality-run-request.schema.json",
+  "title": "Argus NormalizationQualityRunRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "quality_run_id", "policy_revision", "oracle_bindings", "created_at"],
+  "properties": {
+    "schema_version": {"const": "argus.normalization_quality_run_request.v1alpha1"},
+    "quality_run_id": {"$ref": "#/$defs/id"},
+    "policy_revision": {"$ref": "#/$defs/id"},
+    "oracle_bindings": {"type": "array", "minItems": 1, "maxItems": 1024, "uniqueItems": true, "items": {"$ref": "#/$defs/oracle_binding"}},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "oracle_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "contract": {"const": "argus.normalization_oracle.v1alpha1+json"}
+      }
+    },
+    "oracle_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["oracle_id", "case_id", "revision", "registered_event_id", "oracle_ref", "attestation_id", "trust_authority", "trust_key_id", "trust_key_revision", "trust_key_registered_event_id"],
+      "properties": {
+        "oracle_id": {"$ref": "#/$defs/id"},
+        "case_id": {"$ref": "#/$defs/id"},
+        "revision": {"type": "integer", "minimum": 1},
+        "registered_event_id": {"$ref": "#/$defs/id"},
+        "oracle_ref": {"$ref": "#/$defs/oracle_ref"},
+        "attestation_id": {"$ref": "#/$defs/id"},
+        "trust_authority": {"$ref": "#/$defs/id"},
+        "trust_key_id": {"$ref": "#/$defs/id"},
+        "trust_key_revision": {"$ref": "#/$defs/id"},
+        "trust_key_registered_event_id": {"$ref": "#/$defs/id"}
+      }
+    }
+  }
+}

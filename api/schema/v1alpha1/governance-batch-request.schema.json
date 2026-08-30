@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/governance-batch-request.schema.json",
+  "title": "Argus GovernanceBatchRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "batch_id", "operation", "items", "terminal_event_id", "submitted_at"],
+  "properties": {
+    "schema_version": {"const": "argus.governance_batch_request.v1alpha1"},
+    "batch_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "operation": {"enum": ["assign", "annotate", "adjudicate", "activate", "reopen"]},
+    "items": {"type": "array", "minItems": 1, "maxItems": 500},
+    "terminal_event_id": {"$ref": "#/$defs/event_id"},
+    "submitted_at": {"type": "string", "format": "date-time"}
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "operation": {"const": "assign"},
+        "items": {"items": {"$ref": "#/$defs/assignment_item"}}
+      }
+    },
+    {
+      "properties": {
+        "operation": {"const": "annotate"},
+        "items": {"items": {"$ref": "#/$defs/annotation_item"}}
+      }
+    },
+    {
+      "properties": {
+        "operation": {"const": "adjudicate"},
+        "items": {"items": {"$ref": "#/$defs/adjudication_item"}}
+      }
+    },
+    {
+      "properties": {
+        "operation": {"const": "activate"},
+        "items": {"items": {"$ref": "#/$defs/activation_item"}}
+      }
+    },
+    {
+      "properties": {
+        "operation": {"const": "reopen"},
+        "items": {"items": {"$ref": "#/$defs/reopen_item"}}
+      }
+    }
+  ],
+  "$defs": {
+    "event_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\s\\x00-\\x1F\\x7F]+$"
+    },
+    "assignment_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "assignment"],
+      "properties": {
+        "event_id": {"$ref": "#/$defs/event_id"},
+        "assignment": {"$ref": "evaluation-case-review-assignment.schema.json"}
+      }
+    },
+    "annotation_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "annotation"],
+      "properties": {
+        "event_id": {"$ref": "#/$defs/event_id"},
+        "annotation": {"$ref": "evaluation-case-annotation.schema.json"}
+      }
+    },
+    "adjudication_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "adjudication"],
+      "properties": {
+        "event_id": {"$ref": "#/$defs/event_id"},
+        "adjudication": {"$ref": "evaluation-case-adjudication.schema.json"}
+      }
+    },
+    "activation_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "activation"],
+      "properties": {
+        "event_id": {"$ref": "#/$defs/event_id"},
+        "activation": {"$ref": "evaluation-case-activation.schema.json"}
+      }
+    },
+    "reopen_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "reopen"],
+      "properties": {
+        "event_id": {"$ref": "#/$defs/event_id"},
+        "reopen": {"$ref": "evaluation-case-reopen.schema.json"}
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "argus.local_runtime_file_manifest.v1alpha1",
+  "authority": "local_host_observation",
+  "node": {
+    "path": "node",
+    "size_bytes": 4,
+    "sha256": "545ea538461003efdc8c81c244531b003f6f26cfccf6c0073b3239fdedf49446"
+  },
+  "files": [
+    {
+      "path": "dist/worker.js",
+      "size_bytes": 4,
+      "sha256": "87eba76e7f3164534045ba922e7770fb58bbd14ad732bbf5ba6f11cc56989e6e"
+    },
+    {
+      "path": "node_modules/runtime/index.js",
+      "size_bytes": 4,
+      "sha256": "d92c6a81b2ff50096bcda80885427d1f59a25b5f483f7055523504925d16ab23"
+    },
+    {
+      "path": "package-lock.json",
+      "size_bytes": 4,
+      "sha256": "0c030586945fe504b604ecc2e875c38ede400cd5cd73da9730302162e6b02c6f"
+    },
+    {
+      "path": "package.json",
+      "size_bytes": 4,
+      "sha256": "bc4a71180870f7945155fbb02f4b0a2e3faa2a62d6d31b7039013055ed19869a"
+    }
+  ],
+  "production_packages": [
+    {
+      "path": "node_modules/runtime",
+      "version": "1.0.0",
+      "integrity": "sha512-fixture"
+    }
+  ]
+}

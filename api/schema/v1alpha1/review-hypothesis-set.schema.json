@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/review-hypothesis-set.schema.json",
+  "title": "Argus ReviewHypothesisSet v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "hypothesis_set_id",
+    "plan_id",
+    "source_run_id",
+    "execution_id",
+    "review_run_id",
+    "target_digest",
+    "completeness",
+    "completeness_reasons",
+    "normalization_decisions",
+    "hypotheses",
+    "dedup_clusters",
+    "coverage",
+    "generated_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.review_hypothesis_set.v1alpha1"},
+    "hypothesis_set_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "plan_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "source_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "execution_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "review_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "target_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+    "completeness": {"enum": ["complete", "partial"]},
+    "completeness_reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}
+    },
+    "normalization_decisions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/normalizationDecision"}
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/hypothesis"}
+    },
+    "dedup_clusters": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/dedupCluster"}
+    },
+    "coverage": {"$ref": "#/$defs/coverage"},
+    "generated_at": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/utcTimestamp"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"completeness": {"const": "complete"}}},
+      "then": {"properties": {"completeness_reasons": {"maxItems": 0}}}
+    }
+  ],
+  "$defs": {
+    "normalizationDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_candidate_id", "claim_digest", "action", "reason_code"],
+      "properties": {
+        "raw_candidate_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "claim_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "action": {"enum": ["retained", "merged_duplicate", "rejected_invalid", "excluded_budget"]},
+        "reason_code": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "occurrence_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "canonical_occurrence_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"action": {"const": "retained"}}},
+          "then": {
+            "required": ["occurrence_id"],
+            "not": {"required": ["canonical_occurrence_id"]}
+          },
+          "else": {
+            "if": {"properties": {"action": {"const": "merged_duplicate"}}},
+            "then": {
+              "required": ["canonical_occurrence_id"],
+              "not": {"required": ["occurrence_id"]}
+            },
+            "else": {
+              "not": {
+                "anyOf": [
+                  {"required": ["occurrence_id"]},
+                  {"required": ["canonical_occurrence_id"]}
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "side", "start_line", "end_line", "source_digest"],
+      "properties": {
+        "path": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "side": {"enum": ["old", "new", "file"]},
+        "start_line": {"type": "integer", "minimum": 1},
+        "end_line": {"type": "integer", "minimum": 1},
+        "source_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "statement", "anchor", "excerpt", "evidence_digest"],
+      "properties": {
+        "evidence_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "statement": {"type": "string", "minLength": 1, "maxLength": 8192},
+        "anchor": {"$ref": "#/$defs/anchor"},
+        "excerpt": {"type": "string", "minLength": 8, "maxLength": 16384},
+        "evidence_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"}
+      }
+    },
+    "verificationObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_id",
+        "sequence",
+        "verifier",
+        "verdict",
+        "reason_code",
+        "explanation",
+        "evidence_ids"
+      ],
+      "properties": {
+        "observation_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "sequence": {"type": "integer", "minimum": 1},
+        "verifier": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+        "verdict": {"enum": ["confirmed", "rejected", "inconclusive"]},
+        "reason_code": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "explanation": {"type": "string", "minLength": 1, "maxLength": 8192},
+        "evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"verdict": {"const": "confirmed"}}},
+          "then": {"properties": {"evidence_ids": {"minItems": 1}}}
+        }
+      ]
+    },
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "occurrence_id",
+        "cluster_fingerprint",
+        "group_id",
+        "dimension",
+        "category",
+        "severity",
+        "raw_confidence_available",
+        "raw_confidence_ppm",
+        "title",
+        "description",
+        "impact",
+        "anchor",
+        "evidence",
+        "verification_observations"
+      ],
+      "properties": {
+        "occurrence_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "cluster_fingerprint": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "group_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "dimension": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+        "category": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "severity": {"enum": ["critical", "high", "medium", "low"]},
+        "raw_confidence_available": {"type": "boolean"},
+        "raw_confidence_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "title": {"type": "string", "minLength": 1, "maxLength": 8192},
+        "description": {"type": "string", "minLength": 1, "maxLength": 8192},
+        "impact": {"type": "string", "minLength": 1, "maxLength": 8192},
+        "anchor": {"$ref": "#/$defs/anchor"},
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidence"}
+        },
+        "suggestion": {"type": "string", "minLength": 1, "maxLength": 8192},
+        "verification_observations": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/verificationObservation"}
+        }
+      }
+    },
+    "dedupCluster": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cluster_id", "fingerprint", "canonical_occurrence_id", "occurrence_ids"],
+      "properties": {
+        "cluster_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "fingerprint": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "canonical_occurrence_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "occurrence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}
+        }
+      }
+    },
+    "coverageGap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gap_id", "phase", "subject_id", "reason_code"],
+      "properties": {
+        "gap_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "phase": {"enum": ["capture", "context", "review", "verification"]},
+        "subject_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "reason_code": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "groups_total",
+        "groups_reviewed",
+        "review_tasks_total",
+        "review_tasks_succeeded",
+        "files_included",
+        "gaps"
+      ],
+      "properties": {
+        "groups_total": {"type": "integer", "minimum": 0},
+        "groups_reviewed": {"type": "integer", "minimum": 0},
+        "review_tasks_total": {"type": "integer", "minimum": 0},
+        "review_tasks_succeeded": {"type": "integer", "minimum": 0},
+        "files_included": {"type": "integer", "minimum": 0},
+        "gaps": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/coverageGap"}
+        }
+      }
+    }
+  }
+}
