@@ -1,0 +1,13 @@
+{
+  "schema_version": "argus.local_api_normalization_promotion_operational_gate_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.normalization_promotion_operational_gate_request.v1alpha1",
+    "variant_id": "normalization-policy-argus-pi-review-workflow-v2",
+    "gate": "shadow_traffic",
+    "policy_ref": {"uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "size_bytes": 1024, "contract": "argus.normalization_promotion_policy.v1alpha1+json"},
+    "review_run_ids": ["shadow-review-run-001"],
+    "safety_event_count": 0,
+    "evaluated_at": "2026-08-27T09:00:00Z"
+  },
+  "mutation": {"schema_version": "argus.local_api_mutation.v1alpha1", "idempotency_key": "normalization-shadow-gate-1", "audit": "verify exact normalization shadow runs", "at": "2026-08-27T09:00:00Z"}
+}

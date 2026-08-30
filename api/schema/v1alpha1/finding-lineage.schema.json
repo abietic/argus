@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/finding-lineage.schema.json",
+  "title": "Argus FindingLineage v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "lineage_id", "policy", "baseline", "variant", "path_mappings", "baseline_findings", "variant_findings", "relations", "summary", "generated_at"],
+  "properties": {
+    "schema_version": {"const": "argus.finding_lineage.v1alpha1"},
+    "lineage_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "baseline": {"$ref": "#/$defs/runBinding"},
+    "variant": {"$ref": "#/$defs/runBinding"},
+    "ancestry": {"$ref": "#/$defs/gitAncestry"},
+    "path_mappings": {"type": "array", "items": {"$ref": "#/$defs/pathMapping"}},
+    "baseline_findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "variant_findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "relations": {"type": "array", "items": {"$ref": "#/$defs/relation"}},
+    "summary": {"$ref": "#/$defs/summary"},
+    "generated_at": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/utcTimestamp"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"policy": {"properties": {"ancestry_authority": {"const": "local_git_object_graph"}}}}},
+      "then": {"required": ["ancestry"]},
+      "else": {"properties": {"path_mappings": {"maxItems": 0}}, "not": {"required": ["ancestry"]}}
+    }
+  ],
+  "$defs": {
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "revision", "sha256", "family_fields", "many_to_many_action", "ancestry_authority"],
+      "properties": {
+        "policy_id": {"enum": ["argus-conservative-lineage-matcher", "argus-git-aware-conservative-lineage-matcher"]},
+        "revision": {"const": "1"},
+        "sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "family_fields": {"type": "array", "prefixItems": [{"const": "category"}, {"const": "dimension"}, {"const": "path"}, {"const": "title_normalized"}], "items": false, "minItems": 4, "maxItems": 4},
+        "many_to_many_action": {"const": "leave_unmatched"},
+        "ancestry_authority": {"enum": ["caller_order_unverified", "local_git_object_graph"]},
+        "rename_threshold_bps": {"type": "integer", "minimum": 0, "maximum": 10000}
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "policy_id": {"const": "argus-conservative-lineage-matcher"},
+            "ancestry_authority": {"const": "caller_order_unverified"},
+            "rename_threshold_bps": {"const": 0}
+          }
+        },
+        {
+          "required": ["rename_threshold_bps"],
+          "properties": {
+            "policy_id": {"const": "argus-git-aware-conservative-lineage-matcher"},
+            "ancestry_authority": {"const": "local_git_object_graph"},
+            "rename_threshold_bps": {"const": 5000}
+          }
+        }
+      ]
+    },
+    "gitAncestry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authority", "repository_identity_sha256", "object_format", "baseline_head_oid", "variant_head_oid", "merge_base_oid", "baseline_is_ancestor", "evidence_sha256"],
+      "properties": {
+        "authority": {"const": "local_git_object_graph"},
+        "repository_identity_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "object_format": {"enum": ["sha1", "sha256"]},
+        "baseline_head_oid": {"type": "string", "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"},
+        "variant_head_oid": {"type": "string", "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"},
+        "merge_base_oid": {"type": "string", "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"},
+        "baseline_is_ancestor": {"const": true},
+        "evidence_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"}
+      }
+    },
+    "pathMapping": {
+      "type": "object", "additionalProperties": false,
+      "required": ["baseline_path", "variant_path", "similarity_bps"],
+      "properties": {
+        "baseline_path": {"type": "string", "minLength": 1},
+        "variant_path": {"type": "string", "minLength": 1},
+        "similarity_bps": {"type": "integer", "minimum": 5000, "maximum": 10000}
+      }
+    },
+    "repository": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider", "repository_id"],
+      "properties": {
+        "provider": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "repository_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}
+      }
+    },
+    "runBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_id", "run_sha256", "tenant_id", "workspace_id", "repository", "target_mode", "base_revision", "head_revision", "target_digest", "review_spec_sha256", "target_snapshot_sha256", "candidate_set_sha256", "verification_ledger_sha256", "calibration_ledger_sha256", "suppression_ledger_sha256", "governed_report_sha256"],
+      "properties": {
+        "run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "run_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "tenant_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "workspace_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "repository": {"$ref": "#/$defs/repository"},
+        "target_mode": {"enum": ["diff", "selection", "scope"]},
+        "base_revision": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "head_revision": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "target_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "review_spec_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "target_snapshot_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "candidate_set_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "verification_ledger_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "calibration_ledger_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "suppression_ledger_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "governed_report_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"}
+      }
+    },
+    "finding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_id", "finding_id", "fingerprint", "family_key", "candidate_id", "dimension", "category", "severity", "title", "anchor"],
+      "properties": {
+        "run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "finding_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "fingerprint": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "family_key": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "candidate_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "dimension": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+        "category": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "severity": {"enum": ["low", "medium", "high", "critical"]},
+        "title": {"type": "string", "minLength": 1, "maxLength": 512},
+        "anchor": {"$ref": "review-hypothesis-set.schema.json#/$defs/anchor"}
+      }
+    },
+    "relation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["relation_id", "type", "method", "reason_code", "family_key", "baseline_finding_ids", "variant_finding_ids"],
+      "properties": {
+        "relation_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "type": {"enum": ["continued", "split", "merged", "introduced", "resolved"]},
+        "method": {"enum": ["exact_fingerprint", "stable_family", "git_rename_family", "unmatched"]},
+        "reason_code": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "family_key": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "baseline_finding_ids": {"type": "array", "items": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}},
+        "variant_finding_ids": {"type": "array", "items": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}}
+      }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["baseline_findings", "variant_findings", "continued", "split", "merged", "introduced", "resolved"],
+      "properties": {
+        "baseline_findings": {"type": "integer", "minimum": 0},
+        "variant_findings": {"type": "integer", "minimum": 0},
+        "continued": {"type": "integer", "minimum": 0},
+        "split": {"type": "integer", "minimum": 0},
+        "merged": {"type": "integer", "minimum": 0},
+        "introduced": {"type": "integer", "minimum": 0},
+        "resolved": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

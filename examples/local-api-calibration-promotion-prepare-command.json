@@ -1,0 +1,19 @@
+{
+  "schema_version": "argus.local_api_calibration_promotion_prepare_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.calibration_promotion_prepare_request.v1alpha1",
+    "plan_id": "calibration-promotion-20260826-1",
+    "calibration_run_id": "calibration-fit-20260826-1",
+    "expected_calibration_run_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "baseline_review_run_id": "review-baseline-20260826-1",
+    "baseline_config_revision_id": "repository-finding-governance",
+    "baseline_config_revision": "1",
+    "variant_config_revision_id": "repository-finding-governance",
+    "variant_config_revision": "calibrated-20260826-1",
+    "promotion_variant_id": "filter-calibrated-20260826-1",
+    "promotion_policy_revision": "calibration-promotion-policy-1",
+    "owner": "calibration-promotion-owner",
+    "created_at": "2026-08-26T09:00:00Z"
+  },
+  "mutation": {"schema_version": "argus.local_api_mutation.v1alpha1", "idempotency_key": "prepare-calibration-promotion-1", "audit": "prepare passed calibration profile without publishing", "at": "2026-08-26T09:00:00Z"}
+}

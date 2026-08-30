@@ -1,0 +1,350 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/hailix-platform-execution-http.schema.json",
+  "title": "Argus consumer contract for Hailix platform-execution HTTP v1alpha1",
+  "anyOf": [
+    { "$ref": "#/$defs/capabilityRequest" },
+    { "$ref": "#/$defs/executionRequest" },
+    { "$ref": "#/$defs/cancelRequest" },
+    { "$ref": "#/$defs/awaitRequest" },
+    { "$ref": "#/$defs/verifyCallbackRequest" },
+    { "$ref": "#/$defs/capabilityResponse" },
+    { "$ref": "#/$defs/ensureResponse" },
+    { "$ref": "#/$defs/terminalResponse" },
+    { "$ref": "#/$defs/callbackResponse" },
+    { "$ref": "#/$defs/errorResponse" }
+  ],
+  "$defs": {
+    "schemaVersion": {
+      "const": "hailix.platform_execution_http.v1alpha1"
+    },
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[^\\s\\x00-\\x1f\\x7f]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "positiveJSONInteger": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "organization_id", "workspace_id", "repository_id"],
+      "properties": {
+        "tenant_id": { "$ref": "#/$defs/identifier" },
+        "organization_id": { "$ref": "#/$defs/identifier" },
+        "workspace_id": { "$ref": "#/$defs/identifier" },
+        "repository_id": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "verifierRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision", "sha256"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "revision": { "$ref": "#/$defs/identifier" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "ensureReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject",
+        "provider_handle",
+        "execution_id",
+        "attempt",
+        "generation",
+        "fencing_token",
+        "idempotency_key",
+        "request_sha256",
+        "capability_sha256"
+      ],
+      "properties": {
+        "subject": { "$ref": "#/$defs/subject" },
+        "provider_handle": { "$ref": "#/$defs/identifier" },
+        "execution_id": { "$ref": "#/$defs/identifier" },
+        "attempt": { "$ref": "#/$defs/positiveJSONInteger" },
+        "generation": { "$ref": "#/$defs/positiveJSONInteger" },
+        "fencing_token": { "$ref": "#/$defs/positiveJSONInteger" },
+        "idempotency_key": { "$ref": "#/$defs/identifier" },
+        "request_sha256": { "$ref": "#/$defs/sha256" },
+        "capability_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "callbackBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "binding_sha256",
+        "provider_handle",
+        "execution_id",
+        "attempt",
+        "generation",
+        "fencing_token",
+        "idempotency_key",
+        "request_sha256",
+        "capability_sha256"
+      ],
+      "properties": {
+        "binding_id": { "$ref": "#/$defs/identifier" },
+        "binding_sha256": { "$ref": "#/$defs/sha256" },
+        "provider_handle": { "$ref": "#/$defs/identifier" },
+        "execution_id": { "$ref": "#/$defs/identifier" },
+        "attempt": { "$ref": "#/$defs/positiveJSONInteger" },
+        "generation": { "$ref": "#/$defs/positiveJSONInteger" },
+        "fencing_token": { "$ref": "#/$defs/positiveJSONInteger" },
+        "idempotency_key": { "$ref": "#/$defs/identifier" },
+        "request_sha256": { "$ref": "#/$defs/sha256" },
+        "capability_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "capabilityRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "subject", "plan_id", "plan_sha256", "canonical_plan"],
+      "properties": {
+        "schema_version": { "$ref": "#/$defs/schemaVersion" },
+        "subject": { "$ref": "#/$defs/subject" },
+        "plan_id": { "$ref": "#/$defs/identifier" },
+        "plan_sha256": { "$ref": "#/$defs/sha256" },
+        "canonical_plan": {
+          "$ref": "agent-stage-plan.schema.json"
+        }
+      }
+    },
+    "executionRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "subject", "canonical_request"],
+      "properties": {
+        "schema_version": { "$ref": "#/$defs/schemaVersion" },
+        "subject": { "$ref": "#/$defs/subject" },
+        "canonical_request": {
+          "$ref": "stage-execution-request.schema.json"
+        }
+      }
+    },
+    "cancelRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "subject",
+        "review_run_id",
+        "stage_id",
+        "stage_revision",
+        "stage_sha256",
+        "intent_id",
+        "intent_sha256",
+        "terminal_gate_id",
+        "terminal_gate_sha256",
+        "provider_handle",
+        "execution_id",
+        "attempt",
+        "generation",
+        "fencing_token",
+        "create_idempotency_key",
+        "cancel_idempotency_key",
+        "request_sha256",
+        "capability_sha256"
+      ],
+      "properties": {
+        "schema_version": { "$ref": "#/$defs/schemaVersion" },
+        "subject": { "$ref": "#/$defs/subject" },
+        "review_run_id": { "$ref": "#/$defs/identifier" },
+        "stage_id": { "$ref": "#/$defs/identifier" },
+        "stage_revision": { "$ref": "#/$defs/identifier" },
+        "stage_sha256": { "$ref": "#/$defs/sha256" },
+        "intent_id": { "$ref": "#/$defs/identifier" },
+        "intent_sha256": { "$ref": "#/$defs/sha256" },
+        "terminal_gate_id": { "$ref": "#/$defs/identifier" },
+        "terminal_gate_sha256": { "$ref": "#/$defs/sha256" },
+        "provider_handle": { "$ref": "#/$defs/identifier" },
+        "execution_id": { "$ref": "#/$defs/identifier" },
+        "attempt": { "$ref": "#/$defs/positiveJSONInteger" },
+        "generation": { "$ref": "#/$defs/positiveJSONInteger" },
+        "fencing_token": { "$ref": "#/$defs/positiveJSONInteger" },
+        "create_idempotency_key": { "$ref": "#/$defs/identifier" },
+        "cancel_idempotency_key": { "$ref": "#/$defs/identifier" },
+        "request_sha256": { "$ref": "#/$defs/sha256" },
+        "capability_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "awaitRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "subject",
+        "provider_handle",
+        "execution_id",
+        "attempt",
+        "generation",
+        "fencing_token",
+        "idempotency_key",
+        "request_sha256",
+        "capability_sha256"
+      ],
+      "properties": {
+        "schema_version": { "$ref": "#/$defs/schemaVersion" },
+        "subject": { "$ref": "#/$defs/subject" },
+        "provider_handle": { "$ref": "#/$defs/identifier" },
+        "execution_id": { "$ref": "#/$defs/identifier" },
+        "attempt": { "$ref": "#/$defs/positiveJSONInteger" },
+        "generation": { "$ref": "#/$defs/positiveJSONInteger" },
+        "fencing_token": { "$ref": "#/$defs/positiveJSONInteger" },
+        "idempotency_key": { "$ref": "#/$defs/identifier" },
+        "request_sha256": { "$ref": "#/$defs/sha256" },
+        "capability_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "verifyCallbackRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "subject",
+        "binding",
+        "canonical_result",
+        "result_sha256",
+        "callback_proof_base64",
+        "proof_sha256"
+      ],
+      "properties": {
+        "schema_version": { "$ref": "#/$defs/schemaVersion" },
+        "subject": { "$ref": "#/$defs/subject" },
+        "binding": { "$ref": "#/$defs/callbackBinding" },
+        "canonical_result": {
+          "$ref": "stage-execution-result.schema.json"
+        },
+        "result_sha256": { "$ref": "#/$defs/sha256" },
+        "callback_proof_base64": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 87384,
+          "contentEncoding": "base64"
+        },
+        "proof_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "capabilityResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "receipt"],
+      "properties": {
+        "schema_version": { "$ref": "#/$defs/schemaVersion" },
+        "receipt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["subject", "plan_id", "plan_sha256", "capability", "verifier"],
+          "properties": {
+            "subject": { "$ref": "#/$defs/subject" },
+            "plan_id": { "$ref": "#/$defs/identifier" },
+            "plan_sha256": { "$ref": "#/$defs/sha256" },
+            "capability": {
+              "$ref": "stage-execution-request.schema.json#/$defs/capability"
+            },
+            "verifier": { "$ref": "#/$defs/verifierRef" }
+          }
+        }
+      }
+    },
+    "ensureResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "receipt"],
+      "properties": {
+        "schema_version": { "$ref": "#/$defs/schemaVersion" },
+        "receipt": { "$ref": "#/$defs/ensureReceipt" }
+      }
+    },
+    "terminalResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "canonical_result", "callback_proof_base64"],
+      "properties": {
+        "schema_version": { "$ref": "#/$defs/schemaVersion" },
+        "canonical_result": {
+          "$ref": "stage-execution-result.schema.json"
+        },
+        "callback_proof_base64": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 87384,
+          "contentEncoding": "base64"
+        }
+      }
+    },
+    "callbackResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "receipt"],
+      "properties": {
+        "schema_version": { "$ref": "#/$defs/schemaVersion" },
+        "receipt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "subject",
+            "binding_id",
+            "binding_sha256",
+            "provider_handle",
+            "result_sha256",
+            "proof_sha256",
+            "verifier_id",
+            "verifier_revision",
+            "verifier_sha256"
+          ],
+          "properties": {
+            "subject": { "$ref": "#/$defs/subject" },
+            "binding_id": { "$ref": "#/$defs/identifier" },
+            "binding_sha256": { "$ref": "#/$defs/sha256" },
+            "provider_handle": { "$ref": "#/$defs/identifier" },
+            "result_sha256": { "$ref": "#/$defs/sha256" },
+            "proof_sha256": { "$ref": "#/$defs/sha256" },
+            "verifier_id": { "$ref": "#/$defs/identifier" },
+            "verifier_revision": { "$ref": "#/$defs/identifier" },
+            "verifier_sha256": { "$ref": "#/$defs/sha256" }
+          }
+        }
+      }
+    },
+    "errorResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "error"],
+      "properties": {
+        "schema_version": { "$ref": "#/$defs/schemaVersion" },
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message", "retryable"],
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "retryable": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

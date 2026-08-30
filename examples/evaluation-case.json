@@ -1,0 +1,44 @@
+{
+  "schema_version": "argus.evaluation_case.v1alpha1",
+  "case_id": "case-localized-1",
+  "type": "positive_localized",
+  "provenance": {
+    "kind": "human_confirmed_finding",
+    "repository_id": "repo-example",
+    "source_id": "review-comment-1",
+    "finding_id": "finding-confirmed-1",
+    "observed_at": "2026-08-25T07:00:00Z",
+    "collected_at": "2026-08-25T07:01:00Z",
+    "evidence_refs": ["artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
+  },
+  "license_consent": {
+    "license_id": "internal-license",
+    "consent": "authorized_internal",
+    "allowed_uses": ["evaluation", "promotion", "training"],
+    "restrictions": []
+  },
+  "classification": "internal",
+  "owner": "quality-team",
+  "input_snapshot_ref": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "label": {
+    "expected_outcome": "defect_present",
+    "category": "correctness",
+    "severity": "high",
+    "anchors": [{
+      "path": "internal/review.go",
+      "side": "new",
+      "start_line": 10,
+      "end_line": 12,
+      "source_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }],
+    "anchor_refs": ["artifact://local/sha256/dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"],
+    "suppression_targets": []
+  },
+  "label_policy_revision": "label-policy-1",
+  "review_state": "approved",
+  "dataset_state": "active",
+  "split": "test",
+  "clone_group_id": "clone-localized-1",
+  "eligibility": { "evaluation": true, "training": true, "promotion": true, "production_distribution": true },
+  "created_at": "2026-08-25T07:02:00Z"
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-mutation.schema.json",
+  "title": "Argus LocalAPIMutation v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "idempotency_key", "audit", "at"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_mutation.v1alpha1"},
+    "idempotency_key": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[^\\s\\x00-\\x1F\\x7F]+$"},
+    "audit": {"type": "string", "maxLength": 4096},
+    "at": {"type": "string", "format": "date-time"}
+  }
+}

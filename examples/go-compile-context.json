@@ -1,0 +1,44 @@
+{
+  "schema_version": "argus.context.go_compile.v1alpha1",
+  "provider_id": "argus-go-compile",
+  "provider_revision": "1",
+  "commit_oid": "1111111111111111111111111111111111111111",
+  "target_paths": ["review/handler.go"],
+  "toolchain": {
+    "go_version": "go1.26.4",
+    "goos": "darwin",
+    "goarch": "arm64",
+    "cgo_enabled": false,
+    "repository_code_executed": false,
+    "module_network": "disabled_goproxy_off",
+    "authority": "local_host_unattested"
+  },
+  "packages": [
+    {
+      "package": "./review",
+      "status": "failed",
+      "diagnostics": [
+        {"path": "review/handler.go", "line": 4, "column": 9, "message": "undefined: missingHandler"}
+      ],
+      "output_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "output_size_bytes": 53,
+      "command_executed": true,
+      "exit_code": 1,
+      "test_sources_included": true
+    }
+  ],
+  "coverage": {
+    "files_discovered": 3,
+    "files_materialized": 3,
+    "files_unavailable": 0,
+    "target_files_requested": 1,
+    "target_go_files_found": 1,
+    "packages_requested": 1,
+    "packages_passed": 0,
+    "packages_failed": 1,
+    "packages_unavailable": 0,
+    "diagnostics_emitted": 1,
+    "truncated": false
+  },
+  "gaps": []
+}

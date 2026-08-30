@@ -1,0 +1,35 @@
+{
+  "schema_version": "argus.formal_corpus_batch_request.v1alpha1",
+  "batch_id": "formal-corpus-example-1",
+  "evaluation_run_id": "formal-corpus-evaluation-example-1",
+  "evaluator_revision": "defect-presence-1",
+  "executor_revision": "argus-local-formal-pi-corpus-1",
+  "corpus_snapshot_ref": {
+    "uri": "artifact://local/sha256/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "size_bytes": 4096,
+    "contract": "argus.corpus_snapshot.v1alpha1"
+  },
+  "max_concurrency": 2,
+  "cases": [
+    {
+      "case_id": "case-example-1",
+      "expected_label_revision": 1,
+      "source_review_run_id": "source-review-run-example-1",
+      "exposure_observations": [
+        {"component": "prompt", "status": "not_seen", "revision": "prompt-1"},
+        {"component": "rule", "status": "not_seen", "revision": "rule-1"},
+        {"component": "model", "status": "not_seen", "revision": "model-1"},
+        {"component": "index", "status": "not_seen", "revision": "index-1"}
+      ],
+      "dimension_scope": [
+        {
+          "id": "correctness",
+          "revision": "builtin-v2",
+          "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-08-26T10:00:00Z"
+}

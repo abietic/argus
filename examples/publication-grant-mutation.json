@@ -1,0 +1,8 @@
+{
+  "schema_version": "argus.publication_grant_mutation.v1alpha1",
+  "idempotency_key": "publication-grant-key-001",
+  "actor": {"kind": "human", "id": "approver-001"},
+  "roles": ["publication_approver"],
+  "audit": "Approved one exact publication after reviewing the committed finding evidence.",
+  "at": "2026-08-25T06:01:00Z"
+}

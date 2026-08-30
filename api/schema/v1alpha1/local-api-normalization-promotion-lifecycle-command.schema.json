@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-normalization-promotion-lifecycle-command.schema.json",
+  "title": "Argus LocalAPINormalizationPromotionLifecycleCommand v1alpha1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "variant_id", "mutation"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_normalization_promotion_lifecycle_command.v1alpha1"},
+    "variant_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "mutation": {"$ref": "local-api-mutation.schema.json"}
+  }
+}

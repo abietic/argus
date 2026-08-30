@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-experiment-batch-submit-command.schema.json",
+  "title": "Argus LocalAPIExperimentBatchSubmitCommand v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request", "mutation"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_experiment_batch_submit_command.v1alpha1"},
+    "request": {
+      "allOf": [
+        {"$ref": "experiment-batch-request.schema.json"},
+        {"properties": {"created_at": {"pattern": "Z$"}}},
+        {"not": {"required": ["executor_template_ref"]}}
+      ]
+    },
+    "budget_timeout_ms": {"type": "integer", "minimum": 1, "maximum": 86400000},
+    "model": {"type": "string", "minLength": 1, "maxLength": 256},
+    "component_refs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {"$ref": "#/$defs/versionedRef"}
+    },
+    "context_providers": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {"$ref": "#/$defs/contextProviderDefinition"}
+    },
+    "rule_pack": {"$ref": "config-bundle.schema.json#/$defs/rulePack"},
+    "workflow_definition": {"$ref": "workflow-definition.schema.json"},
+    "finding_governance": {"$ref": "#/$defs/findingGovernancePolicy"},
+    "mutation": {"$ref": "local-api-mutation.schema.json"}
+  },
+  "oneOf": [
+    {
+      "required": ["budget_timeout_ms"],
+      "not": {"anyOf": [{"required": ["component_refs"]}, {"required": ["context_providers"]}, {"required": ["rule_pack"]}, {"required": ["workflow_definition"]}, {"required": ["model"]}, {"required": ["finding_governance"]}]},
+      "properties": {"request": {"properties": {"variable": {"const": "budget"}}}}
+    },
+    {
+      "required": ["model"],
+      "not": {"anyOf": [{"required": ["budget_timeout_ms"]}, {"required": ["component_refs"]}, {"required": ["context_providers"]}, {"required": ["rule_pack"]}, {"required": ["workflow_definition"]}, {"required": ["finding_governance"]}]},
+      "properties": {"request": {"properties": {"variable": {"const": "model"}}}}
+    },
+    {
+      "required": ["component_refs"],
+      "not": {"anyOf": [{"required": ["budget_timeout_ms"]}, {"required": ["context_providers"]}, {"required": ["rule_pack"]}, {"required": ["workflow_definition"]}, {"required": ["model"]}, {"required": ["finding_governance"]}]},
+      "properties": {
+        "request": {"properties": {"variable": {"const": "prompt"}}},
+        "component_refs": {"minItems": 1, "maxItems": 1}
+      }
+    },
+    {
+      "required": ["component_refs"],
+      "not": {"anyOf": [{"required": ["budget_timeout_ms"]}, {"required": ["context_providers"]}, {"required": ["rule_pack"]}, {"required": ["workflow_definition"]}, {"required": ["model"]}, {"required": ["finding_governance"]}]},
+      "properties": {
+        "request": {"properties": {"variable": {"const": "skill_pack"}}},
+        "component_refs": {"minItems": 1, "maxItems": 16}
+      }
+    },
+    {
+      "required": ["component_refs"],
+      "not": {"anyOf": [{"required": ["budget_timeout_ms"]}, {"required": ["context_providers"]}, {"required": ["rule_pack"]}, {"required": ["workflow_definition"]}, {"required": ["model"]}, {"required": ["finding_governance"]}]},
+      "properties": {
+        "request": {"properties": {"variable": {"const": "knowledge_pack"}}},
+        "component_refs": {"minItems": 1, "maxItems": 8}
+      }
+    },
+    {
+      "required": ["context_providers"],
+      "not": {"anyOf": [{"required": ["budget_timeout_ms"]}, {"required": ["component_refs"]}, {"required": ["rule_pack"]}, {"required": ["workflow_definition"]}, {"required": ["model"]}, {"required": ["finding_governance"]}]},
+      "properties": {"request": {"properties": {"variable": {"const": "index"}}}}
+    },
+    {
+      "required": ["rule_pack"],
+      "not": {"anyOf": [{"required": ["budget_timeout_ms"]}, {"required": ["component_refs"]}, {"required": ["context_providers"]}, {"required": ["workflow_definition"]}, {"required": ["model"]}, {"required": ["finding_governance"]}]},
+      "properties": {"request": {"properties": {"variable": {"const": "rule_pack"}}}}
+    },
+    {
+      "required": ["workflow_definition"],
+      "not": {"anyOf": [{"required": ["budget_timeout_ms"]}, {"required": ["component_refs"]}, {"required": ["context_providers"]}, {"required": ["rule_pack"]}, {"required": ["model"]}, {"required": ["finding_governance"]}]},
+      "properties": {"request": {"properties": {"variable": {"const": "workflow"}}}}
+    },
+    {
+      "required": ["finding_governance"],
+      "not": {"anyOf": [{"required": ["budget_timeout_ms"]}, {"required": ["component_refs"]}, {"required": ["context_providers"]}, {"required": ["rule_pack"]}, {"required": ["workflow_definition"]}, {"required": ["model"]}]},
+      "properties": {"request": {"properties": {"variable": {"const": "finding_governance"}}}}
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$"
+    },
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "calibrationPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_ppm", "confidence_ppm"],
+      "properties": {
+        "raw_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "confidence_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000}
+      }
+    },
+    "calibrationProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "id", "revision", "points", "sha256"],
+      "properties": {
+        "schema_version": {"const": "argus.calibration_profile.v1alpha1"},
+        "id": {"$ref": "#/$defs/identifier"},
+        "revision": {"$ref": "#/$defs/identifier"},
+        "points": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/calibrationPoint"}},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "findingGovernancePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "id", "revision", "calibration_profile", "minimum_confidence_ppm", "max_findings", "sha256"],
+      "properties": {
+        "schema_version": {"const": "argus.finding_governance_policy.v1alpha1"},
+        "id": {"const": "effective"},
+        "revision": {"const": "resolved"},
+        "calibration_profile": {"$ref": "#/$defs/calibrationProfile"},
+        "minimum_confidence_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "max_findings": {"type": "integer", "minimum": 0},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "versionedRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision", "sha256"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$"},
+        "revision": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "contextProviderDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision", "kind", "adapter"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "revision": {"$ref": "#/$defs/identifier"},
+        "kind": {"enum": ["repository_search", "codegraph", "lsp", "dependency", "artifact", "go_ast", "compile"]},
+        "adapter": {"$ref": "#/$defs/versionedRef"}
+      }
+    }
+  }
+}

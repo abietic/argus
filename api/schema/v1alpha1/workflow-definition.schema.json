@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/workflow-definition.schema.json",
+  "title": "Argus WorkflowDefinition v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "workflow_id",
+    "revision",
+    "stages"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "argus.workflow.v1alpha1"
+    },
+    "workflow_id": {
+      "$ref": "#/$defs/nonEmpty"
+    },
+    "revision": {
+      "$ref": "#/$defs/nonEmpty"
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/stage"
+      }
+    }
+  },
+  "$defs": {
+    "nonEmpty": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\\S(?:.*\\S)?$"
+    },
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stage_id",
+        "kind",
+        "implementation_revision",
+        "input_contract",
+        "output_contract",
+        "depends_on",
+        "executor",
+        "required_capabilities",
+        "budget",
+        "retry",
+        "failure_policy",
+        "side_effect",
+        "replay_policy"
+      ],
+      "properties": {
+        "stage_id": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "kind": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "implementation_revision": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "input_contract": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "output_contract": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "depends_on": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmpty"
+          }
+        },
+        "executor": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "required_capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmpty"
+          }
+        },
+        "authority_ceiling": {
+          "$ref": "#/$defs/authorityCeiling"
+        },
+        "budget": {
+          "$ref": "#/$defs/budget"
+        },
+        "retry": {
+          "$ref": "#/$defs/retry"
+        },
+        "failure_policy": {
+          "enum": [
+            "fail_run",
+            "allow_partial",
+            "record_pending"
+          ]
+        },
+        "side_effect": {
+          "enum": [
+            "none",
+            "remote_publish"
+          ]
+        },
+        "replay_policy": {
+          "enum": [
+            "checkpoint",
+            "exact",
+            "forbidden"
+          ]
+        }
+      }
+    },
+    "authorityCeiling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_egress",
+        "allowed_tools",
+        "tool_network",
+        "workspace_reads",
+        "workspace_writes",
+        "remote_writes",
+        "max_delegation_depth",
+        "max_model_calls",
+        "max_tool_calls"
+      ],
+      "properties": {
+        "model_egress": {"const": "provider_broker_only"},
+        "allowed_tools": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonEmpty"}
+        },
+        "tool_network": {"const": "deny"},
+        "workspace_reads": {"const": "frozen_input_only"},
+        "workspace_writes": {"const": "deny"},
+        "remote_writes": {"const": "deny"},
+        "max_delegation_depth": {"type": "integer", "minimum": 0},
+        "max_model_calls": {"type": "integer", "minimum": 1},
+        "max_tool_calls": {"type": "integer", "minimum": 0}
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "timeout_ms",
+        "max_input_bytes",
+        "max_output_bytes",
+        "max_concurrency"
+      ],
+      "properties": {
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_input_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_concurrency": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_attempts",
+        "backoff_ms",
+        "jitter",
+        "retryable_codes",
+        "unknown_outcome"
+      ],
+      "properties": {
+        "max_attempts": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "backoff_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "jitter": {
+          "type": "boolean"
+        },
+        "retryable_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmpty"
+          }
+        },
+        "unknown_outcome": {
+          "enum": [
+            "fail",
+            "reconcile"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/stage-execution-request.schema.json",
+  "title": "Argus StageExecutionRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_sha256",
+    "execution_id",
+    "review_run_id",
+    "tenant_id",
+    "workspace_id",
+    "workload_id",
+    "lease_id",
+    "lease_worker_id",
+    "stage",
+    "attempt",
+    "generation",
+    "fencing_token",
+    "idempotency_key",
+    "plan",
+    "execution_snapshot",
+    "review_input",
+    "upstream",
+    "output_contract",
+    "capability",
+    "deadline",
+    "side_effects"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "argus.stage_execution_request.v1alpha1"
+    },
+    "request_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "execution_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "review_run_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "tenant_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "workspace_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "workload_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "lease_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "lease_worker_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "stage": {
+      "$ref": "#/$defs/versionedRef"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "fencing_token": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "idempotency_key": {
+      "$ref": "#/$defs/identifier"
+    },
+    "plan": {
+      "$ref": "#/$defs/agentStagePlanBinding"
+    },
+    "execution_snapshot": {
+      "$ref": "#/$defs/executionSnapshotBinding"
+    },
+    "review_input": {
+      "$ref": "#/$defs/reviewInputBinding"
+    },
+    "upstream": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonEmptyArtifactBinding"
+      }
+    },
+    "output_contract": {
+      "$ref": "#/$defs/identifier"
+    },
+    "capability": {
+      "$ref": "#/$defs/capability"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "side_effects": {
+      "const": "deny"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\x00-\\x1F\\x7F]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifactURI": {
+      "type": "string",
+      "pattern": "^artifact://[A-Za-z0-9]([A-Za-z0-9.-]{0,126}[A-Za-z0-9])?/[A-Za-z0-9._~-]+(/[A-Za-z0-9._~-]+)*$",
+      "not": {
+        "pattern": "/(\\.|\\.\\.)(/|$)"
+      }
+    },
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uri",
+        "sha256",
+        "size_bytes"
+      ],
+      "properties": {
+        "uri": {
+          "$ref": "#/$defs/artifactURI"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "nonEmptyArtifactBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "contract"
+      ],
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/contentRef"
+        },
+        "contract": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "agentStagePlanBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "contract"
+      ],
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/contentRef"
+        },
+        "contract": {
+          "const": "argus.agent_stage_plan.v1alpha1"
+        }
+      }
+    },
+    "executionSnapshotBinding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/nonEmptyArtifactBinding"
+        },
+        {
+          "properties": {
+            "contract": {
+              "const": "argus.execution_snapshot.v1alpha1"
+            }
+          }
+        }
+      ]
+    },
+    "reviewInputBinding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/nonEmptyArtifactBinding"
+        },
+        {
+          "properties": {
+            "contract": {
+              "const": "argus.review_input.v1alpha1"
+            }
+          }
+        }
+      ]
+    },
+    "versionedRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime_kind",
+        "runtime_id",
+        "runtime_revision",
+        "runtime_sha256",
+        "build_identity",
+        "authority",
+        "trust",
+        "sha256"
+      ],
+      "properties": {
+        "runtime_kind": {
+          "$ref": "#/$defs/identifier"
+        },
+        "runtime_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "runtime_revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "runtime_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "build_identity": {
+          "$ref": "#/$defs/identifier"
+        },
+        "authority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "allowed_tools",
+            "model_egress",
+            "tool_network",
+            "workspace_reads",
+            "workspace_writes",
+            "remote_writes",
+            "max_delegation_depth"
+          ],
+          "properties": {
+            "allowed_tools": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/identifier"
+              }
+            },
+            "model_egress": {
+              "const": "provider_broker_only"
+            },
+            "tool_network": {
+              "const": "deny"
+            },
+            "workspace_reads": {
+              "const": "frozen_input_only"
+            },
+            "workspace_writes": {
+              "const": "deny"
+            },
+            "remote_writes": {
+              "const": "deny"
+            },
+            "max_delegation_depth": {
+              "const": 0
+            }
+          }
+        },
+        "trust": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "authority",
+            "capability_verifier",
+            "callback_verifier"
+          ],
+          "properties": {
+            "authority": {
+              "enum": ["local_host", "platform"]
+            },
+            "capability_verifier": {
+              "$ref": "#/$defs/versionedRef"
+            },
+            "callback_verifier": {
+              "$ref": "#/$defs/versionedRef"
+            }
+          }
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    }
+  }
+}

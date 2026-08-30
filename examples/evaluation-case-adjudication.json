@@ -1,0 +1,26 @@
+{
+  "schema_version": "argus.evaluation_case_adjudication.v1alpha1",
+  "case_id": "case-localized-1",
+  "expected_governance_revision": 1,
+  "expected_label_revision": 1,
+  "annotation_event_ids": ["annotation-reviewer-a", "annotation-reviewer-b"],
+  "outcome": "approve",
+  "selected_label": {
+    "expected_outcome": "defect_present",
+    "category": "correctness",
+    "severity": "high",
+    "anchors": [{
+      "path": "internal/review.go",
+      "side": "new",
+      "start_line": 10,
+      "end_line": 12,
+      "source_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }],
+    "anchor_refs": ["artifact://local/sha256/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"],
+    "suppression_targets": []
+  },
+  "label_policy_revision": "label-policy-1",
+  "rationale": "independent adjudication resolved the reviewer disagreement using source evidence",
+  "evidence_refs": ["artifact://local/sha256/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"],
+  "adjudicated_at": "2026-03-01T09:10:00Z"
+}

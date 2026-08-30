@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/agent-execution-receipt-collection.schema.json",
+  "title": "Argus AgentExecutionReceiptCollection v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "source_run_id",
+    "execution_id",
+    "review_run_id",
+    "receipts"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.agent_execution_receipt_collection.v1alpha1"},
+    "plan_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "source_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "execution_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "review_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "receipts": {
+      "type": "array",
+      "items": {
+        "$ref": "https://argus.local/schema/v1alpha1/agent-execution-receipt.schema.json"
+      }
+    }
+  }
+}

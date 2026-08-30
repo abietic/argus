@@ -1,0 +1,20 @@
+{
+  "schema_version": "argus.calibration_promotion_observation_request.v1alpha1",
+  "observation_id": "promotion-observation-20260826-1",
+  "plan_id": "calibration-promotion-20260826-1",
+  "baseline_snapshot_id": "dashboard-before-promotion-20260826",
+  "observation_snapshot_id": "dashboard-after-promotion-20260827",
+  "policy": {
+    "schema_version": "argus.calibration_promotion_monitor_policy.v1alpha1",
+    "policy_id": "calibration-promotion-monitor",
+    "revision": "1",
+    "rules": [
+      {"metric_id": "published_adverse_rate", "direction": "lower_is_better", "minimum_baseline_sample_size": 30, "minimum_observation_sample_size": 30, "maximum_regression_ppm": 50000},
+      {"metric_id": "published_fixed_rate", "direction": "higher_is_better", "minimum_baseline_sample_size": 30, "minimum_observation_sample_size": 30, "maximum_regression_ppm": 50000},
+      {"metric_id": "published_outcome_coverage_rate", "direction": "higher_is_better", "minimum_baseline_sample_size": 50, "minimum_observation_sample_size": 50, "maximum_regression_ppm": 100000},
+      {"metric_id": "review_run_complete_rate", "direction": "higher_is_better", "minimum_baseline_sample_size": 100, "minimum_observation_sample_size": 100, "maximum_regression_ppm": 20000},
+      {"metric_id": "review_run_success_rate", "direction": "higher_is_better", "minimum_baseline_sample_size": 100, "minimum_observation_sample_size": 100, "maximum_regression_ppm": 20000}
+    ]
+  },
+  "observed_at": "2026-08-27T12:00:00Z"
+}

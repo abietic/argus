@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/training-job-prepare-request.schema.json",
+  "title": "Argus TrainingJobPrepareRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "job_id", "export_id", "export_bundle_ref", "provider_id", "provider_profile_revision", "base_model", "objective", "hyperparameters", "created_at"],
+  "properties": {
+    "schema_version": {"const": "argus.training_job_prepare_request.v1alpha1"},
+    "job_id": {"$ref": "#/$defs/id"},
+    "export_id": {"$ref": "#/$defs/id"},
+    "export_bundle_ref": {"$ref": "#/$defs/export_ref"},
+    "provider_id": {"$ref": "#/$defs/id"},
+    "provider_profile_revision": {"$ref": "#/$defs/id"},
+    "base_model": {"$ref": "#/$defs/component_ref"},
+    "objective": {"const": "supervised_fine_tuning"},
+    "hyperparameters": {"$ref": "#/$defs/hyperparameters"},
+    "created_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/\\-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "export_ref": {"type": "object", "additionalProperties": false, "required": ["uri", "sha256", "size_bytes", "contract"], "properties": {"uri": {"type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$"}, "sha256": {"$ref": "#/$defs/sha256"}, "size_bytes": {"type": "integer", "minimum": 0, "maximum": 9007199254740991}, "contract": {"const": "argus.training_export_bundle.v1alpha1+json"}}},
+    "component_ref": {"type": "object", "additionalProperties": false, "required": ["id", "revision", "sha256"], "properties": {"id": {"$ref": "#/$defs/id"}, "revision": {"$ref": "#/$defs/id"}, "sha256": {"$ref": "#/$defs/sha256"}}},
+    "hyperparameters": {"type": "object", "additionalProperties": false, "required": ["epochs", "batch_size", "learning_rate_micros", "seed"], "properties": {"epochs": {"type": "integer", "minimum": 1, "maximum": 100}, "batch_size": {"type": "integer", "minimum": 1, "maximum": 65536}, "learning_rate_micros": {"type": "integer", "minimum": 1, "maximum": 1000000000}, "seed": {"type": "integer", "minimum": 0, "maximum": 9007199254740991}}}
+  }
+}

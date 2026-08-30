@@ -1,0 +1,30 @@
+{
+  "schema_version": "argus.evaluation_probe.v1alpha1",
+  "probe_id": "synthetic-clean-probe-1",
+  "kind": "synthetic_clean",
+  "review_run_id": "review-run-synthetic-clean-1",
+  "oracle": {
+    "authority": "independent-clean-corpus-review",
+    "revision": "oracle-v1",
+    "expected_outcome": "clean",
+    "anchors": [],
+    "evidence_artifacts": [
+      {
+        "uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size_bytes": 128,
+        "contract": "argus.clean_corpus_attestation.v1alpha1"
+      }
+    ]
+  },
+  "receipt_ref": {
+    "uri": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "size_bytes": 512,
+    "contract": "argus.evaluation_probe_receipt.v1alpha1"
+  },
+  "source_authority": "synthetic-corpus-builder",
+  "source_id": "clean-fixture-1",
+  "source_revision": "builder-v1",
+  "recorded_at": "2026-08-25T14:02:00Z"
+}

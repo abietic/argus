@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/normalization-promotion-gate-request.schema.json",
+  "title": "Argus NormalizationPromotionGateRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "variant_id", "gate", "policy_ref", "quality_run_ref", "evaluated_at"],
+  "properties": {
+    "schema_version": {"const": "argus.normalization_promotion_gate_request.v1alpha1"},
+    "variant_id": {"$ref": "#/$defs/id"},
+    "gate": {"enum": ["targeted_regression", "fixed_holdout"]},
+    "policy_ref": {"$ref": "#/$defs/artifact_ref"},
+    "quality_run_ref": {"$ref": "#/$defs/artifact_ref"},
+    "evaluated_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "contract": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "argus.review_spec.v1alpha1",
+  "request_id": "review-request-selection-001",
+  "idempotency_key": "local-selection-001",
+  "tenant_id": "tenant-local",
+  "workspace_id": "workspace-argus",
+  "repository": {
+    "provider": "local",
+    "repository_id": "argus"
+  },
+  "target": {
+    "mode": "selection",
+    "selection": {
+      "revision": "2222222222222222222222222222222222222222",
+      "path": "internal/review/service.go",
+      "start_line": 40,
+      "end_line": 72,
+      "content": {
+        "uri": "artifact://argus/selections/selection-001",
+        "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "size_bytes": 256
+      }
+    }
+  },
+  "config_bundle_ref": {
+    "id": "config-default",
+    "revision": "1",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "workflow_ref": {
+    "id": "workflow-default",
+    "revision": "1",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "requested_outputs": [
+    "findings",
+    "report"
+  ],
+  "remote_writes": "deny"
+}

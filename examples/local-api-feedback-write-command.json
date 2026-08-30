@@ -1,0 +1,16 @@
+{
+  "schema_version": "argus.local_api_feedback_write_command.v1alpha1",
+  "feedback_id": "feedback-api-1",
+  "action": "accept",
+  "source": {"kind": "api", "id": "local-platform-api"},
+  "occurred_at": "2026-08-26T03:59:00Z",
+  "source_refs": [
+    {"kind": "manual_observation", "authority": "local-operator", "id": "observation-1"}
+  ],
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "finding-feedback-api-1",
+    "audit": "operator accepted finding",
+    "at": "2026-08-26T04:00:00Z"
+  }
+}

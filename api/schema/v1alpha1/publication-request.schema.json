@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/publication-request.schema.json",
+  "title": "Argus PublicationRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "publication_id", "idempotency_key", "grant_id", "grant_sha256", "tenant_id", "workspace_id", "run_id", "run_kind", "run_status", "target_mode", "provider", "repository_id", "change_kind", "change_id", "base_revision", "expected_head_revision", "target_snapshot_ref", "config_bundle_ref", "finding_source_ref", "finding_source_contract", "finding_id", "fingerprint", "decision_id", "target_digest", "anchor", "channel", "message", "remote_writes", "expected_permission_revision", "grant_expires_at", "created_at"],
+  "properties": {
+    "schema_version": {"const": "argus.publication_request.v1alpha1"},
+    "publication_id": {"$ref": "#/$defs/id"},
+    "idempotency_key": {"$ref": "#/$defs/id"},
+    "grant_id": {"$ref": "#/$defs/id"},
+    "grant_sha256": {"$ref": "#/$defs/sha256"},
+    "tenant_id": {"$ref": "#/$defs/id"},
+    "workspace_id": {"$ref": "#/$defs/id"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "run_kind": {"const": "review"},
+    "run_status": {"const": "succeeded"},
+    "target_mode": {"const": "diff"},
+    "provider": {"$ref": "#/$defs/id"},
+    "repository_id": {"$ref": "#/$defs/id"},
+    "change_kind": {"const": "pull_request"},
+    "change_id": {"$ref": "#/$defs/id"},
+    "base_revision": {"$ref": "#/$defs/id"},
+    "expected_head_revision": {"$ref": "#/$defs/id"},
+    "target_snapshot_ref": {"$ref": "#/$defs/content_ref"},
+    "config_bundle_ref": {"$ref": "#/$defs/content_ref"},
+    "finding_source_ref": {"$ref": "#/$defs/content_ref"},
+    "finding_source_contract": {"enum": ["argus.finding_set.v1alpha1", "argus.governed_review_report.v1alpha1+json"]},
+    "finding_id": {"$ref": "#/$defs/id"},
+    "fingerprint": {"$ref": "#/$defs/id"},
+    "decision_id": {"$ref": "#/$defs/id"},
+    "target_digest": {"$ref": "#/$defs/sha256"},
+    "anchor": {"$ref": "#/$defs/anchor"},
+    "channel": {"$ref": "#/$defs/id"},
+    "message": {"type": "string", "minLength": 1, "maxLength": 16384},
+    "remote_writes": {"const": "allow"},
+    "expected_permission_revision": {"$ref": "#/$defs/id"},
+    "grant_expires_at": {"type": "string", "format": "date-time"},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[^\\x00-\\x1F\\x7F]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "content_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^artifact://[^/]+/.+$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0}
+      }
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "side", "start_line", "end_line", "target_digest"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "side": {"const": "head"},
+        "start_line": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "end_line": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "target_digest": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

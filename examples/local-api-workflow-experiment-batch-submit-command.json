@@ -1,0 +1,80 @@
+{
+  "schema_version": "argus.local_api_experiment_batch_submit_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.experiment_batch_request.v1alpha1",
+    "batch_id": "experiment-batch-workflow-1",
+    "baseline_evaluation_run_id": "evaluation-baseline-1",
+    "variant_evaluation_run_id": "evaluation-workflow-1",
+    "experiment_run_id": "experiment-workflow-1",
+    "experiment_revision": "formal-stage-budget-v2",
+    "variable": "workflow",
+    "executor_revision": "argus-local-formal-pi-replay-1",
+    "max_concurrency": 2,
+    "cases": [
+      {
+        "case_id": "case-example-1",
+        "expected_label_revision": 1,
+        "baseline_review_run_id": "review-baseline-1",
+        "expected_baseline_config_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "expected_variant_config_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "exposure_observations": [
+          {"component": "prompt", "status": "not_seen", "revision": "prompt-1"},
+          {"component": "rule", "status": "not_seen", "revision": "rule-1"},
+          {"component": "model", "status": "not_seen", "revision": "model-1"},
+          {"component": "index", "status": "not_seen", "revision": "index-1"}
+        ]
+      }
+    ],
+    "created_at": "2026-08-27T12:45:00Z"
+  },
+  "workflow_definition": {
+    "schema_version": "argus.workflow.v1alpha1",
+    "workflow_id": "formal-pi-agent-review",
+    "revision": "stage-budget-v2",
+    "stages": [
+      {
+        "stage_id": "agent_hypothesize",
+        "kind": "agent_hypothesize",
+        "implementation_revision": "1",
+        "input_contract": "argus.review_input.v1alpha1",
+        "output_contract": "argus.review_hypothesis_set.v1alpha1",
+        "depends_on": [],
+        "executor": "formal-local-pi",
+        "required_capabilities": ["brokered-model", "frozen-review-input"],
+        "authority_ceiling": {
+          "model_egress": "provider_broker_only",
+          "allowed_tools": ["list_files", "read_file", "search_code"],
+          "tool_network": "deny",
+          "workspace_reads": "frozen_input_only",
+          "workspace_writes": "deny",
+          "remote_writes": "deny",
+          "max_delegation_depth": 0,
+          "max_model_calls": 2000,
+          "max_tool_calls": 100
+        },
+        "budget": {
+          "timeout_ms": 60000,
+          "max_input_bytes": 67108864,
+          "max_output_bytes": 1048576,
+          "max_concurrency": 8
+        },
+        "retry": {
+          "max_attempts": 1,
+          "backoff_ms": 0,
+          "jitter": false,
+          "retryable_codes": [],
+          "unknown_outcome": "reconcile"
+        },
+        "failure_policy": "fail_run",
+        "side_effect": "none",
+        "replay_policy": "exact"
+      }
+    ]
+  },
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "submit-workflow-experiment-001",
+    "audit": "submit one exact effective formal workflow budget experiment",
+    "at": "2026-08-27T12:45:00Z"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": "argus.local_api_config_resolution_query.v1alpha1",
+  "context": {
+    "tenant_id": "tenant-local",
+    "organization_id": "organization-local",
+    "repository_id": "repository-local",
+    "path": "internal/service.go",
+    "invocation_id": "local-api-config-resolution-1"
+  }
+}

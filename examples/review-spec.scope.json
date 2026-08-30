@@ -1,0 +1,41 @@
+{
+  "schema_version": "argus.review_spec.v1alpha1",
+  "request_id": "review-request-scope-001",
+  "idempotency_key": "local-scope-001",
+  "tenant_id": "tenant-local",
+  "workspace_id": "workspace-argus",
+  "repository": {
+    "provider": "local",
+    "repository_id": "argus"
+  },
+  "target": {
+    "mode": "scope",
+    "scope": {
+      "revision": "2222222222222222222222222222222222222222",
+      "include": [
+        "internal/**",
+        "pkg/**"
+      ],
+      "exclude": [
+        "**/*_test.go",
+        "build/**"
+      ]
+    }
+  },
+  "config_bundle_ref": {
+    "id": "config-default",
+    "revision": "1",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "workflow_ref": {
+    "id": "workflow-default",
+    "revision": "1",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "requested_outputs": [
+    "findings",
+    "report",
+    "trace"
+  ],
+  "remote_writes": "deny"
+}

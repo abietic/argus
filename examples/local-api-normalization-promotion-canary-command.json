@@ -1,0 +1,7 @@
+{
+  "schema_version": "argus.local_api_normalization_promotion_canary_command.v1alpha1",
+  "variant_id": "normalization-policy-argus-pi-review-workflow-v2",
+  "policy_ref": {"uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "size_bytes": 1024, "contract": "argus.normalization_promotion_policy.v1alpha1+json"},
+  "rollout": {"percentage": 10, "seed": "normalization-v2-canary"},
+  "mutation": {"schema_version": "argus.local_api_mutation.v1alpha1", "idempotency_key": "normalization-canary-1", "audit": "start deterministic normalization canary", "at": "2026-08-27T10:00:00Z"}
+}

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/workload-timeline-event.schema.json",
+  "title": "Argus WorkloadTimelineEvent v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sequence", "event_id", "type", "policy_sha256", "occurred_at", "actor", "audit"],
+  "properties": {
+    "schema_version": {"const": "argus.workload_timeline_event.v1alpha1"},
+    "sequence": {"type": "integer", "minimum": 1},
+    "event_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "type": {"enum": ["submitted", "claimed", "heartbeat", "callback_accepted", "callback_rejected", "run_canceled", "reconciled"]},
+    "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "actor": {"type": "string", "minLength": 1, "maxLength": 256},
+    "audit": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "admission": {"$ref": "#/$defs/admission"},
+    "lease": {"$ref": "#/$defs/lease"},
+    "heartbeat": {"$ref": "#/$defs/heartbeatFact"},
+    "callback": {"$ref": "#/$defs/callbackFact"},
+    "cancellation": {"$ref": "#/$defs/cancellation"},
+    "reconciled": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/reconcileAction"}}
+  },
+  "oneOf": [
+    {"required": ["admission"]}, {"required": ["lease"]}, {"required": ["heartbeat"]},
+    {"required": ["callback"]}, {"required": ["cancellation"]}, {"required": ["reconciled"]}
+  ],
+  "$defs": {
+    "admission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision", "reason", "global_queue_depth", "class_queue_depth", "tenant_queue_depth", "admission_deadline", "recorded_at"],
+      "properties": {
+        "decision": {"enum": ["admitted", "queued", "rejected", "throttled"]},
+        "reason": {"type": "string", "minLength": 1},
+        "global_queue_depth": {"type": "integer", "minimum": 0},
+        "class_queue_depth": {"type": "integer", "minimum": 0},
+        "tenant_queue_depth": {"type": "integer", "minimum": 0},
+        "admission_deadline": {"type": "string", "format": "date-time"},
+        "recorded_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "lease": {
+      "type": "object", "additionalProperties": false,
+      "required": ["lease_id", "workload_id", "worker_id", "attempt", "generation", "fencing_token", "acquired_at", "last_heartbeat", "expires_at"],
+      "properties": {
+        "lease_id": {"type": "string", "minLength": 1}, "workload_id": {"type": "string", "minLength": 1},
+        "worker_id": {"type": "string", "minLength": 1}, "attempt": {"type": "integer", "minimum": 1},
+        "generation": {"type": "integer", "minimum": 1}, "fencing_token": {"type": "integer", "minimum": 1},
+        "acquired_at": {"type": "string", "format": "date-time"}, "last_heartbeat": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "heartbeatFact": {
+      "type": "object", "additionalProperties": false, "required": ["heartbeat", "expires_at"],
+      "properties": {
+        "heartbeat": {"$ref": "#/$defs/heartbeat"},
+        "expires_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "heartbeat": {
+      "type": "object", "additionalProperties": false,
+      "required": ["idempotency_key", "lease_id", "workload_id", "worker_id", "attempt", "generation", "fencing_token", "at"],
+      "properties": {
+        "idempotency_key": {"type": "string", "minLength": 1}, "lease_id": {"type": "string", "minLength": 1},
+        "workload_id": {"type": "string", "minLength": 1}, "worker_id": {"type": "string", "minLength": 1},
+        "attempt": {"type": "integer", "minimum": 1}, "generation": {"type": "integer", "minimum": 1},
+        "fencing_token": {"type": "integer", "minimum": 1}, "at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "callbackFact": {
+      "type": "object", "additionalProperties": false, "required": ["callback"],
+      "properties": {"callback": {"$ref": "#/$defs/callback"}, "reason": {"type": "string"}}
+    },
+    "callback": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "idempotency_key", "lease_id", "workload_id", "worker_id", "attempt", "generation", "fencing_token", "status", "output_refs", "occurred_at"],
+      "properties": {
+        "schema_version": {"const": "argus.workload_callback.v1alpha1"}, "idempotency_key": {"type": "string", "minLength": 1},
+        "lease_id": {"type": "string", "minLength": 1}, "workload_id": {"type": "string", "minLength": 1},
+        "worker_id": {"type": "string", "minLength": 1}, "attempt": {"type": "integer", "minimum": 1},
+        "generation": {"type": "integer", "minimum": 1}, "fencing_token": {"type": "integer", "minimum": 1},
+        "status": {"enum": ["succeeded", "failed", "unknown"]}, "output_refs": {"type": "array", "items": {"type": "string"}},
+        "failure_code": {"type": "string", "minLength": 1}, "occurred_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "cancellation": {
+      "type": "object", "additionalProperties": false, "required": ["run_id", "actor", "reason", "canceled_at"],
+      "properties": {
+        "run_id": {"type": "string", "minLength": 1}, "actor": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1}, "canceled_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "reconcileAction": {
+      "type": "object", "additionalProperties": false,
+      "required": ["workload_id", "type", "generation", "fencing_token"],
+      "properties": {
+        "workload_id": {"type": "string", "minLength": 1},
+        "type": {"enum": ["admission_expired", "execution_expired", "lease_expired", "unknown_expired"]},
+        "generation": {"type": "integer", "minimum": 0}, "fencing_token": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

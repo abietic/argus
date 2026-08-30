@@ -1,0 +1,17 @@
+{
+  "schema_version": "argus.local_api_trust_key_revocation_command.v1alpha1",
+  "revocation": {
+    "schema_version": "argus.governance_trust_key_revocation.v1alpha1",
+    "authority": "example-governance-authority",
+    "key_id": "example-key-1",
+    "revision": "example-trust-v1",
+    "reason": "external governance authority rotated the signing key",
+    "revoked_at": "2026-08-25T08:00:00Z"
+  },
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "local-api-revoke-example-key-1",
+    "audit": "revoke rotated external governance key",
+    "at": "2026-08-25T08:00:00Z"
+  }
+}

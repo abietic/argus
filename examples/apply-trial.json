@@ -1,0 +1,22 @@
+{
+  "schema_version": "argus.apply_trial.v1alpha1",
+  "trial_id": "apply-trial-example-1",
+  "case_id": "case-fix-example-1",
+  "label_revision": 1,
+  "review_run_id": "review-run-example-1",
+  "finding_id": "finding-example-1",
+  "finding_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "input_snapshot_ref": { "uri": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "size_bytes": 512, "contract": "argus.materialized_target.v1alpha1" },
+  "governed_report_ref": { "uri": "artifact://local/sha256/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "size_bytes": 768, "contract": "argus.governed_review_report.v1alpha1+json" },
+  "suggestion_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "edit_script_ref": { "uri": "artifact://local/sha256/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "size_bytes": 128, "contract": "argus.edit_script.v1alpha1" },
+  "authority": "local_host_unattested",
+  "completeness": "conclusive",
+  "reason_codes": [],
+  "checks": [
+    { "kind": "dry_run", "status": "passed", "command_sha256": "1111111111111111111111111111111111111111111111111111111111111111", "evidence_ref": { "uri": "artifact://local/sha256/2222222222222222222222222222222222222222222222222222222222222222", "sha256": "2222222222222222222222222222222222222222222222222222222222222222", "size_bytes": 64, "contract": "argus.apply_check_evidence.v1alpha1" }, "duration_ms": 5 },
+    { "kind": "compile", "status": "passed", "command_sha256": "3333333333333333333333333333333333333333333333333333333333333333", "evidence_ref": { "uri": "artifact://local/sha256/4444444444444444444444444444444444444444444444444444444444444444", "sha256": "4444444444444444444444444444444444444444444444444444444444444444", "size_bytes": 96, "contract": "argus.apply_check_evidence.v1alpha1" }, "duration_ms": 1200 },
+    { "kind": "test", "status": "passed", "command_sha256": "5555555555555555555555555555555555555555555555555555555555555555", "evidence_ref": { "uri": "artifact://local/sha256/6666666666666666666666666666666666666666666666666666666666666666", "sha256": "6666666666666666666666666666666666666666666666666666666666666666", "size_bytes": 128, "contract": "argus.apply_check_evidence.v1alpha1" }, "duration_ms": 2400 }
+  ],
+  "executed_at": "2026-08-25T08:30:00Z"
+}

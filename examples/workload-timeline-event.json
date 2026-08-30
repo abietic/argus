@@ -1,0 +1,19 @@
+{
+  "schema_version": "argus.workload_timeline_event.v1alpha1",
+  "sequence": 42,
+  "event_id": "job-example-submit",
+  "type": "submitted",
+  "policy_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "occurred_at": "2026-08-25T08:00:00Z",
+  "actor": "review-operator",
+  "audit": "admit immutable local review job",
+  "admission": {
+    "decision": "admitted",
+    "reason": "capacity_available",
+    "global_queue_depth": 0,
+    "class_queue_depth": 0,
+    "tenant_queue_depth": 0,
+    "admission_deadline": "2026-08-25T08:05:00Z",
+    "recorded_at": "2026-08-25T08:00:00Z"
+  }
+}

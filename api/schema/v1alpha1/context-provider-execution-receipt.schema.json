@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/context-provider-execution-receipt.schema.json",
+  "title": "Argus ContextProviderExecutionReceipt v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "receipt_id", "sha256", "provider_id", "provider_revision", "kind", "adapter", "request_sha256", "repository_id", "commit_oid", "observed_revision", "target_paths", "target_ranges", "status", "reason_code", "context_id", "context_digest", "context_contract", "timeout_ms", "started_at", "completed_at", "duration_ms", "authority"],
+  "properties": {
+    "schema_version": {"const": "argus.context_provider_execution_receipt.v1alpha1"},
+    "receipt_id": {"type": "string", "pattern": "^context-provider-receipt-[0-9a-f]{24}$"},
+    "sha256": {"$ref": "#/$defs/sha256"},
+    "provider_id": {"$ref": "#/$defs/id"},
+    "provider_revision": {"$ref": "#/$defs/id"},
+    "kind": {"enum": ["repository_search", "codegraph", "lsp", "dependency", "artifact", "go_ast", "compile"]},
+    "adapter": {"$ref": "#/$defs/versioned_ref"},
+    "request_sha256": {"$ref": "#/$defs/sha256"},
+    "repository_id": {"$ref": "#/$defs/id"},
+    "commit_oid": {"type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"},
+    "observed_revision": {"type": "string", "maxLength": 64},
+    "target_paths": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+    "target_ranges": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/target_range"}},
+    "status": {"enum": ["succeeded", "gap"]},
+    "reason_code": {"type": "string", "maxLength": 128},
+    "context_id": {"$ref": "#/$defs/id"},
+    "context_digest": {"$ref": "#/$defs/sha256"},
+    "context_contract": {"type": "string", "maxLength": 512},
+    "timeout_ms": {"type": "integer", "minimum": 1},
+    "started_at": {"type": "string", "format": "date-time"},
+    "completed_at": {"type": "string", "format": "date-time"},
+    "duration_ms": {"type": "integer", "minimum": 0},
+    "authority": {"const": "local_host_observation"}
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "succeeded"}}}, "then": {"properties": {"reason_code": {"const": ""}, "context_contract": {"minLength": 1}, "observed_revision": {"pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"}}}},
+    {"if": {"properties": {"status": {"const": "gap"}}}, "then": {"properties": {"reason_code": {"minLength": 1}, "context_contract": {"const": ""}}}},
+    {"if": {"properties": {"reason_code": {"const": "context_revision_mismatch"}}}, "then": {"properties": {"observed_revision": {"pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"}}}},
+    {"if": {"properties": {"status": {"const": "gap"}, "reason_code": {"not": {"const": "context_revision_mismatch"}}}}, "then": {"properties": {"observed_revision": {"const": ""}}}}
+  ],
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9._~-]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {"type": "string", "minLength": 1, "maxLength": 4096, "pattern": "^[^\\\\/:\\n\\r\\t]+(?:/[^\\\\/:\\n\\r\\t]+)*$"},
+    "versioned_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "revision", "sha256"],
+      "properties": {"id": {"$ref": "#/$defs/id"}, "revision": {"$ref": "#/$defs/id"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "target_range": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "start_line", "end_line"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "start_line": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "end_line": {"type": "integer", "minimum": 1, "maximum": 4294967295}
+      }
+    }
+  }
+}

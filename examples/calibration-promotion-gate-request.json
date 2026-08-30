@@ -1,0 +1,20 @@
+{
+  "schema_version": "argus.calibration_promotion_gate_request.v1alpha1",
+  "plan_id": "calibration-promotion-20260826-1",
+  "result": {
+    "schema_version": "argus.promotion_gate_result.v1alpha1",
+    "variant_id": "filter-calibrated-20260826-1",
+    "gate": "targeted_regression",
+    "outcome": "pass",
+    "evidence": {
+      "refs": ["artifact://local/evidence/experiment-calibration-1"],
+      "basis": "deterministic",
+      "checks_passed": true,
+      "holdout_case_ids": [],
+      "safety_event_count": 0,
+      "rollback_verified": false
+    },
+    "summary": "exact finding_governance experiment completed without regressions"
+  },
+  "experiment_run_id": "experiment-calibration-20260826-1"
+}

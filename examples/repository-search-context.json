@@ -1,0 +1,55 @@
+{
+  "schema_version": "argus.context.repository_search.v1alpha1",
+  "provider_id": "argus-repository-search",
+  "provider_revision": "2",
+  "commit_oid": "1111111111111111111111111111111111111111",
+  "target_paths": ["src/handler.go"],
+  "target_ranges": [{"path": "src/handler.go", "start_line": 1, "end_line": 1}],
+  "query_halo_lines": 32,
+  "queries": [
+    {
+      "term": "ValidateOrder",
+      "source_paths": ["src/handler.go"],
+      "target_occurrences": 1,
+      "repository_occurrences": 2,
+      "matched_files": 2
+    }
+  ],
+  "matches": [
+    {
+      "term": "ValidateOrder",
+      "path": "docs/usage.md",
+      "line": 1,
+      "column": 19,
+      "line_sha256": "63671c7bd4aab02967285cb9b12993c44b0a7262cc09f0a94b90cbc9e3ccfa29",
+      "line_text": "HandleOrder calls ValidateOrder with an OrderRequest.",
+      "line_text_start_column": 1,
+      "line_text_truncated": false
+    },
+    {
+      "term": "ValidateOrder",
+      "path": "src/service.go",
+      "line": 2,
+      "column": 6,
+      "line_sha256": "f383a9ae48a2aaffe4b45f865447e21dae2585b8c908b70730c35f053752f2f2",
+      "line_text": "func ValidateOrder(request OrderRequest) error { return nil }",
+      "line_text_start_column": 1,
+      "line_text_truncated": false
+    }
+  ],
+  "coverage": {
+    "files_matched": 3,
+    "files_retained": 3,
+    "files_read": 3,
+    "files_unavailable": 0,
+    "files_sensitive_skipped": 0,
+    "target_files_requested": 1,
+    "target_files_found": 1,
+    "candidate_terms": 3,
+    "queries_emitted": 1,
+    "repository_occurrences": 2,
+    "matches_emitted": 2,
+    "truncated": false
+  },
+  "gaps": []
+}

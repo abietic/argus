@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/agent-review-result-manifest.schema.json",
+  "title": "Argus AgentReviewResultManifest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "plan_id",
+    "hypothesis_set_id",
+    "source_run_id",
+    "execution_id",
+    "review_run_id",
+    "target_digest",
+    "execution_snapshot_ref",
+    "review_input_ref",
+    "agent_review_plan_ref",
+    "hypothesis_set_ref",
+    "raw_candidate_collection_ref",
+    "agent_task_evidence_ref",
+    "agent_execution_receipt_ref",
+    "producer_class",
+    "disposition",
+    "status",
+    "summary",
+    "recorded_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.agent_review_result_manifest.v1alpha1"},
+    "manifest_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "plan_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "hypothesis_set_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "source_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "execution_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "review_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "target_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+    "execution_snapshot_ref": {
+      "allOf": [
+        {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.execution_snapshot.v1alpha1"}}}
+      ]
+    },
+    "review_input_ref": {
+      "allOf": [
+        {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.review_input.v1alpha1"}}}
+      ]
+    },
+    "agent_review_plan_ref": {
+      "allOf": [
+        {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.agent_review_plan.v1alpha1"}}}
+      ]
+    },
+    "hypothesis_set_ref": {
+      "allOf": [
+        {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.review_hypothesis_set.v1alpha1"}}}
+      ]
+    },
+    "raw_candidate_collection_ref": {
+      "allOf": [
+        {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.agent_review_raw_candidate_collection.v1alpha1"}}}
+      ]
+    },
+    "agent_task_evidence_ref": {
+      "allOf": [
+        {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.agent_review_task_evidence_collection.v1alpha1"}}}
+      ]
+    },
+    "agent_execution_receipt_ref": {
+      "allOf": [
+        {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+        {"properties": {"contract": {"const": "argus.agent_execution_receipt_collection.v1alpha1"}}}
+      ]
+    },
+    "producer_class": {"const": "argus_go_host"},
+    "disposition": {"const": "shadow_only"},
+    "status": {"enum": ["complete", "partial", "failed"]},
+    "summary": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/resultSummary"},
+    "recorded_at": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/utcTimestamp"}
+  }
+}

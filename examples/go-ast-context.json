@@ -1,0 +1,47 @@
+{
+  "schema_version": "argus.context.go_ast.v1alpha1",
+  "provider_id": "argus-go-ast",
+  "provider_revision": "2",
+  "commit_oid": "1111111111111111111111111111111111111111",
+  "module_path": "example.com/review",
+  "target_paths": ["review/handler.go"],
+  "symbols": [
+    {"id": "review/review.Handler", "name": "Handler", "kind": "function", "signature": "func(service argus.exact/review/review.Service, input string) bool", "path": "review/handler.go", "start_line": 2, "end_line": 2, "target": true},
+    {"id": "review/review.Service.Review", "name": "Review", "kind": "method", "signature": "func(input string) bool", "path": "review/service.go", "start_line": 3, "end_line": 3, "target": false},
+    {"id": "review/review.validate", "name": "validate", "kind": "function", "signature": "func(input string) bool", "path": "review/service.go", "start_line": 2, "end_line": 2, "target": false}
+  ],
+  "calls": [
+    {"caller": "review/review.Handler", "callee": "review/review.Service.Review", "path": "review/handler.go", "line": 2, "column": 59, "resolution": "go_types_exact", "relation": "callee_of_target"}
+  ],
+  "call_paths": [
+    {
+      "direction": "downstream",
+      "target": "review/review.Handler",
+      "symbols": ["review/review.Handler", "review/review.Service.Review", "review/review.validate"],
+      "sites": [
+        {"caller": "review/review.Handler", "callee": "review/review.Service.Review", "path": "review/handler.go", "line": 2, "column": 59},
+        {"caller": "review/review.Service.Review", "callee": "review/review.validate", "path": "review/service.go", "line": 3, "column": 50}
+      ]
+    }
+  ],
+  "types": [
+    {"symbol": "review/review.Handler", "type": "func(service argus.exact/review/review.Service, input string) bool", "path": "review/handler.go", "line": 2, "resolution": "go_types"},
+    {"symbol": "review/review.Service.Review", "type": "func(input string) bool", "path": "review/service.go", "line": 3, "resolution": "go_types"},
+    {"symbol": "review/review.validate", "type": "func(input string) bool", "path": "review/service.go", "line": 2, "resolution": "go_types"}
+  ],
+  "coverage": {
+    "files_discovered": 2,
+    "files_parsed": 2,
+    "files_failed": 0,
+    "target_files_requested": 1,
+    "target_files_found": 1,
+    "type_groups_checked": 1,
+    "type_groups_with_errors": 0,
+    "symbols_emitted": 3,
+    "calls_emitted": 1,
+    "call_paths_emitted": 1,
+    "type_facts_emitted": 3,
+    "truncated": false
+  },
+  "gaps": []
+}

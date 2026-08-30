@@ -1,0 +1,6 @@
+{
+  "schema_version": "argus.local_api_calibration_promotion_activate_command.v1alpha1",
+  "plan_id": "calibration-promotion-20260826-1",
+  "rollout": {"percentage": 10, "seed": "calibration-canary-20260826"},
+  "mutation": {"schema_version": "argus.local_api_mutation.v1alpha1", "idempotency_key": "activate-calibration-promotion-1", "audit": "activate fully gated calibration config at ten percent", "at": "2026-08-26T10:00:00Z"}
+}

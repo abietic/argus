@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/calibration-promotion-gate-request.schema.json",
+  "title": "Argus CalibrationPromotionGateRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "plan_id", "result"],
+  "properties": {
+    "schema_version": {"const": "argus.calibration_promotion_gate_request.v1alpha1"},
+    "plan_id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$"},
+    "result": {"$ref": "promotion-gate-result.schema.json"},
+    "experiment_run_id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$"}
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": "argus.review_spec.v1alpha1",
+  "request_id": "invalid-unknown-field",
+  "idempotency_key": "invalid-unknown-field",
+  "tenant_id": "tenant-local",
+  "workspace_id": "workspace-argus",
+  "repository": {
+    "provider": "local",
+    "repository_id": "argus"
+  },
+  "target": {
+    "mode": "scope",
+    "scope": {
+      "revision": "head",
+      "include": [
+        "**"
+      ],
+      "exclude": []
+    }
+  },
+  "config_bundle_ref": {
+    "id": "default",
+    "revision": "1",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "workflow_ref": {
+    "id": "default-review",
+    "revision": "1",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "requested_outputs": [
+    "findings"
+  ],
+  "remote_writes": "deny",
+  "unrecognized": true
+}

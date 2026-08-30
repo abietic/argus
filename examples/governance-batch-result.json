@@ -1,0 +1,18 @@
+{
+  "schema_version": "argus.governance_batch_result.v1alpha1",
+  "batch_id": "governance-assignment-example-1",
+  "status": "succeeded",
+  "items": [
+    {
+      "event_id": "governance-assignment-case-a",
+      "case_id": "candidate-case-a",
+      "state": "succeeded"
+    },
+    {
+      "event_id": "governance-assignment-case-b",
+      "case_id": "candidate-case-b",
+      "state": "succeeded"
+    }
+  ],
+  "completed_at": "2026-08-25T09:00:00Z"
+}

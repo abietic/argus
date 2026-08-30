@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/review-job-request.schema.json",
+  "title": "Argus ReviewJobRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "execution_profile", "execution_timeout_seconds"],
+  "properties": {
+    "schema_version": {"const": "argus.review_job_request.v1alpha1"},
+    "execution_profile": {"enum": ["deterministic_review_v1", "formal_pi_review_v1"]},
+    "source_run_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "repository_path": {"type": "string", "minLength": 1, "maxLength": 4096, "pattern": "^/"},
+    "mode": {"enum": ["diff", "selection", "scope"]},
+    "base_revision": {"type": "string", "minLength": 1, "maxLength": 256},
+    "head_revision": {"type": "string", "minLength": 1, "maxLength": 256},
+    "revision": {"type": "string", "minLength": 1, "maxLength": 256},
+    "selection_path": {"$ref": "review-spec.schema.json#/$defs/repositoryPath"},
+    "start_line": {"type": "integer", "minimum": 1},
+    "end_line": {"type": "integer", "minimum": 1},
+    "selection_ranges": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "array", "minItems": 1, "items": {"$ref": "review-spec.schema.json#/$defs/selectionRange"}}
+      ]
+    },
+    "selection_symbol": {"$ref": "review-spec.schema.json#/$defs/symbolSelector"},
+    "include": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "review-spec.schema.json#/$defs/repositoryPattern"}}
+      ]
+    },
+    "exclude": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "array", "uniqueItems": true, "items": {"$ref": "review-spec.schema.json#/$defs/repositoryPattern"}}
+      ]
+    },
+    "execution_timeout_seconds": {"type": "integer", "minimum": 30, "maximum": 86400}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"execution_profile": {"const": "deterministic_review_v1"}}},
+      "then": {
+        "required": ["repository_path", "mode"],
+        "not": {"required": ["source_run_id"]}
+      },
+      "else": {
+        "required": ["source_run_id"],
+        "not": {
+          "anyOf": [
+            {"required": ["repository_path"]}, {"required": ["mode"]},
+            {"required": ["base_revision"]}, {"required": ["head_revision"]},
+            {"required": ["revision"]}, {"required": ["selection_path"]},
+            {"required": ["start_line"]}, {"required": ["end_line"]},
+            {"required": ["selection_ranges"]}, {"required": ["selection_symbol"]},
+            {"required": ["include"]}, {"required": ["exclude"]}
+          ]
+        }
+      }
+    },
+    {
+      "if": {"required": ["mode"], "properties": {"mode": {"const": "diff"}}},
+      "then": {"required": ["base_revision", "head_revision"]}
+    },
+    {
+      "if": {"required": ["mode"], "properties": {"mode": {"const": "selection"}}},
+      "then": {
+        "required": ["revision", "selection_path"],
+        "oneOf": [
+          {
+            "required": ["start_line", "end_line"],
+            "not": {"anyOf": [{"required": ["selection_symbol"]}, {"required": ["selection_ranges"], "properties": {"selection_ranges": {"type": "array"}}}]}
+          },
+          {
+            "required": ["selection_ranges"],
+            "properties": {"selection_ranges": {"type": "array", "minItems": 1}},
+            "not": {"anyOf": [{"required": ["start_line"]}, {"required": ["end_line"]}, {"required": ["selection_symbol"]}]}
+          },
+          {
+            "required": ["selection_symbol"],
+            "not": {"anyOf": [{"required": ["start_line"]}, {"required": ["end_line"]}, {"required": ["selection_ranges"], "properties": {"selection_ranges": {"type": "array"}}}]}
+          }
+        ]
+      }
+    },
+    {
+      "if": {"required": ["mode"], "properties": {"mode": {"const": "scope"}}},
+      "then": {"required": ["revision", "include", "exclude"]}
+    }
+  ]
+}

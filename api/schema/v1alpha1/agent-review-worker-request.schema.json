@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/agent-review-worker-request.schema.json",
+  "title": "Argus AgentReviewWorkerRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "work_item_id",
+    "attempt",
+    "generation",
+    "fencing_token",
+    "idempotency_key",
+    "capability",
+    "deadline",
+    "plan",
+    "rule_pack_base64",
+    "prompt_bundle",
+    "review_skills",
+    "knowledge_packs",
+    "context_artifacts",
+    "checkpoint_scope_sha256",
+    "group_checkpoints",
+    "review_input_base64"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.agent_review_worker_request.v1alpha1"},
+    "work_item_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "attempt": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+    "generation": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+    "fencing_token": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+    "idempotency_key": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "capability": {"$ref": "#/$defs/capability"},
+    "deadline": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/utcTimestamp"},
+    "plan": {"$ref": "agent-review-plan.schema.json"},
+    "rule_pack_base64": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 349528,
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+    },
+    "prompt_bundle": {"$ref": "#/$defs/promptBundle"},
+    "review_skills": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {"$ref": "#/$defs/reviewSkill"}
+    },
+    "knowledge_packs": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {"$ref": "#/$defs/knowledgePack"}
+    },
+    "context_artifacts": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {"$ref": "#/$defs/contextArtifact"}
+    },
+    "checkpoint_scope_sha256": {
+      "$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"
+    },
+    "group_checkpoints": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {"$ref": "#/$defs/groupCheckpoint"}
+    },
+    "review_input_base64": {
+      "type": "string",
+      "minLength": 4,
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+    }
+  },
+  "$defs": {
+    "groupCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "group_id",
+        "checkpoint_revision",
+        "checkpoint_scope_sha256",
+        "content_sha256",
+        "size_bytes",
+        "content_base64"
+      ],
+      "properties": {
+        "group_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "checkpoint_revision": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "checkpoint_scope_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "content_sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 1, "maximum": 16777216},
+        "content_base64": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 22369624,
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        }
+      }
+    },
+    "contextArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context_id", "kind", "revision", "artifact", "content_base64"],
+      "properties": {
+        "context_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "kind": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "revision": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "artifact": {
+          "allOf": [
+            {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+            {"properties": {"ref": {"properties": {"size_bytes": {"maximum": 524288}}}}}
+          ]
+        },
+        "content_base64": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 699052,
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        }
+      }
+    },
+    "knowledgePack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "artifact", "content_base64"],
+      "properties": {
+        "ref": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+        "artifact": {
+          "allOf": [
+            {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+            {"properties": {
+              "contract": {"const": "argus.knowledge_pack.v1alpha1"},
+              "ref": {"properties": {"size_bytes": {"maximum": 131072}}}
+            }}
+          ]
+        },
+        "content_base64": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 174764,
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        }
+      }
+    },
+    "reviewSkill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "artifact", "content_base64"],
+      "properties": {
+        "ref": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+        "artifact": {
+          "allOf": [
+            {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+            {"properties": {
+              "contract": {"const": "argus.skill_pack.v1alpha1"},
+              "ref": {"properties": {"size_bytes": {"maximum": 65536}}}
+            }}
+          ]
+        },
+        "content_base64": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 87384,
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        }
+      }
+    },
+    "promptBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "artifact", "content_base64"],
+      "properties": {
+        "ref": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+        "artifact": {
+          "allOf": [
+            {"$ref": "agent-review-shadow-defs.schema.json#/$defs/artifactBinding"},
+            {"properties": {
+              "contract": {"const": "argus.prompt_bundle.v1alpha1"},
+              "ref": {"properties": {"size_bytes": {"maximum": 65536}}}
+            }}
+          ]
+        },
+        "content_base64": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 87384,
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocol",
+        "frozen_input",
+        "max_input_bytes",
+        "max_output_bytes",
+        "sha256"
+      ],
+      "properties": {
+        "protocol": {"const": "argus.agent_review_worker_stdio.v1alpha1"},
+        "frozen_input": {"const": "review_input_inline_base64"},
+        "max_input_bytes": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "max_output_bytes": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"}
+      }
+    }
+  }
+}

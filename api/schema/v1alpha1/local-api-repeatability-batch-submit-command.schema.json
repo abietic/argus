@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-repeatability-batch-submit-command.schema.json",
+  "title": "Argus LocalAPIRepeatabilityBatchSubmitCommand v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request", "mutation"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_repeatability_batch_submit_command.v1alpha1"},
+    "request": {
+      "allOf": [
+        {"$ref": "repeatability-batch-request.schema.json"},
+        {"properties": {"created_at": {"pattern": "Z$"}}},
+        {"not": {"required": ["executor_template_ref"]}}
+      ]
+    },
+    "mutation": {"$ref": "local-api-mutation.schema.json"}
+  }
+}

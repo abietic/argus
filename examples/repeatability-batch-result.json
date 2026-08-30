@@ -1,0 +1,46 @@
+{
+  "schema_version": "argus.repeatability_batch_result.v1alpha1",
+  "batch_id": "repeatability-batch-example-1",
+  "replay_evaluation_run_ids": ["evaluation-replay-1", "evaluation-replay-2"],
+  "repeatability_run_id": "repeatability-run-example-1",
+  "cases": [
+    {
+      "evaluation_run_id": "evaluation-replay-1",
+      "case_id": "case-example-1",
+      "baseline_review_run_id": "review-baseline-1",
+      "replay_review_run_id": "review-replay-1",
+      "replay_review_run_ref": {
+        "uri": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "size_bytes": 1024,
+        "contract": "argus.review_run.v1alpha1"
+      },
+      "replay_change_set_ref": {
+        "uri": "artifact://local/sha256/dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "size_bytes": 512,
+        "contract": "argus.replay_change_set.v1alpha1"
+      }
+    },
+    {
+      "evaluation_run_id": "evaluation-replay-2",
+      "case_id": "case-example-1",
+      "baseline_review_run_id": "review-baseline-1",
+      "replay_review_run_id": "review-replay-2",
+      "replay_review_run_ref": {
+        "uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size_bytes": 1024,
+        "contract": "argus.review_run.v1alpha1"
+      },
+      "replay_change_set_ref": {
+        "uri": "artifact://local/sha256/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "size_bytes": 512,
+        "contract": "argus.replay_change_set.v1alpha1"
+      }
+    }
+  ],
+  "completed_at": "2026-08-25T11:05:00Z",
+  "completed_by": "evaluation-runner"
+}

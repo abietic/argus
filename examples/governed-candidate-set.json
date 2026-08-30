@@ -1,0 +1,17 @@
+{
+  "schema_version": "argus.governed_candidate_set.v1alpha1",
+  "candidate_set_id": "candidate-set-e4a05b3abd672bf8b61d6111",
+  "review_run_id": "formal-run-example",
+  "execution_id": "execution-example",
+  "hypothesis_set_id": "hypothesis-set-example",
+  "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "completeness": "complete",
+  "summary": {
+    "candidates": 0,
+    "confirmed": 0,
+    "rejected": 0,
+    "inconclusive": 0
+  },
+  "candidates": [],
+  "generated_at": "2026-08-25T01:02:03Z"
+}

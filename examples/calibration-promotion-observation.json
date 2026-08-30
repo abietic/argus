@@ -1,0 +1,38 @@
+{
+  "schema_version": "argus.calibration_promotion_observation.v1alpha1",
+  "request": {
+    "schema_version": "argus.calibration_promotion_observation_request.v1alpha1",
+    "observation_id": "promotion-observation-20260826-1",
+    "plan_id": "calibration-promotion-20260826-1",
+    "baseline_snapshot_id": "dashboard-before-promotion-20260826",
+    "observation_snapshot_id": "dashboard-after-promotion-20260827",
+    "policy": {
+      "schema_version": "argus.calibration_promotion_monitor_policy.v1alpha1", "policy_id": "calibration-promotion-monitor", "revision": "1",
+      "rules": [
+        {"metric_id": "published_adverse_rate", "direction": "lower_is_better", "minimum_baseline_sample_size": 30, "minimum_observation_sample_size": 30, "maximum_regression_ppm": 50000},
+        {"metric_id": "published_fixed_rate", "direction": "higher_is_better", "minimum_baseline_sample_size": 30, "minimum_observation_sample_size": 30, "maximum_regression_ppm": 50000},
+        {"metric_id": "published_outcome_coverage_rate", "direction": "higher_is_better", "minimum_baseline_sample_size": 50, "minimum_observation_sample_size": 50, "maximum_regression_ppm": 100000},
+        {"metric_id": "review_run_complete_rate", "direction": "higher_is_better", "minimum_baseline_sample_size": 100, "minimum_observation_sample_size": 100, "maximum_regression_ppm": 20000},
+        {"metric_id": "review_run_success_rate", "direction": "higher_is_better", "minimum_baseline_sample_size": 100, "minimum_observation_sample_size": 100, "maximum_regression_ppm": 20000}
+      ]
+    },
+    "observed_at": "2026-08-27T12:00:00Z"
+  },
+  "plan_binding": {
+    "plan_id": "calibration-promotion-20260826-1", "plan_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "activation_at": "2026-08-26T10:00:00Z",
+    "calibration_run_id": "calibration-fit-20260826-1", "calibration_run_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "baseline_review_run_id": "review-baseline-20260826-1",
+    "baseline_bundle_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "variant_bundle_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "variant_config_revision_id": "repository-finding-governance", "variant_config_revision": "calibrated-20260826-1", "variant_config_revision_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "promotion_variant_id": "filter-calibrated-20260826-1", "promotion_policy_revision": "calibration-promotion-policy-1"
+  },
+  "baseline_snapshot": {"snapshot_id": "dashboard-before-promotion-20260826", "sha256": "1111111111111111111111111111111111111111111111111111111111111111", "scope": {"tenant_id": "tenant-local", "organization_id": "organization-local", "repository_id": "repository-local"}, "window": {"start_inclusive": "2026-08-25T10:00:00Z", "end_exclusive": "2026-08-26T10:00:00Z"}, "group_by": [], "built_at": "2026-08-26T10:01:00Z"},
+  "observation_snapshot": {"snapshot_id": "dashboard-after-promotion-20260827", "sha256": "2222222222222222222222222222222222222222222222222222222222222222", "scope": {"tenant_id": "tenant-local", "organization_id": "organization-local", "repository_id": "repository-local"}, "window": {"start_inclusive": "2026-08-26T10:00:00Z", "end_exclusive": "2026-08-27T10:00:00Z"}, "group_by": [], "built_at": "2026-08-27T10:01:00Z"},
+  "metrics": [
+    {"metric_id": "published_adverse_rate", "definition": "recurred or escaped published Findings divided by published Findings with a known Outcome", "direction": "lower_is_better", "baseline": {"numerator": 5, "denominator": 50, "rate_ppm": 100000}, "observation": {"numerator": 5, "denominator": 55, "rate_ppm": 90909}, "delta_ppm": -9091, "regression_ppm": 0, "availability": "evaluated", "regression": false, "reason_codes": []},
+    {"metric_id": "published_fixed_rate", "definition": "fixed published Findings divided by published Findings with a known Outcome", "direction": "higher_is_better", "baseline": {"numerator": 45, "denominator": 50, "rate_ppm": 900000}, "observation": {"numerator": 50, "denominator": 55, "rate_ppm": 909090}, "delta_ppm": 9090, "regression_ppm": 0, "availability": "evaluated", "regression": false, "reason_codes": []},
+    {"metric_id": "published_outcome_coverage_rate", "definition": "published Findings with a known Outcome divided by published Findings", "direction": "higher_is_better", "baseline": {"numerator": 50, "denominator": 60, "rate_ppm": 833333}, "observation": {"numerator": 55, "denominator": 65, "rate_ppm": 846153}, "delta_ppm": 12820, "regression_ppm": 0, "availability": "evaluated", "regression": false, "reason_codes": []},
+    {"metric_id": "review_run_complete_rate", "definition": "complete ReviewRuns divided by selected ReviewRuns", "direction": "higher_is_better", "baseline": {"numerator": 98, "denominator": 100, "rate_ppm": 980000}, "observation": {"numerator": 103, "denominator": 105, "rate_ppm": 980952}, "delta_ppm": 952, "regression_ppm": 0, "availability": "evaluated", "regression": false, "reason_codes": []},
+    {"metric_id": "review_run_success_rate", "definition": "succeeded ReviewRuns divided by selected ReviewRuns", "direction": "higher_is_better", "baseline": {"numerator": 97, "denominator": 100, "rate_ppm": 970000}, "observation": {"numerator": 102, "denominator": 105, "rate_ppm": 971428}, "delta_ppm": 1428, "regression_ppm": 0, "availability": "evaluated", "regression": false, "reason_codes": []}
+  ],
+  "status": "healthy", "rollback_recommendation": false, "reason_codes": [], "observed_by": "promotion-operator", "audit": "compare immutable pre and post activation quality windows", "idempotency_key": "observe-calibration-promotion-1"
+}

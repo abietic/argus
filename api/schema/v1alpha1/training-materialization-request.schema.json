@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/training-materialization-request.schema.json",
+  "title": "Argus TrainingMaterializationRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "dataset_id", "dataset_revision", "repository_id", "config_bundle_ref", "cases", "created_at"],
+  "properties": {
+    "schema_version": {"const": "argus.training_materialization_request.v1alpha1"},
+    "dataset_id": {"$ref": "#/$defs/id"},
+    "dataset_revision": {"$ref": "#/$defs/id"},
+    "repository_id": {"$ref": "#/$defs/id"},
+    "config_bundle_ref": {"$ref": "#/$defs/config_ref"},
+    "cases": {"type": "array", "minItems": 1, "maxItems": 100000, "items": {"$ref": "#/$defs/case_binding"}},
+    "created_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/\\-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "contract": {"type": "string", "minLength": 1, "maxLength": 512}
+      }
+    },
+    "config_ref": {"allOf": [{"$ref": "#/$defs/artifact_ref"}, {"properties": {"contract": {"const": "argus.config_bundle.v1alpha1"}}}]},
+    "authority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "reviewer_ids", "adjudicator_id", "evidence_refs", "statement"],
+      "properties": {
+        "kind": {"enum": ["human_adjudication", "external_governance"]},
+        "reviewer_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "adjudicator_id": {"$ref": "#/$defs/id"},
+        "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$"}},
+        "statement": {"const": "independently_adjudicated_not_argus_output"}
+      }
+    },
+    "case_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["case_id", "expected_governance_revision", "expected_label_revision", "artifact_refs", "authority"],
+      "properties": {
+        "case_id": {"$ref": "#/$defs/id"},
+        "expected_governance_revision": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "expected_label_revision": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "artifact_refs": {"type": "array", "minItems": 1, "maxItems": 10000, "items": {"$ref": "#/$defs/artifact_ref"}},
+        "authority": {"$ref": "#/$defs/authority"}
+      }
+    }
+  }
+}

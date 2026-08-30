@@ -1,0 +1,16 @@
+{
+  "schema_version": "argus.publication_grant_request.v1alpha1",
+  "grant_id": "publication-grant-001",
+  "publication_id": "publication-001",
+  "publication_idempotency_key": "publication-key-001",
+  "run_id": "run-20260825-001",
+  "finding_id": "finding-001",
+  "provider": "github",
+  "repository_id": "org/repository",
+  "change_kind": "pull_request",
+  "change_id": "42",
+  "channel": "pull_request_inline",
+  "expected_permission_revision": "single-user-local-v1",
+  "occurred_at": "2026-08-25T06:01:00Z",
+  "expires_at": "2026-08-25T07:00:00Z"
+}

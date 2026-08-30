@@ -1,0 +1,17 @@
+{
+  "schema_version": "argus.local_api_agent_component_publish_command.v1alpha1",
+  "baseline_review_run_id": "review-baseline-1",
+  "contract": "argus.knowledge_pack.v1alpha1",
+  "ref": {
+    "id": "payments-domain",
+    "revision": "refund-invariants-v1",
+    "sha256": "f0d027616ca37fe0405b7b92f18b54019dd977f74bd09ceaaa368edadb2574da"
+  },
+  "content_base64": "IyBQYXltZW50cwoKUmVmdW5kcyByZXF1aXJlIGEgY29tbWl0dGVkIGxlZGdlciB0cmFuc2l0aW9uLgo=",
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "publish-payments-knowledge-001",
+    "audit": "publish exact governed payment knowledge for an experiment",
+    "at": "2026-08-26T12:03:00Z"
+  }
+}

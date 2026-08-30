@@ -1,0 +1,6 @@
+{
+  "schema_version": "argus.local_api_mutation.v1alpha1",
+  "idempotency_key": "local-api-governance-assignment-intent",
+  "audit": "operator requested a blind governance assignment",
+  "at": "2026-08-25T09:00:00Z"
+}

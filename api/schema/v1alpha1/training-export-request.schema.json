@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/training-export-request.schema.json",
+  "title": "Argus TrainingExportRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "export_id", "manifest_id", "manifest_ref", "policy", "created_at"],
+  "properties": {
+    "schema_version": {"const": "argus.training_export_request.v1alpha1"},
+    "export_id": {"$ref": "#/$defs/id"},
+    "manifest_id": {"type": "string", "pattern": "^training-manifest-[0-9a-f]{24}$"},
+    "manifest_ref": {"$ref": "#/$defs/manifest_ref"},
+    "policy": {"$ref": "training-strict-redaction-policy.schema.json"},
+    "created_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/\\-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "manifest_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "contract": {"const": "argus.training_dataset_manifest.v1alpha1+json"}
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "argus.review_input.v1alpha1",
+  "target_id": "target-selection-context-ref-001",
+  "target_mode": "selection",
+  "canonical_patch": "",
+  "regions": [
+    {
+      "path": "review.go",
+      "start_line": 2,
+      "end_line": 2,
+      "sha256": "efd4618b5b40801df0896be78a2329cf9802623352269de5856d78a8ebeece6c"
+    }
+  ],
+  "files": [
+    {
+      "path": "review.go",
+      "sha256": "efd4618b5b40801df0896be78a2329cf9802623352269de5856d78a8ebeece6c",
+      "size_bytes": 38,
+      "content": "package fixture\n// ARGUS_BUG selected\n"
+    }
+  ],
+  "contexts": [
+    {
+      "ref": {
+        "context_id": "context-repository-search-001",
+        "kind": "repository_search",
+        "revision": "2222222222222222222222222222222222222222",
+        "digest": "05cbb0a8773fb07d4832ff533dfb7dbd7d55a2f486470c6244559ce63bfc5b3c",
+        "coverage": {
+          "spans": [
+            {
+              "path": "related.go",
+              "start_line": 10,
+              "end_line": 20
+            }
+          ],
+          "symbols": []
+        },
+        "provenance": {
+          "provider": "repository-search",
+          "producer_id": "argus-context-provider",
+          "producer_revision": "1"
+        },
+        "artifact_uri": "artifact://argus/contexts/repository-search-001",
+        "contract": "argus.context.repository_search.v1alpha1",
+        "size_bytes": 24
+      }
+    }
+  ]
+}

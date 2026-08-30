@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/agent-review-task-evidence-collection.schema.json",
+  "title": "Argus AgentReviewTaskEvidenceCollection v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "plan_id", "source_run_id", "execution_id", "review_run_id",
+    "target_digest", "authority", "provenance_class", "disposition", "content_policy",
+    "completeness", "reason_codes", "task_executions"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.agent_review_task_evidence_collection.v1alpha1"},
+    "plan_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "source_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "execution_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "review_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "target_digest": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+    "authority": {"const": "diagnostic_only"},
+    "provenance_class": {"const": "worker_self_report"},
+    "disposition": {"const": "shadow_only"},
+    "content_policy": {"const": "exact_local_sensitive"},
+    "completeness": {"enum": ["complete", "partial"]},
+    "reason_codes": {
+      "type": "array", "uniqueItems": true,
+      "items": {"enum": ["evidence_budget_exceeded", "task_evidence_unavailable"]}
+    },
+    "task_executions": {
+      "type": "array", "maxItems": 4096,
+      "items": {"$ref": "#/$defs/taskExecution"}
+    }
+  },
+  "$defs": {
+    "content": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sha256", "size_bytes"],
+      "properties": {
+        "sha256": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0, "maximum": 16777216},
+        "content": {"type": "string"},
+        "omission_reason": {"const": "evidence_budget_exceeded"}
+      },
+      "oneOf": [
+        {"required": ["content"], "not": {"required": ["omission_reason"]}},
+        {"required": ["omission_reason"], "not": {"required": ["content"]}}
+      ]
+    },
+    "tool": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "tool_name", "arguments"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 1},
+        "tool_name": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "arguments": {"$ref": "#/$defs/content"},
+        "result": {"$ref": "#/$defs/content"},
+        "is_error": {"type": "boolean"}
+      },
+      "dependentRequired": {"result": ["is_error"], "is_error": ["result"]}
+    },
+    "taskExecution": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "task_id", "task_role", "group_id", "system_prompt", "user_prompt",
+        "terminal_status", "tools"
+      ],
+      "properties": {
+        "task_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "task_role": {"enum": ["context", "review", "verification"]},
+        "group_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "skill_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "hypothesis_occurrence_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+        "system_prompt": {"$ref": "#/$defs/content"},
+        "user_prompt": {"$ref": "#/$defs/content"},
+        "output": {"$ref": "#/$defs/content"},
+        "terminal_status": {"enum": ["succeeded", "failed", "canceled"]},
+        "tools": {"type": "array", "items": {"$ref": "#/$defs/tool"}}
+      }
+    }
+  }
+}

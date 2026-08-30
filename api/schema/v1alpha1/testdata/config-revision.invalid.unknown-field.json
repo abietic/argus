@@ -1,0 +1,13 @@
+{
+  "schema_version": "argus.config_revision.v1alpha1",
+  "id": "invalid-unknown-field",
+  "revision": "1",
+  "scope": "platform",
+  "selector": {},
+  "patch": {
+    "target": {
+      "max_files": 1
+    }
+  },
+  "unknown": true
+}

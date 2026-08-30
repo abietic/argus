@@ -1,0 +1,5 @@
+{
+  "schema_version": "argus.local_api_calibration_promotion_rollback_command.v1alpha1",
+  "plan_id": "calibration-promotion-20260826-1",
+  "mutation": {"schema_version": "argus.local_api_mutation.v1alpha1", "idempotency_key": "rollback-calibration-promotion-1", "audit": "rollback calibration config and promotion projection", "at": "2026-08-26T11:00:00Z"}
+}

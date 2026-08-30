@@ -1,0 +1,43 @@
+{
+  "schema_version": "argus.publication_grant.v1alpha1",
+  "grant_sha256": "c270bc09c3b917ace0842768f7bfd6fdc644e5d9afc61dd44b6bd4248a83f206",
+  "grant_id": "grant-1",
+  "publication_id": "publication-1",
+  "publication_idempotency_key": "publication-key-1",
+  "run_id": "run-1",
+  "finding_id": "finding-1",
+  "change_kind": "pull_request",
+  "change_id": "42",
+  "channel": "pull_request_inline",
+  "expected_permission_revision": "single-user-local-v1",
+  "tenant_id": "tenant-1",
+  "workspace_id": "workspace-1",
+  "decision_id": "decision-1",
+  "provider": "github",
+  "repository_id": "org/repository",
+  "base_revision": "base-1",
+  "expected_head_revision": "head-1",
+  "target_snapshot_ref": {
+    "uri": "artifact://local/target",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "size_bytes": 1
+  },
+  "config_bundle_ref": {
+    "uri": "artifact://local/config",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "size_bytes": 1
+  },
+  "finding_source_ref": {
+    "uri": "artifact://local/findings",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "size_bytes": 1
+  },
+  "finding_source_contract": "argus.governed_review_report.v1alpha1+json",
+  "occurred_at": "2026-08-25T06:00:00Z",
+  "granted_at": "2026-08-25T06:01:00Z",
+  "expires_at": "2026-08-25T07:00:00Z",
+  "granted_by": {"kind": "human", "id": "approver-1"},
+  "roles": ["publication_approver"],
+  "audit": "approved exact publication",
+  "idempotency_key": "grant-key-1"
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": "argus.workload_pressure_snapshot.v1alpha1",
+  "policy_revision": "local-run-coordinator-1",
+  "policy_sha256": "3061647f4415b10194e7b97ffd1d5adb61dff8065255c125a5892cf161ff4d97",
+  "ledger_sequence": 0,
+  "observed_at": "2026-08-26T00:00:00Z",
+  "global": {"queue_limit": 64, "queue_depth": 0, "active_limit": 4, "active_depth": 0, "oldest_pending_wait_ms": 0, "state": "available"},
+  "classes": [
+    {"class": "incremental_mr", "base_priority": 80, "capacity": {"queue_limit": 32, "queue_depth": 0, "active_limit": 1, "active_depth": 0, "oldest_pending_wait_ms": 0, "state": "available"}},
+    {"class": "interactive", "base_priority": 100, "capacity": {"queue_limit": 16, "queue_depth": 0, "active_limit": 1, "active_depth": 0, "oldest_pending_wait_ms": 0, "state": "available"}},
+    {"class": "full_scan", "base_priority": 10, "capacity": {"queue_limit": 8, "queue_depth": 0, "active_limit": 1, "active_depth": 0, "oldest_pending_wait_ms": 0, "state": "available"}},
+    {"class": "eval_replay", "base_priority": 20, "capacity": {"queue_limit": 16, "queue_depth": 0, "active_limit": 1, "active_depth": 0, "oldest_pending_wait_ms": 0, "state": "available"}}
+  ],
+  "tenants": [],
+  "admissions": {"admitted": 0, "queued": 0, "rejected": 0, "throttled": 0},
+  "states": {"pending": 0, "leased": 0, "unknown": 0, "succeeded": 0, "failed": 0, "canceled": 0, "rejected": 0, "throttled": 0},
+  "stale": {"pending_requires_reconcile": 0, "active_requires_reconcile": 0}
+}

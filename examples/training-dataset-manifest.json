@@ -1,0 +1,31 @@
+{
+  "schema_version": "argus.training_dataset_manifest.v1alpha1",
+  "manifest_id": "training-manifest-6f820bc435af779c0070403a",
+  "dataset_id": "dataset-review-quality",
+  "dataset_revision": "revision-1",
+  "repository_id": "repository-example",
+  "config_context": {"tenant_id": "tenant-example", "organization_id": "organization-example", "repository_id": "repository-example", "path": "internal/review.go", "invocation_id": "training-materialize-1"},
+  "config_bundle_ref": {"uri": "artifact://local/sha256/dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "size_bytes": 4096, "contract": "argus.config_bundle.v1alpha1"},
+  "data_policy": {"retention_days": 30, "redaction": "strict", "training": "allow", "export": "allow"},
+  "content_mode": "reference_only_strict_redaction_required",
+  "contains_source_bytes": false,
+  "self_labels_allowed": false,
+  "samples": [{
+    "case_id": "case-training-1", "case_governance_revision": 3, "case_label_revision": 2, "case_type": "negative_clean",
+    "provenance": {"kind": "synthetic", "repository_id": "repository-example", "source_id": "synthetic-clean-1", "observed_at": "2026-08-26T07:00:00Z", "collected_at": "2026-08-26T07:30:00Z", "evidence_refs": ["artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"]},
+    "license_consent": {"license_id": "internal-license", "consent": "authorized_internal", "allowed_uses": ["evaluation", "training"], "restrictions": []},
+    "classification": "internal", "owner": "quality-team", "input_snapshot_ref": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "label": {"expected_outcome": "clean", "anchors": [], "anchor_refs": [], "suppression_targets": []},
+    "label_policy_revision": "label-policy-1", "review_state": "approved", "dataset_state": "active", "dataset_split": "train", "clone_group_id": "clone-training-1",
+    "eligibility": {"evaluation": true, "training": true, "promotion": false, "production_distribution": false}, "case_created_at": "2026-08-26T08:00:00Z",
+    "artifact_refs": [
+      {"uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "size_bytes": 128, "contract": "argus.training_input_snapshot.v1alpha1"},
+      {"uri": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "size_bytes": 64, "contract": "argus.training_source_evidence.v1alpha1"},
+      {"uri": "artifact://local/sha256/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "size_bytes": 96, "contract": "argus.training_adjudication_evidence.v1alpha1"}
+    ],
+    "authority": {"kind": "external_governance", "reviewer_ids": ["reviewer-1"], "adjudicator_id": "adjudicator-1", "evidence_refs": ["artifact://local/sha256/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"], "statement": "independently_adjudicated_not_argus_output"}
+  }],
+  "created_by": "curator-1",
+  "created_at": "2026-08-26T09:00:00Z",
+  "sha256": "6f820bc435af779c0070403aa5f528c4049aa661cad73dc98ddbcd0261e832e6"
+}

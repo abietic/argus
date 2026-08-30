@@ -1,0 +1,73 @@
+{
+  "schema_version": "argus.agent_execution_receipt.v1alpha1",
+  "receipt_id": "receipt-1",
+  "plan_id": "plan-1",
+  "source_run_id": "source-run-1",
+  "execution_id": "execution-1",
+  "review_run_id": "review-run-1",
+  "task_id": "task-1",
+  "group_id": "group-1",
+  "task_role": "review",
+  "dimension": {
+    "id": "correctness",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "runtime": {
+    "id": "node-runtime",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "profile": {
+    "id": "local-shadow",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "agent": {
+    "id": "pi-agent",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "provider": {
+    "id": "deepseek-anthropic-env",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "model": {
+    "id": "deepseek-v4-pro-1m",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "api_protocol": "anthropic_messages",
+  "provenance_class": "worker_self_report",
+  "authority": "diagnostic_only",
+  "status": "succeeded",
+  "prompt_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "output_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "started_at": "2026-08-20T10:00:00Z",
+  "finished_at": "2026-08-20T10:00:01Z",
+  "model_turns_started": 1,
+  "model_turns_completed": 1,
+  "tool_calls": 2,
+  "tool_usage": [
+    {
+      "tool_id": "read_file",
+      "invocation_count": 1,
+      "failure_count": 0
+    },
+    {
+      "tool_id": "submit_candidates",
+      "invocation_count": 1,
+      "failure_count": 0
+    }
+  ],
+  "usage": {
+    "completeness": "provider_reported",
+    "input_tokens": 100,
+    "output_tokens": 50,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "reasoning_tokens": 10,
+    "total_tokens": 150
+  }
+}

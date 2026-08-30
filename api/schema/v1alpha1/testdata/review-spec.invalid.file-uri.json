@@ -1,0 +1,37 @@
+{
+  "schema_version": "argus.review_spec.v1alpha1",
+  "request_id": "invalid-file-uri",
+  "idempotency_key": "invalid-file-uri",
+  "tenant_id": "tenant-local",
+  "workspace_id": "workspace-argus",
+  "repository": {
+    "provider": "local",
+    "repository_id": "argus"
+  },
+  "target": {
+    "mode": "diff",
+    "diff": {
+      "base_revision": "base",
+      "head_revision": "head",
+      "patch": {
+        "uri": "file:///etc/passwd",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size_bytes": 1
+      }
+    }
+  },
+  "config_bundle_ref": {
+    "id": "default",
+    "revision": "1",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "workflow_ref": {
+    "id": "default-review",
+    "revision": "1",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "requested_outputs": [
+    "findings"
+  ],
+  "remote_writes": "deny"
+}

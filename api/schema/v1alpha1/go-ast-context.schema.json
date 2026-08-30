@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/go-ast-context.schema.json",
+  "title": "Argus GoASTContext v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "provider_id", "provider_revision", "commit_oid", "module_path", "target_paths", "symbols", "calls", "call_paths", "types", "coverage", "gaps"],
+  "properties": {
+    "schema_version": {"const": "argus.context.go_ast.v1alpha1"},
+    "provider_id": {"const": "argus-go-ast"},
+    "provider_revision": {"const": "2"},
+    "commit_oid": {"type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"},
+    "module_path": {"type": "string", "maxLength": 512},
+    "target_paths": {"type": "array", "items": {"$ref": "#/$defs/path"}, "uniqueItems": true},
+    "symbols": {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/symbol"}},
+    "calls": {"type": "array", "maxItems": 8192, "items": {"$ref": "#/$defs/call"}},
+    "call_paths": {"type": "array", "maxItems": 2048, "items": {"$ref": "#/$defs/call_path"}},
+    "types": {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/type_fact"}},
+    "coverage": {"$ref": "#/$defs/coverage"},
+    "gaps": {"type": "array", "items": {"$ref": "#/$defs/gap"}}
+  },
+  "$defs": {
+    "text": {"type": "string", "minLength": 1, "maxLength": 4096, "pattern": "^[^\\n\\r\\t]+$"},
+    "path": {"type": "string", "minLength": 1, "maxLength": 4096, "pattern": "^[^\\\\/:\\n\\r\\t]+(?:/[^\\\\/:\\n\\r\\t]+)*$"},
+    "positive_line": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+    "symbol": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name", "kind", "signature", "path", "start_line", "end_line", "target"],
+      "properties": {
+        "id": {"$ref": "#/$defs/text"}, "name": {"$ref": "#/$defs/text"},
+        "kind": {"enum": ["function", "method", "type"]},
+        "signature": {"$ref": "#/$defs/text"}, "path": {"$ref": "#/$defs/path"},
+        "start_line": {"$ref": "#/$defs/positive_line"}, "end_line": {"$ref": "#/$defs/positive_line"},
+        "target": {"type": "boolean"}
+      }
+    },
+    "call": {
+      "type": "object", "additionalProperties": false,
+      "required": ["caller", "callee", "path", "line", "column", "resolution", "relation"],
+      "properties": {
+        "caller": {"$ref": "#/$defs/text"}, "callee": {"$ref": "#/$defs/text"},
+        "path": {"$ref": "#/$defs/path"}, "line": {"$ref": "#/$defs/positive_line"},
+        "column": {"$ref": "#/$defs/positive_line"},
+        "resolution": {"enum": ["go_types_exact", "go_types_external", "name_match", "unresolved"]},
+        "relation": {"enum": ["within_target", "caller_of_target", "possible_caller_of_target", "callee_of_target"]}
+      }
+    },
+    "call_site": {
+      "type": "object", "additionalProperties": false,
+      "required": ["caller", "callee", "path", "line", "column"],
+      "properties": {
+        "caller": {"$ref": "#/$defs/text"}, "callee": {"$ref": "#/$defs/text"},
+        "path": {"$ref": "#/$defs/path"}, "line": {"$ref": "#/$defs/positive_line"},
+        "column": {"$ref": "#/$defs/positive_line"}
+      }
+    },
+    "call_path": {
+      "type": "object", "additionalProperties": false,
+      "required": ["direction", "target", "symbols", "sites"],
+      "properties": {
+        "direction": {"enum": ["upstream", "downstream"]},
+        "target": {"$ref": "#/$defs/text"},
+        "symbols": {"type": "array", "minItems": 3, "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}},
+        "sites": {"type": "array", "minItems": 2, "maxItems": 3, "items": {"$ref": "#/$defs/call_site"}}
+      }
+    },
+    "type_fact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["symbol", "type", "path", "line", "resolution"],
+      "properties": {
+        "symbol": {"$ref": "#/$defs/text"}, "type": {"$ref": "#/$defs/text"},
+        "path": {"$ref": "#/$defs/path"}, "line": {"$ref": "#/$defs/positive_line"},
+        "resolution": {"enum": ["go_types", "syntax"]}
+      }
+    },
+    "coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["files_discovered", "files_parsed", "files_failed", "target_files_requested", "target_files_found", "type_groups_checked", "type_groups_with_errors", "symbols_emitted", "calls_emitted", "call_paths_emitted", "type_facts_emitted", "truncated"],
+      "properties": {
+        "files_discovered": {"type": "integer", "minimum": 0},
+        "files_parsed": {"type": "integer", "minimum": 0},
+        "files_failed": {"type": "integer", "minimum": 0},
+        "target_files_requested": {"type": "integer", "minimum": 0},
+        "target_files_found": {"type": "integer", "minimum": 0},
+        "type_groups_checked": {"type": "integer", "minimum": 0},
+        "type_groups_with_errors": {"type": "integer", "minimum": 0},
+        "symbols_emitted": {"type": "integer", "minimum": 0},
+        "calls_emitted": {"type": "integer", "minimum": 0},
+        "call_paths_emitted": {"type": "integer", "minimum": 0},
+        "type_facts_emitted": {"type": "integer", "minimum": 0},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "gap": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code"],
+      "properties": {
+        "code": {"$ref": "#/$defs/text"}, "path": {"$ref": "#/$defs/path"},
+        "line": {"type": "integer", "minimum": 0, "maximum": 4294967295}
+      }
+    }
+  }
+}

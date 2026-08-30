@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/review-run-impact-index-fact.schema.json",
+  "title": "Argus ReviewRunImpactIndexFact v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "execution_snapshot_id", "bindings"],
+  "properties": {
+    "schema_version": {"const": "argus.review_run_impact_index_fact.v1alpha1"},
+    "run_id": {"$ref": "#/$defs/identity"},
+    "execution_snapshot_id": {"$ref": "#/$defs/identity"},
+    "bindings": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/binding"}
+    }
+  },
+  "$defs": {
+    "identity": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^/\\\\\\x00-\\x1F\\x7F\\s](?:[^/\\\\\\x00-\\x1F\\x7F]*[^/\\\\\\x00-\\x1F\\x7F\\s])?$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "baseBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "revision", "sha256", "source"],
+      "properties": {
+        "kind": {"type": "string"},
+        "id": {"$ref": "#/$defs/identity"},
+        "revision": {"$ref": "#/$defs/identity"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "source": {"type": "string"}
+      }
+    },
+    "binding": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "id", "revision", "source"],
+          "properties": {
+            "kind": {"const": "config_revision"},
+            "id": {"$ref": "#/$defs/identity"},
+            "revision": {"$ref": "#/$defs/identity"},
+            "source": {"const": "config_bundle.applied_revisions"}
+          }
+        },
+        {
+          "allOf": [
+            {"$ref": "#/$defs/baseBinding"},
+            {
+              "properties": {
+                "kind": {"const": "config_bundle"},
+                "source": {"const": "execution_snapshot.config"}
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {"$ref": "#/$defs/baseBinding"},
+            {
+              "properties": {
+                "kind": {"const": "rule_pack"},
+                "source": {"const": "config_bundle.rule_pack"}
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {"$ref": "#/$defs/baseBinding"},
+            {
+              "properties": {
+                "kind": {"const": "workflow"},
+                "source": {"const": "execution_snapshot.workflow"}
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {"$ref": "#/$defs/baseBinding"},
+            {
+              "properties": {
+                "kind": {"const": "model"},
+                "source": {
+                  "enum": [
+                    "config_bundle.execution.model_profile",
+                    "config_bundle.agent_review.model"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

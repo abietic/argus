@@ -1,0 +1,117 @@
+{
+  "schema_version": "argus.agent_review_plan.v1alpha1",
+  "plan_id": "plan-1",
+  "source_run_id": "source-run-1",
+  "execution_id": "execution-1",
+  "review_run_id": "review-run-1",
+  "execution_snapshot_ref": {
+    "ref": {
+      "uri": "artifact://local/execution-snapshot",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.execution_snapshot.v1alpha1"
+  },
+  "review_input_ref": {
+    "ref": {
+      "uri": "artifact://local/review-input",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size_bytes": 10
+    },
+    "contract": "argus.review_input.v1alpha1"
+  },
+  "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "rule_pack": {
+    "id": "review-rules",
+    "revision": "1",
+    "sha256": "b6f0c4ef0dccea071eca002bc18198ec8a62a54e2c62fa2247a0c7966569463c"
+  },
+  "implementation": {
+    "id": "pi-review",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "normalization": {
+    "id": "candidate-normalization",
+    "revision": "v2",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "grouping": {
+    "id": "path-grouping",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "context_dimensions": [
+    {
+      "id": "call-context",
+      "revision": "1",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "review_dimensions": [
+    {
+      "id": "correctness",
+      "revision": "1",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "verifier": {
+    "id": "independent-verifier",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "knowledge": [],
+  "runtime": {
+    "id": "node-runtime",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "profile": {
+    "id": "local-shadow",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "agent": {
+    "id": "pi-agent",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "provider": {
+    "id": "deepseek-anthropic-env",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "model": {
+    "id": "deepseek-v4-pro-1m",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "api_protocol": "anthropic_messages",
+  "tool_policy": {
+    "allowed_tools": [
+      "list_files",
+      "read_file",
+      "search_code"
+    ],
+    "tool_network": "deny",
+    "workspace_writes": "deny",
+    "remote_writes": "deny"
+  },
+  "budget": {
+    "max_files": 20,
+    "max_groups": 10,
+    "max_candidates": 20,
+    "max_model_calls": 50,
+    "max_tool_calls": 50,
+    "max_output_tokens": 4096,
+    "max_group_bytes": 100000,
+    "max_target_bytes": 1000000,
+    "timeout_ms": 60000,
+    "max_concurrency": 4
+  },
+  "verification_required": true,
+  "execution_class": "local_direct_provider_shadow",
+  "attestation": "non_attested",
+  "side_effects": "deny",
+  "created_at": "2026-08-20T10:00:00Z"
+}

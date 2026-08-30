@@ -1,0 +1,8 @@
+{
+  "schema_version": "argus.normalization_oracle_revocation.v1alpha1",
+  "oracle_id": "normalization-oracle-dev-1",
+  "expected_revision": 1,
+  "expected_registered_event_id": "register-normalization-oracle-dev-1",
+  "reason": "independent adjudication correction required",
+  "revoked_at": "2026-08-27T04:00:00Z"
+}

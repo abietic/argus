@@ -1,0 +1,98 @@
+{
+  "schema_version": "argus.training_export_bundle.v1alpha1",
+  "export_id": "training-export-1",
+  "dataset_id": "dataset-review-quality",
+  "dataset_revision": "revision-1",
+  "repository_id": "repository-example",
+  "manifest_id": "training-manifest-47c8595539d69eb832e429bc",
+  "manifest_ref": {
+    "uri": "artifact://local/sha256/27ed9604dd686de93966a695c835c8f12dfaef4d15f52d8819ecee59460b9e5a",
+    "sha256": "27ed9604dd686de93966a695c835c8f12dfaef4d15f52d8819ecee59460b9e5a",
+    "size_bytes": 3101,
+    "contract": "argus.training_dataset_manifest.v1alpha1+json"
+  },
+  "policy": {
+    "schema_version": "argus.training_strict_redaction_policy.v1alpha1",
+    "id": "argus-strict-text",
+    "revision": "1",
+    "rule_ids": ["assignment_secret", "aws_access_key", "bearer_credential", "email_address", "github_token", "ip_address", "jwt", "openai_anthropic_key", "pem_private_key", "slack_token", "url_userinfo", "user_home_path"],
+    "replacement": "[ARGUS_REDACTED]",
+    "max_artifact_bytes": 1048576,
+    "sha256": "ca57b580c56c10e6a04cd2cf648dfc3b9a09a86cb24810cb2ff9922f83dad87c"
+  },
+  "portable_format": "argus_training_records_jsonl_v1alpha1",
+  "contains_unredacted_source_bytes": false,
+  "receipts": [
+    {
+      "source_ref": {"uri": "artifact://local/sha256/13602cdee553d8b67d57105e98c958cf9daa4aad4ce8c7957aa261d522f74aa8", "sha256": "13602cdee553d8b67d57105e98c958cf9daa4aad4ce8c7957aa261d522f74aa8", "size_bytes": 17, "contract": "argus.test.provenance.v1"},
+      "redacted_ref": {"uri": "artifact://local/sha256/13602cdee553d8b67d57105e98c958cf9daa4aad4ce8c7957aa261d522f74aa8", "sha256": "13602cdee553d8b67d57105e98c958cf9daa4aad4ce8c7957aa261d522f74aa8", "size_bytes": 17, "contract": "argus.training_redacted_text.v1alpha1"},
+      "policy_sha256": "ca57b580c56c10e6a04cd2cf648dfc3b9a09a86cb24810cb2ff9922f83dad87c",
+      "encoding": "utf-8",
+      "input_size_bytes": 17,
+      "output_size_bytes": 17,
+      "hits": []
+    },
+    {
+      "source_ref": {"uri": "artifact://local/sha256/50367a38344cfd58fdc4619ba19cdb7082a74c216566a0803fac2086b16ca41d", "sha256": "50367a38344cfd58fdc4619ba19cdb7082a74c216566a0803fac2086b16ca41d", "size_bytes": 12, "contract": "argus.test.input.v1"},
+      "redacted_ref": {"uri": "artifact://local/sha256/50367a38344cfd58fdc4619ba19cdb7082a74c216566a0803fac2086b16ca41d", "sha256": "50367a38344cfd58fdc4619ba19cdb7082a74c216566a0803fac2086b16ca41d", "size_bytes": 12, "contract": "argus.training_redacted_text.v1alpha1"},
+      "policy_sha256": "ca57b580c56c10e6a04cd2cf648dfc3b9a09a86cb24810cb2ff9922f83dad87c",
+      "encoding": "utf-8",
+      "input_size_bytes": 12,
+      "output_size_bytes": 12,
+      "hits": []
+    },
+    {
+      "source_ref": {"uri": "artifact://local/sha256/a7b6fd2c996c798612aaf3c6b011b0eccc77814c1d9fe3d637e5156b688f95df", "sha256": "a7b6fd2c996c798612aaf3c6b011b0eccc77814c1d9fe3d637e5156b688f95df", "size_bytes": 24, "contract": "argus.test.adjudication.v1"},
+      "redacted_ref": {"uri": "artifact://local/sha256/a7b6fd2c996c798612aaf3c6b011b0eccc77814c1d9fe3d637e5156b688f95df", "sha256": "a7b6fd2c996c798612aaf3c6b011b0eccc77814c1d9fe3d637e5156b688f95df", "size_bytes": 24, "contract": "argus.training_redacted_text.v1alpha1"},
+      "policy_sha256": "ca57b580c56c10e6a04cd2cf648dfc3b9a09a86cb24810cb2ff9922f83dad87c",
+      "encoding": "utf-8",
+      "input_size_bytes": 24,
+      "output_size_bytes": 24,
+      "hits": []
+    }
+  ],
+  "samples": [
+    {
+      "governed_sample": {
+        "case_id": "case-training-1",
+        "case_governance_revision": 1,
+        "case_label_revision": 1,
+        "case_type": "negative_clean",
+        "provenance": {
+          "kind": "synthetic",
+          "repository_id": "repository-example",
+          "source_id": "synthetic-1",
+          "observed_at": "2026-08-26T06:00:00Z",
+          "collected_at": "2026-08-26T07:00:00Z",
+          "evidence_refs": ["artifact://local/sha256/13602cdee553d8b67d57105e98c958cf9daa4aad4ce8c7957aa261d522f74aa8"]
+        },
+        "license_consent": {"license_id": "internal-license", "consent": "authorized_internal", "allowed_uses": ["evaluation", "training"], "restrictions": []},
+        "classification": "internal",
+        "owner": "quality-team",
+        "input_snapshot_ref": "artifact://local/sha256/50367a38344cfd58fdc4619ba19cdb7082a74c216566a0803fac2086b16ca41d",
+        "label": {"expected_outcome": "clean", "anchors": [], "anchor_refs": [], "suppression_targets": []},
+        "label_policy_revision": "label-policy-1",
+        "review_state": "approved",
+        "dataset_state": "active",
+        "dataset_split": "train",
+        "clone_group_id": "clone-training-1",
+        "eligibility": {"evaluation": true, "training": true, "promotion": false, "production_distribution": false},
+        "case_created_at": "2026-08-26T07:30:00Z",
+        "artifact_refs": [
+          {"uri": "artifact://local/sha256/13602cdee553d8b67d57105e98c958cf9daa4aad4ce8c7957aa261d522f74aa8", "sha256": "13602cdee553d8b67d57105e98c958cf9daa4aad4ce8c7957aa261d522f74aa8", "size_bytes": 17, "contract": "argus.test.provenance.v1"},
+          {"uri": "artifact://local/sha256/50367a38344cfd58fdc4619ba19cdb7082a74c216566a0803fac2086b16ca41d", "sha256": "50367a38344cfd58fdc4619ba19cdb7082a74c216566a0803fac2086b16ca41d", "size_bytes": 12, "contract": "argus.test.input.v1"},
+          {"uri": "artifact://local/sha256/a7b6fd2c996c798612aaf3c6b011b0eccc77814c1d9fe3d637e5156b688f95df", "sha256": "a7b6fd2c996c798612aaf3c6b011b0eccc77814c1d9fe3d637e5156b688f95df", "size_bytes": 24, "contract": "argus.test.adjudication.v1"}
+        ],
+        "authority": {"kind": "external_governance", "reviewer_ids": ["reviewer-1"], "adjudicator_id": "adjudicator-1", "evidence_refs": ["artifact://local/sha256/a7b6fd2c996c798612aaf3c6b011b0eccc77814c1d9fe3d637e5156b688f95df"], "statement": "independently_adjudicated_not_argus_output"}
+      },
+      "redacted_refs": [
+        {"uri": "artifact://local/sha256/13602cdee553d8b67d57105e98c958cf9daa4aad4ce8c7957aa261d522f74aa8", "sha256": "13602cdee553d8b67d57105e98c958cf9daa4aad4ce8c7957aa261d522f74aa8", "size_bytes": 17, "contract": "argus.training_redacted_text.v1alpha1"},
+        {"uri": "artifact://local/sha256/50367a38344cfd58fdc4619ba19cdb7082a74c216566a0803fac2086b16ca41d", "sha256": "50367a38344cfd58fdc4619ba19cdb7082a74c216566a0803fac2086b16ca41d", "size_bytes": 12, "contract": "argus.training_redacted_text.v1alpha1"},
+        {"uri": "artifact://local/sha256/a7b6fd2c996c798612aaf3c6b011b0eccc77814c1d9fe3d637e5156b688f95df", "sha256": "a7b6fd2c996c798612aaf3c6b011b0eccc77814c1d9fe3d637e5156b688f95df", "size_bytes": 24, "contract": "argus.training_redacted_text.v1alpha1"}
+      ]
+    }
+  ],
+  "created_by": "curator-2",
+  "created_at": "2026-08-26T08:01:00Z",
+  "sha256": "f1c028a173534fb79443388d30982b10183e6890346e95652595ea129150b346"
+}

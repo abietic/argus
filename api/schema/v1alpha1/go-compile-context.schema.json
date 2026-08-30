@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/go-compile-context.schema.json",
+  "title": "Go Compile Context v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "provider_id", "provider_revision", "commit_oid", "target_paths", "toolchain", "packages", "coverage", "gaps"],
+  "properties": {
+    "schema_version": {"const": "argus.context.go_compile.v1alpha1"},
+    "provider_id": {"const": "argus-go-compile"},
+    "provider_revision": {"const": "1"},
+    "commit_oid": {"pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"},
+    "target_paths": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+    "toolchain": {"$ref": "#/$defs/toolchain"},
+    "packages": {"type": "array", "items": {"$ref": "#/$defs/package"}},
+    "coverage": {"$ref": "#/$defs/coverage"},
+    "gaps": {"type": "array", "items": {"$ref": "#/$defs/gap"}}
+  },
+  "$defs": {
+    "path": {"type": "string", "minLength": 1, "maxLength": 4096, "pattern": "^[^/\\\\][^\\\\]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "toolchain": {
+      "type": "object", "additionalProperties": false,
+      "required": ["go_version", "goos", "goarch", "cgo_enabled", "repository_code_executed", "module_network", "authority"],
+      "properties": {
+        "go_version": {"type": "string", "minLength": 1}, "goos": {"type": "string", "minLength": 1},
+        "goarch": {"type": "string", "minLength": 1}, "cgo_enabled": {"const": false},
+        "repository_code_executed": {"const": false}, "module_network": {"const": "disabled_goproxy_off"},
+        "authority": {"const": "local_host_unattested"}
+      }
+    },
+    "diagnostic": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "line", "column", "message"],
+      "properties": {"path": {"$ref": "#/$defs/path"}, "line": {"type": "integer", "minimum": 1}, "column": {"type": "integer", "minimum": 0}, "message": {"type": "string", "minLength": 1, "maxLength": 2048}}
+    },
+    "package": {
+      "type": "object", "additionalProperties": false,
+      "required": ["package", "status", "diagnostics", "output_sha256", "output_size_bytes", "command_executed", "exit_code", "test_sources_included"],
+      "properties": {
+        "package": {"type": "string", "minLength": 1}, "status": {"enum": ["passed", "failed", "unavailable"]},
+        "diagnostics": {"type": "array", "items": {"$ref": "#/$defs/diagnostic"}},
+        "output_sha256": {"$ref": "#/$defs/sha256"}, "output_size_bytes": {"type": "integer", "minimum": 0},
+        "command_executed": {"type": "boolean"}, "exit_code": {"type": "integer", "minimum": -1},
+        "test_sources_included": {"type": "boolean"}
+      }
+    },
+    "coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["files_discovered", "files_materialized", "files_unavailable", "target_files_requested", "target_go_files_found", "packages_requested", "packages_passed", "packages_failed", "packages_unavailable", "diagnostics_emitted", "truncated"],
+      "properties": {
+        "files_discovered": {"type": "integer", "minimum": 0}, "files_materialized": {"type": "integer", "minimum": 0},
+        "files_unavailable": {"type": "integer", "minimum": 0}, "target_files_requested": {"type": "integer", "minimum": 0},
+        "target_go_files_found": {"type": "integer", "minimum": 0}, "packages_requested": {"type": "integer", "minimum": 0},
+        "packages_passed": {"type": "integer", "minimum": 0}, "packages_failed": {"type": "integer", "minimum": 0},
+        "packages_unavailable": {"type": "integer", "minimum": 0}, "diagnostics_emitted": {"type": "integer", "minimum": 0},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "gap": {
+      "type": "object", "additionalProperties": false, "required": ["code"],
+      "properties": {"code": {"type": "string", "minLength": 1}, "path": {"$ref": "#/$defs/path"}, "package": {"type": "string", "minLength": 1}}
+    }
+  }
+}

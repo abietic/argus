@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/governance-batch-result.schema.json",
+  "title": "Argus GovernanceBatchResult v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "batch_id", "status", "items", "completed_at"],
+  "properties": {
+    "schema_version": {"const": "argus.governance_batch_result.v1alpha1"},
+    "batch_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "status": {"enum": ["succeeded", "failed"]},
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event_id", "case_id", "state"],
+        "properties": {
+          "event_id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[^\\s\\x00-\\x1F\\x7F]+$"},
+          "case_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+          "state": {"enum": ["succeeded", "failed", "not_started"]}
+        }
+      }
+    },
+    "failed_item_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "failure_reason": {"enum": ["unauthorized", "not_found", "conflict", "invalid_transition"]},
+    "completed_at": {"type": "string", "format": "date-time"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "succeeded"}}, "required": ["status"]},
+      "then": {"not": {"anyOf": [{"required": ["failed_item_id"]}, {"required": ["failure_reason"]}]}},
+      "else": {"required": ["failed_item_id", "failure_reason"]}
+    }
+  ]
+}

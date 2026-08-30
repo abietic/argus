@@ -1,0 +1,904 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/config-revision.schema.json",
+  "title": "Argus ConfigRevision v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "revision",
+    "scope",
+    "selector",
+    "patch"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "argus.config_revision.v1alpha1"
+    },
+    "id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "revision": {
+      "$ref": "#/$defs/identifier"
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "organization_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repository_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "path_prefix": {
+          "$ref": "#/$defs/pathPrefix"
+        },
+        "invocation_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "patch": {
+      "$ref": "#/$defs/configPatch"
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "scope": {
+          "const": "platform"
+        },
+        "selector": {
+          "$ref": "#/$defs/platformSelector"
+        }
+      }
+    },
+    {
+      "properties": {
+        "scope": {
+          "const": "tenant"
+        },
+        "selector": {
+          "$ref": "#/$defs/tenantSelector"
+        }
+      }
+    },
+    {
+      "properties": {
+        "scope": {
+          "const": "organization"
+        },
+        "selector": {
+          "$ref": "#/$defs/organizationSelector"
+        }
+      }
+    },
+    {
+      "properties": {
+        "scope": {
+          "const": "repository"
+        },
+        "selector": {
+          "$ref": "#/$defs/repositorySelector"
+        }
+      }
+    },
+    {
+      "properties": {
+        "scope": {
+          "const": "path"
+        },
+        "selector": {
+          "$ref": "#/$defs/pathSelector"
+        }
+      }
+    },
+    {
+      "properties": {
+        "scope": {
+          "const": "invocation"
+        },
+        "selector": {
+          "$ref": "#/$defs/invocationSelector"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[\\p{L}\\p{N}._~-]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "scope": {
+      "enum": [
+        "platform",
+        "tenant",
+        "organization",
+        "repository",
+        "path",
+        "invocation"
+      ]
+    },
+    "permission": {
+      "enum": [
+        "allow",
+        "deny"
+      ]
+    },
+    "severity": {
+      "enum": [
+        "info",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\\\:\\x00-\\x1F\\x7F]([^\\\\:\\x00-\\x1F\\x7F]*[^/\\\\:\\x00-\\x1F\\x7F])?$",
+      "not": {
+        "pattern": "(^|/)(\\.|\\.\\.)(/|$)|//"
+      }
+    },
+    "pathPrefix": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/repositoryPath"
+        },
+        {
+          "not": {
+            "pattern": "[*?\\[]"
+          }
+        }
+      ]
+    },
+    "optionalPathPrefix": {
+      "anyOf": [
+        {
+          "const": ""
+        },
+        {
+          "$ref": "#/$defs/pathPrefix"
+        }
+      ]
+    },
+    "globPattern": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^[^/\\\\:?\\[\\]\\x00-\\x1F\\x7F]([^\\\\:?\\[\\]\\x00-\\x1F\\x7F]*[^/\\\\:?\\[\\]\\x00-\\x1F\\x7F])?$",
+      "not": {
+        "pattern": "(^|/)(\\.|\\.\\.)(/|$)|//|\\*\\*\\*"
+      }
+    },
+    "platformSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "maxProperties": 0
+    },
+    "tenantSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id"
+      ],
+      "properties": {
+        "tenant_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "organizationSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id",
+        "organization_id"
+      ],
+      "properties": {
+        "tenant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "organization_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "repositorySelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id",
+        "organization_id",
+        "repository_id"
+      ],
+      "properties": {
+        "tenant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "organization_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repository_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "pathSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id",
+        "organization_id",
+        "repository_id",
+        "path_prefix"
+      ],
+      "properties": {
+        "tenant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "organization_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repository_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "path_prefix": {
+          "$ref": "#/$defs/pathPrefix"
+        }
+      }
+    },
+    "invocationSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id",
+        "organization_id",
+        "repository_id",
+        "invocation_id"
+      ],
+      "properties": {
+        "tenant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "organization_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repository_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "invocation_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "versionedRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "allOf": [
+            {"$ref": "#/$defs/identifier"},
+            {"not": {"pattern": "^[lL][aA][tT][eE][sS][tT]$"}}
+          ]
+        },
+        "revision": {
+          "allOf": [
+            {"$ref": "#/$defs/identifier"},
+            {"not": {"pattern": "^[lL][aA][tT][eE][sS][tT]$"}}
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "secretRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uri"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "pattern": "^secret://[A-Za-z0-9](?:[A-Za-z0-9.-]{0,126}[A-Za-z0-9])?/[A-Za-z0-9._~-]+(?:/[A-Za-z0-9._~-]+)*$"
+        }
+      }
+    },
+    "identifierArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "globArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/globPattern"
+      }
+    },
+    "targetModeArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "diff",
+          "selection",
+          "scope"
+        ]
+      }
+    },
+    "identifierSetPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "add",
+        "remove"
+      ],
+      "properties": {
+        "add": {
+          "$ref": "#/$defs/identifierArray"
+        },
+        "remove": {
+          "$ref": "#/$defs/identifierArray"
+        }
+      }
+    },
+    "globSetPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "add",
+        "remove"
+      ],
+      "properties": {
+        "add": {
+          "$ref": "#/$defs/globArray"
+        },
+        "remove": {
+          "$ref": "#/$defs/globArray"
+        }
+      }
+    },
+    "targetModeSetPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "add",
+        "remove"
+      ],
+      "properties": {
+        "add": {
+          "$ref": "#/$defs/targetModeArray"
+        },
+        "remove": {
+          "$ref": "#/$defs/targetModeArray"
+        }
+      }
+    },
+    "ruleDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "kind",
+        "detector",
+        "languages",
+        "path_prefixes",
+        "evidence_kinds",
+        "severity",
+        "enabled"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "kind": {
+          "enum": [
+            "deterministic",
+            "ast",
+            "lsp",
+            "compile",
+            "test",
+            "static",
+            "search",
+            "codegraph",
+            "llm",
+            "agent"
+          ]
+        },
+        "detector": {
+          "$ref": "#/$defs/versionedRef"
+        },
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "path_prefixes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/optionalPathPrefix"
+          }
+        },
+        "evidence_kinds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "severity": {
+          "$ref": "#/$defs/severity"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "targetPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "allowed_modes": {
+          "$ref": "#/$defs/targetModeSetPatch"
+        },
+        "include": {
+          "$ref": "#/$defs/globSetPatch"
+        },
+        "exclude": {
+          "$ref": "#/$defs/globSetPatch"
+        },
+        "max_files": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_patch_bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "orderedRulePatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "remove"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ruleDefinition"
+          }
+        },
+        "remove": {
+          "$ref": "#/$defs/identifierArray"
+        }
+      }
+    },
+    "rulePackPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rules"
+      ],
+      "properties": {
+        "rules": {
+          "$ref": "#/$defs/orderedRulePatch"
+        }
+      }
+    },
+    "workflowPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definition"
+      ],
+      "properties": {
+        "definition": {
+          "$ref": "#/$defs/versionedRef"
+        }
+      }
+    },
+    "contextProviderDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "kind",
+        "adapter"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "kind": {
+          "enum": [
+            "repository_search",
+            "codegraph",
+            "lsp",
+            "dependency",
+            "artifact",
+            "go_ast",
+            "compile"
+          ]
+        },
+        "adapter": {
+          "$ref": "#/$defs/versionedRef"
+        }
+      }
+    },
+    "orderedContextProviderPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upsert",
+        "remove"
+      ],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/contextProviderDefinition"
+          }
+        },
+        "remove": {
+          "$ref": "#/$defs/identifierArray"
+        }
+      }
+    },
+    "executionPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "agent_profile": {
+          "$ref": "#/$defs/versionedRef"
+        },
+        "model_profile": {
+          "$ref": "#/$defs/versionedRef"
+        },
+        "model_credential_ref": {
+          "$ref": "#/$defs/secretRef"
+        },
+        "allowed_tools": {
+          "$ref": "#/$defs/identifierSetPatch"
+        },
+        "context_providers": {
+          "$ref": "#/$defs/orderedContextProviderPatch"
+        },
+        "context_provider_max_concurrency": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        }
+      }
+    },
+    "agentSkillPackDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "phase", "ref"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "phase": {"enum": ["grouping", "context", "review", "verification"]},
+        "ref": {"$ref": "#/$defs/versionedRef"}
+      }
+    },
+    "orderedAgentSkillPackPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["upsert", "remove"],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/agentSkillPackDefinition"}
+        },
+        "remove": {"$ref": "#/$defs/identifierArray"}
+      }
+    },
+    "agentKnowledgePackDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "ref"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "ref": {"$ref": "#/$defs/versionedRef"}
+      }
+    },
+    "orderedAgentKnowledgePackPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["upsert", "remove"],
+      "properties": {
+        "upsert": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/agentKnowledgePackDefinition"}
+        },
+        "remove": {"$ref": "#/$defs/identifierArray"}
+      }
+    },
+    "agentAuthorityPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "model_egress": {"const": "provider_broker_only"},
+        "tool_network": {"const": "deny"},
+        "workspace_reads": {"const": "frozen_input_only"},
+        "workspace_writes": {"const": "deny"},
+        "remote_writes": {"const": "deny"},
+        "max_delegation_depth": {"const": 0},
+        "tools": {"$ref": "#/$defs/identifierSetPatch"}
+      }
+    },
+    "agentBudgetPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "max_files": {"type": "integer", "minimum": 1},
+        "max_groups": {"type": "integer", "minimum": 1},
+        "max_hypotheses": {"type": "integer", "minimum": 1},
+        "max_model_calls": {"type": "integer", "minimum": 1},
+        "max_tool_calls": {"type": "integer", "minimum": 1},
+        "max_target_bytes": {"type": "integer", "minimum": 1},
+        "max_group_bytes": {"type": "integer", "minimum": 1},
+        "max_output_bytes": {"type": "integer", "minimum": 1},
+        "max_output_tokens": {"type": "integer", "minimum": 1},
+        "max_cost_micros": {"type": "integer", "minimum": 1},
+        "timeout_ms": {"type": "integer", "minimum": 1},
+        "max_concurrency": {"type": "integer", "minimum": 1}
+      }
+    },
+    "agentReviewPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "agent": {"$ref": "#/$defs/versionedRef"},
+        "normalization": {
+          "allOf": [
+            {"$ref": "#/$defs/versionedRef"},
+            {"properties": {
+              "id": {"const": "candidate-normalization"},
+              "revision": {"enum": ["v0", "v1", "v2"]}
+            }}
+          ]
+        },
+        "provider": {"$ref": "#/$defs/versionedRef"},
+        "model": {"$ref": "#/$defs/versionedRef"},
+        "prompt": {"$ref": "#/$defs/versionedRef"},
+        "model_credential_ref": {"$ref": "#/$defs/secretRef"},
+        "skill_packs": {"$ref": "#/$defs/orderedAgentSkillPackPatch"},
+        "knowledge_packs": {"$ref": "#/$defs/orderedAgentKnowledgePackPatch"},
+        "api_protocol": {"$ref": "#/$defs/versionedRef"},
+        "authority": {"$ref": "#/$defs/agentAuthorityPatch"},
+        "budget": {"$ref": "#/$defs/agentBudgetPatch"}
+      }
+    },
+    "budgetPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "max_input_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_cost_micros": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stage_timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_attempts": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_concurrency": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "verificationPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "required_evidence_kinds": {
+          "$ref": "#/$defs/identifierSetPatch"
+        },
+        "minimum_independent_evidence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "partial_evidence": {
+          "$ref": "#/$defs/permission"
+        }
+      }
+    },
+    "adjudicationPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "minimum_severity": {
+          "$ref": "#/$defs/severity"
+        },
+        "human_review_inconclusive": {
+          "type": "boolean"
+        },
+        "automatic_publication": {
+          "$ref": "#/$defs/permission"
+        }
+      }
+    },
+    "calibrationPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_ppm", "confidence_ppm"],
+      "properties": {
+        "raw_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "confidence_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000}
+      }
+    },
+    "calibrationProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "id", "revision", "points", "sha256"],
+      "properties": {
+        "schema_version": {"const": "argus.calibration_profile.v1alpha1"},
+        "id": {"$ref": "#/$defs/identifier"},
+        "revision": {"$ref": "#/$defs/identifier"},
+        "points": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/calibrationPoint"}
+        },
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "findingGovernancePatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "calibration_profile": {"$ref": "#/$defs/calibrationProfile"},
+        "minimum_confidence_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "max_findings": {"type": "integer", "minimum": 0}
+      }
+    },
+    "publicationPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "remote_writes": {
+          "$ref": "#/$defs/permission"
+        },
+        "channels": {
+          "$ref": "#/$defs/identifierSetPatch"
+        },
+        "max_comments": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "dataPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "retention_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "redaction": {
+          "enum": [
+            "none",
+            "basic",
+            "strict"
+          ]
+        },
+        "training": {
+          "$ref": "#/$defs/permission"
+        },
+        "export": {
+          "$ref": "#/$defs/permission"
+        }
+      }
+    },
+    "configPatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/targetPatch"
+        },
+        "rule_pack": {
+          "$ref": "#/$defs/rulePackPatch"
+        },
+        "workflow": {
+          "$ref": "#/$defs/workflowPatch"
+        },
+        "execution": {
+          "$ref": "#/$defs/executionPatch"
+        },
+        "agent_review": {
+          "$ref": "#/$defs/agentReviewPatch"
+        },
+        "budget": {
+          "$ref": "#/$defs/budgetPatch"
+        },
+        "verification": {
+          "$ref": "#/$defs/verificationPatch"
+        },
+        "adjudication": {
+          "$ref": "#/$defs/adjudicationPatch"
+        },
+        "finding_governance": {
+          "$ref": "#/$defs/findingGovernancePatch"
+        },
+        "publication": {
+          "$ref": "#/$defs/publicationPatch"
+        },
+        "data": {
+          "$ref": "#/$defs/dataPatch"
+        }
+      }
+    }
+  }
+}

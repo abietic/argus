@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/training-job-plan.schema.json",
+  "title": "Argus TrainingJobPlan v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request", "export_bundle_sha256", "portable_format", "execution_mode", "remote_side_effects", "receipt_authority", "promotion_eligible", "status", "observations", "created_by", "updated_by", "updated_at", "sha256"],
+  "properties": {
+    "schema_version": {"const": "argus.training_job_plan.v1alpha1"},
+    "request": {"$ref": "training-job-prepare-request.schema.json"},
+    "export_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "portable_format": {"const": "argus_training_records_jsonl_v1alpha1"},
+    "execution_mode": {"const": "external_manual"},
+    "remote_side_effects": {"const": "deny"},
+    "receipt_authority": {"const": "operator_recorded_unattested"},
+    "promotion_eligible": {"const": false},
+    "status": {"enum": ["prepared", "submitted", "succeeded", "failed", "canceled"]},
+    "observations": {"type": "array", "maxItems": 2, "items": {"$ref": "#/$defs/observation"}},
+    "created_by": {"$ref": "#/$defs/id"},
+    "updated_by": {"$ref": "#/$defs/id"},
+    "updated_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/\\-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "receipt_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "contract": {"const": "argus.training_provider_job_receipt.v1alpha1+json"}
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receipt_ref", "receipt", "recorded_by", "recorded_at"],
+      "properties": {
+        "receipt_ref": {"$ref": "#/$defs/receipt_ref"},
+        "receipt": {"$ref": "training-provider-job-receipt.schema.json"},
+        "recorded_by": {"$ref": "#/$defs/id"},
+        "recorded_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/training-strict-redaction-policy.schema.json",
+  "title": "Argus TrainingStrictRedactionPolicy v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "revision", "rule_ids", "replacement", "max_artifact_bytes", "sha256"],
+  "properties": {
+    "schema_version": {"const": "argus.training_strict_redaction_policy.v1alpha1"},
+    "id": {"const": "argus-strict-text"},
+    "revision": {"const": "1"},
+    "rule_ids": {
+      "type": "array",
+      "prefixItems": [
+        {"const": "assignment_secret"},
+        {"const": "aws_access_key"},
+        {"const": "bearer_credential"},
+        {"const": "email_address"},
+        {"const": "github_token"},
+        {"const": "ip_address"},
+        {"const": "jwt"},
+        {"const": "openai_anthropic_key"},
+        {"const": "pem_private_key"},
+        {"const": "slack_token"},
+        {"const": "url_userinfo"},
+        {"const": "user_home_path"}
+      ],
+      "items": false,
+      "minItems": 12,
+      "maxItems": 12
+    },
+    "replacement": {"const": "[ARGUS_REDACTED]"},
+    "max_artifact_bytes": {"const": 1048576},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

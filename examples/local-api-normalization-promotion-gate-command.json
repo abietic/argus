@@ -1,0 +1,12 @@
+{
+  "schema_version": "argus.local_api_normalization_promotion_gate_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.normalization_promotion_gate_request.v1alpha1",
+    "variant_id": "normalization-policy-argus-pi-review-workflow-v2",
+    "gate": "targeted_regression",
+    "policy_ref": {"uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "size_bytes": 1024, "contract": "argus.normalization_promotion_policy.v1alpha1+json"},
+    "quality_run_ref": {"uri": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "size_bytes": 4096, "contract": "argus.normalization_quality_run.v1alpha1+json"},
+    "evaluated_at": "2026-08-27T09:00:00Z"
+  },
+  "mutation": {"schema_version": "argus.local_api_mutation.v1alpha1", "idempotency_key": "gate-normalization-promotion-1", "audit": "recompute and record exact normalization quality gate", "at": "2026-08-27T09:00:00Z"}
+}

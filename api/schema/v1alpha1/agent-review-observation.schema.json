@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/agent-review-observation.schema.json",
+  "title": "Argus AgentReviewObservation v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "observation_id",
+    "manifest_id",
+    "source_run_id",
+    "execution_id",
+    "review_run_id",
+    "sequence",
+    "kind",
+    "producer_class",
+    "disposition",
+    "status",
+    "agent",
+    "provider",
+    "model",
+    "summary",
+    "duration_ms",
+    "reason_codes",
+    "recorded_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "argus.agent_review_observation.v1alpha1"},
+    "observation_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "manifest_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "source_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "execution_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "review_run_id": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"},
+    "sequence": {"type": "integer", "minimum": 1},
+    "kind": {"const": "shadow_result_recorded"},
+    "producer_class": {"const": "argus_go_host"},
+    "disposition": {"const": "shadow_only"},
+    "status": {"enum": ["complete", "partial", "failed"]},
+    "agent": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+    "provider": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+    "model": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/versionedRef"},
+    "summary": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/resultSummary"},
+    "duration_ms": {"type": "integer", "minimum": 0},
+    "reason_codes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/identifier"}
+    },
+    "recorded_at": {"$ref": "agent-review-shadow-defs.schema.json#/$defs/utcTimestamp"}
+  }
+}

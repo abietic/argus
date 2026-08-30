@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/governance-trust-key-revocation.schema.json",
+  "title": "Argus GovernanceTrustKeyRevocation v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "authority", "key_id", "revision", "reason", "revoked_at"],
+  "properties": {
+    "schema_version": {"const": "argus.governance_trust_key_revocation.v1alpha1"},
+    "authority": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "key_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "revision": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "reason": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "revoked_at": {"type": "string", "format": "date-time"}
+  }
+}

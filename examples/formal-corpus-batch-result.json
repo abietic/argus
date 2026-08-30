@@ -1,0 +1,20 @@
+{
+  "schema_version": "argus.formal_corpus_batch_result.v1alpha1",
+  "batch_id": "formal-corpus-example-1",
+  "evaluation_run_id": "formal-corpus-evaluation-example-1",
+  "cases": [
+    {
+      "case_id": "case-example-1",
+      "source_review_run_id": "source-review-run-example-1",
+      "formal_review_run_id": "formal-review-run-example-1",
+      "formal_review_run_ref": {
+        "uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size_bytes": 2048,
+        "contract": "argus.review_run.v1alpha1"
+      }
+    }
+  ],
+  "completed_at": "2026-08-26T10:10:00Z",
+  "completed_by": "evaluation-runner"
+}

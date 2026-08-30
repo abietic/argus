@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/evaluation-probe-receipt.schema.json",
+  "title": "Argus EvaluationProbeReceipt v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "probe_id", "kind", "review_run_id", "input_target_ref", "oracle_sha256", "method_id", "method_revision", "executor_authority", "executor_revision", "observed_outcome", "evidence_artifacts", "remote_writes", "completed_at"],
+  "properties": {
+    "schema_version": {"const": "argus.evaluation_probe_receipt.v1alpha1"},
+    "probe_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "kind": {"enum": ["mutation_defect", "synthetic_defect", "synthetic_clean", "workflow_invariant"]},
+    "review_run_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "input_target_ref": {"$ref": "#/$defs/artifact_ref"},
+    "baseline_target_ref": {"$ref": "#/$defs/artifact_ref"},
+    "oracle_sha256": {"$ref": "evaluation-case.schema.json#/$defs/sha256"},
+    "method_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "method_revision": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "executor_authority": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "executor_revision": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "observed_outcome": {"enum": ["defect_present", "clean", "invariant_pass", "invariant_fail"]},
+    "evidence_artifacts": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/artifact_ref"}},
+    "remote_writes": {"const": "deny"},
+    "completed_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"$ref": "evaluation-case.schema.json#/$defs/artifact_uri"},
+        "sha256": {"$ref": "evaluation-case.schema.json#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "contract": {"$ref": "evaluation-case.schema.json#/$defs/id"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "mutation_defect"}}},
+      "then": {"required": ["baseline_target_ref"], "properties": {"observed_outcome": {"const": "defect_present"}}},
+      "else": {"not": {"required": ["baseline_target_ref"]}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "synthetic_defect"}}},
+      "then": {"properties": {"observed_outcome": {"const": "defect_present"}}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "synthetic_clean"}}},
+      "then": {"properties": {"observed_outcome": {"const": "clean"}}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "workflow_invariant"}}},
+      "then": {"properties": {"observed_outcome": {"enum": ["invariant_pass", "invariant_fail"]}}}
+    }
+  ]
+}

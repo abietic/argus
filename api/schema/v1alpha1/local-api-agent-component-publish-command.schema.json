@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-agent-component-publish-command.schema.json",
+  "title": "Argus LocalAPIAgentComponentPublishCommand v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "baseline_review_run_id", "contract", "ref", "content_base64", "mutation"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_agent_component_publish_command.v1alpha1"},
+    "baseline_review_run_id": {"$ref": "evaluation-case.schema.json#/$defs/id"},
+    "contract": {
+      "enum": ["argus.prompt_bundle.v1alpha1", "argus.skill_pack.v1alpha1", "argus.knowledge_pack.v1alpha1"]
+    },
+    "ref": {"$ref": "#/$defs/versionedRef"},
+    "content_base64": {"type": "string", "minLength": 4, "maxLength": 174764},
+    "mutation": {"$ref": "local-api-mutation.schema.json"}
+  },
+  "$defs": {
+    "versionedRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision", "sha256"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$"},
+        "revision": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "argus.review_shard_aggregate.v1alpha1",
+  "run_id": "run-scope-example",
+  "manifest_ref": {"uri": "artifact://local/sha256/dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "size_bytes": 2048, "contract": "argus.review_shard_manifest.v1alpha1"},
+  "completeness": "complete",
+  "outputs": [{"shard_id": "shard-0000-example", "ordinal": 0, "output_ref": {"uri": "artifact://local/sha256/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "size_bytes": 768, "contract": "argus.reviewcore_artifact.v1alpha1"}, "generation": 1, "fencing_token": 1}],
+  "coverage": {"total_files": 1, "executable_files": 1, "skipped_files": 0, "total_bytes": 10, "executable_bytes": 10},
+  "gaps": [],
+  "completed_at": "2026-08-25T12:01:00Z",
+  "completed_by": "scope-worker"
+}

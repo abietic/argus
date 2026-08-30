@@ -1,0 +1,8 @@
+{
+  "schema_version": "argus.publication_grant_reservation.v1alpha1",
+  "grant_id": "publication-grant-001",
+  "grant_sha256": "c270bc09c3b917ace0842768f7bfd6fdc644e5d9afc61dd44b6bd4248a83f206",
+  "publication_id": "publication-001",
+  "idempotency_key": "publication-key-001",
+  "reserved_at": "2026-08-25T06:02:00Z"
+}

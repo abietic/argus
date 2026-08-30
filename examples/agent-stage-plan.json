@@ -1,0 +1,334 @@
+{
+  "schema_version": "argus.agent_stage_plan.v1alpha1",
+  "plan_id": "agent-stage-plan-4dd76326ac1bc2978e653e39",
+  "sha256": "4dd76326ac1bc2978e653e39682a493d5cfe8561a06d9395d392499941bae0cc",
+  "behavior_sha256": "3b2bd65e8d66d5334a2eed95edc5b929ca3e0a329bb6c5d23677e1464f74de1b",
+  "review_run_id": "run-1",
+  "stage": {
+    "id": "agent_hypothesize",
+    "revision": "1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "target_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+  "build_identity": "pi-runtime-build-1",
+  "execution_snapshot": {
+    "ref": {
+      "uri": "artifact://local/execution-snapshot",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "size_bytes": 100
+    },
+    "contract": "argus.execution_snapshot.v1alpha1"
+  },
+  "config_bundle": {
+    "ref": {
+      "uri": "artifact://local/config-bundle",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "size_bytes": 100
+    },
+    "contract": "argus.config_bundle.v1alpha1"
+  },
+  "config_resolution_receipt_ref": {
+    "ref": {
+      "uri": "artifact://local/config-resolution-receipt",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "size_bytes": 100
+    },
+    "contract": "argus.config_resolution_receipt.v1alpha1"
+  },
+  "workflow": {
+    "ref": {
+      "uri": "artifact://local/workflow",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "size_bytes": 100
+    },
+    "contract": "argus.workflow.v1alpha1"
+  },
+  "review_spec": {
+    "ref": {
+      "uri": "artifact://local/review-spec",
+      "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "size_bytes": 100
+    },
+    "contract": "argus.review_spec.v1alpha1"
+  },
+  "review_input": {
+    "ref": {
+      "uri": "artifact://local/review-input",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "size_bytes": 100
+    },
+    "contract": "argus.review_input.v1alpha1"
+  },
+  "agent_review_policy": {
+    "id": "formal-review",
+    "revision": "1",
+    "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+  },
+  "rule_pack": {
+    "id": "review-rules",
+    "revision": "1",
+    "sha256": "b6f0c4ef0dccea071eca002bc18198ec8a62a54e2c62fa2247a0c7966569463c"
+  },
+  "normalization": {
+    "id": "candidate-normalization",
+    "revision": "v2",
+    "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+  },
+  "rule_pack_base64": "eyJzY2hlbWFfdmVyc2lvbiI6ImFyZ3VzLnJ1bGVfcGFjay52MWFscGhhMSIsImlkIjoicmV2aWV3LXJ1bGVzIiwicmV2aXNpb24iOiIxIiwicnVsZXMiOltdLCJzaGEyNTYiOiJiNmYwYzRlZjBkY2NlYTA3MWVjYTAwMmJjMTgxOThlYzhhNjJhNTRlMmM2MmZhMjI0N2EwYzc5NjY1Njk0NjNjIn0=",
+  "agent": {
+    "ref": {
+      "id": "agent",
+      "revision": "1",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+    },
+    "artifact": {
+      "ref": {
+        "uri": "artifact://local/agent",
+        "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+        "size_bytes": 100
+      },
+      "contract": "argus.agent_profile.v1alpha1"
+    }
+  },
+  "provider": {
+    "ref": {
+      "id": "provider",
+      "revision": "1",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+    },
+    "artifact": {
+      "ref": {
+        "uri": "artifact://local/provider",
+        "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "size_bytes": 100
+      },
+      "contract": "argus.provider_profile.v1alpha1"
+    }
+  },
+  "model": {
+    "ref": {
+      "id": "model",
+      "revision": "1",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+    },
+    "artifact": {
+      "ref": {
+        "uri": "artifact://local/model",
+        "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "size_bytes": 100
+      },
+      "contract": "argus.model_profile.v1alpha1"
+    }
+  },
+  "runtime": {
+    "ref": {
+      "id": "pi-runtime",
+      "revision": "1",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+    },
+    "artifact": {
+      "ref": {
+        "uri": "artifact://local/pi-runtime",
+        "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "size_bytes": 100
+      },
+      "contract": "argus.runtime_profile.v1alpha1"
+    }
+  },
+  "prompt": {
+    "ref": {
+      "id": "prompt",
+      "revision": "1",
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+    },
+    "artifact": {
+      "ref": {
+        "uri": "artifact://local/prompt",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+        "size_bytes": 100
+      },
+      "contract": "argus.prompt_bundle.v1alpha1"
+    }
+  },
+  "skills": [
+    {
+      "id": "grouping-default",
+      "phase": "grouping",
+      "ref": {
+        "id": "skill-grouping",
+        "revision": "1",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      "artifact": {
+        "ref": {
+          "uri": "artifact://local/skill-grouping",
+          "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+          "size_bytes": 100
+        },
+        "contract": "argus.skill_pack.v1alpha1"
+      }
+    },
+    {
+      "id": "context-default",
+      "phase": "context",
+      "ref": {
+        "id": "skill-context",
+        "revision": "1",
+        "sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+      },
+      "artifact": {
+        "ref": {
+          "uri": "artifact://local/skill-context",
+          "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+          "size_bytes": 100
+        },
+        "contract": "argus.skill_pack.v1alpha1"
+      }
+    },
+    {
+      "id": "review-default",
+      "phase": "review",
+      "ref": {
+        "id": "skill-review",
+        "revision": "1",
+        "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+      },
+      "artifact": {
+        "ref": {
+          "uri": "artifact://local/skill-review",
+          "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+          "size_bytes": 100
+        },
+        "contract": "argus.skill_pack.v1alpha1"
+      }
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "business-a",
+      "ref": {
+        "id": "knowledge-a",
+        "revision": "1",
+        "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+      },
+      "artifact": {
+        "ref": {
+          "uri": "artifact://local/knowledge-a",
+          "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+          "size_bytes": 100
+        },
+        "contract": "argus.knowledge_pack.v1alpha1"
+      }
+    },
+    {
+      "id": "business-b",
+      "ref": {
+        "id": "knowledge-b",
+        "revision": "1",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "artifact": {
+        "ref": {
+          "uri": "artifact://local/knowledge-b",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size_bytes": 100
+        },
+        "contract": "argus.knowledge_pack.v1alpha1"
+      }
+    }
+  ],
+  "context_providers": [
+    {
+      "id": "context-a",
+      "revision": "1",
+      "kind": "repository_search",
+      "adapter": {
+        "ref": {
+          "id": "adapter-a",
+          "revision": "1",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "artifact": {
+          "ref": {
+            "uri": "artifact://local/adapter-a",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "size_bytes": 100
+          },
+          "contract": "argus.context_provider_adapter.v1alpha1"
+        }
+      }
+    },
+    {
+      "id": "context-b",
+      "revision": "1",
+      "kind": "codegraph",
+      "adapter": {
+        "ref": {
+          "id": "adapter-b",
+          "revision": "1",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "artifact": {
+          "ref": {
+            "uri": "artifact://local/adapter-b",
+            "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "size_bytes": 100
+          },
+          "contract": "argus.context_provider_adapter.v1alpha1"
+        }
+      }
+    }
+  ],
+  "model_authority": {
+    "model_egress": "provider_broker_only",
+    "api_protocol": {
+      "ref": {
+        "id": "anthropic-messages",
+        "revision": "2023-06-01",
+        "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      },
+      "artifact": {
+        "ref": {
+          "uri": "artifact://local/anthropic-messages",
+          "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "size_bytes": 100
+        },
+        "contract": "argus.model_api_protocol.v1alpha1"
+      }
+    }
+  },
+  "tool_authority": {
+    "tools": [
+      "read_file",
+      "search_symbols"
+    ],
+    "tool_network": "deny",
+    "workspace_reads": "frozen_input_only",
+    "workspace_writes": "deny",
+    "remote_writes": "deny",
+    "max_delegation_depth": 0
+  },
+  "budget": {
+    "max_files": 20,
+    "max_groups": 4,
+    "max_hypotheses": 50,
+    "max_model_calls": 16,
+    "max_tool_calls": 64,
+    "max_target_bytes": 4194304,
+    "max_group_bytes": 1048576,
+    "max_output_bytes": 1048576,
+    "max_output_tokens": 100000,
+    "max_cost_micros": 2000000,
+    "timeout_ms": 120000,
+    "max_concurrency": 2
+  },
+  "retry": {
+    "max_attempts": 1,
+    "backoff_ms": 0,
+    "retryable_codes": [],
+    "unknown_outcome": "reconcile"
+  },
+  "output_contract": "argus.review_hypothesis_set.v1alpha1",
+  "disposition": "hypothesis_only",
+  "side_effects": "deny"
+}

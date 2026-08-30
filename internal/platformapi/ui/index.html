@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Argus Operator</title>
+    <link rel="stylesheet" href="/ui/app.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">A</span>
+          <div>
+            <strong>ARGUS</strong>
+            <small>CODE REVIEW CONTROL</small>
+          </div>
+        </div>
+        <nav aria-label="主导航">
+          <button class="nav-item active" data-page="overview">概览</button>
+          <button class="nav-item" data-page="jobs">评审任务</button>
+          <button class="nav-item" data-page="reviews">评审运行</button>
+          <button class="nav-item" data-page="config">配置治理</button>
+          <button class="nav-item" data-page="dashboard">收益看板</button>
+          <button class="nav-item" data-page="evaluation">评测数据</button>
+          <button class="nav-item" data-page="training">训练治理</button>
+        </nav>
+        <div class="security-note">
+          <span class="status-dot" id="connection-dot"></span>
+          <div>
+            <strong id="connection-label">未连接</strong>
+            <small>凭据仅保存在当前页面内存</small>
+          </div>
+        </div>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">LOCAL OPERATOR PROFILE</p>
+            <h1 id="page-title">运行概览</h1>
+          </div>
+          <div class="auth-panel">
+            <label class="sr-only" for="token-input">Bearer token</label>
+            <input id="token-input" type="password" autocomplete="off" spellcheck="false" placeholder="输入本地 API token" />
+            <button id="connect-button" class="primary">连接</button>
+            <button id="disconnect-button" class="ghost" hidden>断开</button>
+          </div>
+        </header>
+
+        <section id="notice" class="notice" hidden aria-live="polite"></section>
+        <section id="content" class="content" aria-live="polite">
+          <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">◎</span>
+            <h2>连接本地 Argus API</h2>
+            <p>输入启动服务时使用的 bearer token。页面不会持久化凭据。</p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/ui/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/training-job-observation-request.schema.json",
+  "title": "Argus TrainingJobObservationRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "job_id", "expected_plan_sha256", "receipt", "observed_at"],
+  "properties": {
+    "schema_version": {"const": "argus.training_job_observation_request.v1alpha1"},
+    "job_id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/\\-]*$"},
+    "expected_plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "receipt": {"$ref": "training-provider-job-receipt.schema.json"},
+    "observed_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+  }
+}

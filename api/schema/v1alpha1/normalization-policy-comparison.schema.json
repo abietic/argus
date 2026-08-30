@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/normalization-policy-comparison.schema.json",
+  "title": "Argus NormalizationPolicyComparison v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "comparison_id", "authority", "disposition", "baseline_policy", "variant_policy", "cases", "summary", "created_at"],
+  "properties": {
+    "schema_version": {"const": "argus.normalization_policy_comparison.v1alpha1"},
+    "comparison_id": {"$ref": "#/$defs/id"},
+    "authority": {"const": "diagnostic_only"},
+    "disposition": {"const": "comparison_only"},
+    "baseline_policy": {"const": "recorded_execution_decisions"},
+    "variant_policy": {"$ref": "#/$defs/id"},
+    "cases": {"type": "array", "minItems": 1, "maxItems": 1024, "items": {"$ref": "#/$defs/case"}},
+    "summary": {"$ref": "#/$defs/comparison_summary"},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@+\\-]*$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^artifact://local/sha256/[0-9a-f]{64}$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "contract": {"type": "string", "minLength": 1}
+      }
+    },
+    "normalization_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_candidates", "eligible_candidates", "retained", "merged_exact", "merged_semantic", "ineligible"],
+      "properties": {
+        "raw_candidates": {"type": "integer", "minimum": 0},
+        "eligible_candidates": {"type": "integer", "minimum": 0},
+        "retained": {"type": "integer", "minimum": 0},
+        "merged_exact": {"type": "integer", "minimum": 0},
+        "merged_semantic": {"type": "integer", "minimum": 0},
+        "ineligible": {"type": "integer", "minimum": 0}
+      }
+    },
+    "decision_change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_candidate_id", "baseline_action", "baseline_reason_code", "variant_action", "variant_reason_code"],
+      "properties": {
+        "raw_candidate_id": {"$ref": "#/$defs/id"},
+        "baseline_action": {"enum": ["retained", "merged_duplicate", "rejected_invalid", "excluded_budget"]},
+        "baseline_reason_code": {"$ref": "#/$defs/id"},
+        "variant_action": {"enum": ["retained", "merged_duplicate", "ineligible"]},
+        "variant_reason_code": {"$ref": "#/$defs/id"},
+        "canonical_raw_candidate_id": {"$ref": "#/$defs/id"}
+      }
+    },
+    "cluster": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonical_raw_candidate_id", "fingerprint", "raw_candidate_ids", "dimension_ids"],
+      "properties": {
+        "canonical_raw_candidate_id": {"$ref": "#/$defs/id"},
+        "fingerprint": {"$ref": "#/$defs/sha256"},
+        "raw_candidate_ids": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/id"}},
+        "dimension_ids": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/id"}}
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "source_review_run_id", "source_review_run_ref", "raw_candidate_collection_ref", "target_digest", "baseline", "variant", "retained_delta", "merged_exact_delta", "merged_semantic_delta", "changed_decisions", "variant_clusters"],
+      "properties": {
+        "case_id": {"$ref": "#/$defs/id"},
+        "source_review_run_id": {"$ref": "#/$defs/id"},
+        "source_review_run_ref": {"$ref": "#/$defs/artifact_ref"},
+        "raw_candidate_collection_ref": {"$ref": "#/$defs/artifact_ref"},
+        "target_digest": {"$ref": "#/$defs/sha256"},
+        "baseline": {"$ref": "#/$defs/normalization_summary"},
+        "variant": {"$ref": "#/$defs/normalization_summary"},
+        "retained_delta": {"type": "integer"},
+        "merged_exact_delta": {"type": "integer"},
+        "merged_semantic_delta": {"type": "integer"},
+        "changed_decisions": {"type": "array", "items": {"$ref": "#/$defs/decision_change"}},
+        "variant_clusters": {"type": "array", "items": {"$ref": "#/$defs/cluster"}}
+      }
+    },
+    "comparison_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cases", "raw_candidates", "eligible_candidates", "baseline_retained", "variant_retained", "retained_delta", "baseline_merged_exact", "variant_merged_exact", "merged_exact_delta", "baseline_merged_semantic", "variant_merged_semantic", "merged_semantic_delta", "changed_decisions"],
+      "properties": {
+        "cases": {"type": "integer", "minimum": 1},
+        "raw_candidates": {"type": "integer", "minimum": 0},
+        "eligible_candidates": {"type": "integer", "minimum": 0},
+        "baseline_retained": {"type": "integer", "minimum": 0},
+        "variant_retained": {"type": "integer", "minimum": 0},
+        "retained_delta": {"type": "integer"},
+        "baseline_merged_exact": {"type": "integer", "minimum": 0},
+        "variant_merged_exact": {"type": "integer", "minimum": 0},
+        "merged_exact_delta": {"type": "integer"},
+        "baseline_merged_semantic": {"type": "integer", "minimum": 0},
+        "variant_merged_semantic": {"type": "integer", "minimum": 0},
+        "merged_semantic_delta": {"type": "integer"},
+        "changed_decisions": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

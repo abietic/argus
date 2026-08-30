@@ -1,0 +1,34 @@
+{
+  "schema_version": "argus.local_api_repeatability_batch_submit_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.repeatability_batch_request.v1alpha1",
+    "batch_id": "repeatability-batch-platform-1",
+    "baseline_evaluation_run_id": "evaluation-baseline-1",
+    "replay_evaluation_run_ids": ["evaluation-replay-1", "evaluation-replay-2"],
+    "repeatability_run_id": "repeatability-run-platform-1",
+    "repeatability_revision": "exact-replay-v1",
+    "executor_revision": "argus-local-formal-pi-replay-1",
+    "max_concurrency": 2,
+    "cases": [
+      {
+        "case_id": "case-example-1",
+        "expected_label_revision": 1,
+        "baseline_review_run_id": "review-baseline-1",
+        "expected_baseline_config_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "exposure_observations": [
+          {"component": "prompt", "status": "not_seen", "revision": "prompt-1"},
+          {"component": "rule", "status": "not_seen", "revision": "rule-1"},
+          {"component": "model", "status": "not_seen", "revision": "model-1"},
+          {"component": "index", "status": "not_seen", "revision": "index-1"}
+        ]
+      }
+    ],
+    "created_at": "2026-08-26T12:01:00Z"
+  },
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "submit-repeatability-batch-001",
+    "audit": "submit an exact repeatability batch from the configured formal profile",
+    "at": "2026-08-26T12:01:00Z"
+  }
+}

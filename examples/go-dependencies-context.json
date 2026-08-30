@@ -1,0 +1,74 @@
+{
+  "schema_version": "argus.context.go_dependencies.v1alpha1",
+  "provider_id": "argus-go-dependencies",
+  "provider_revision": "1",
+  "commit_oid": "1111111111111111111111111111111111111111",
+  "module_path": "example.com/project",
+  "target_paths": [
+    "cmd/app/main.go"
+  ],
+  "packages": [
+    {
+      "directory": "cmd/app",
+      "name": "main",
+      "files": [
+        "cmd/app/main.go"
+      ],
+      "target": true
+    },
+    {
+      "directory": "internal/service",
+      "name": "service",
+      "files": [
+        "internal/service/service.go"
+      ],
+      "target": false
+    }
+  ],
+  "imports": [
+    {
+      "from_package": "cmd/app",
+      "import_path": "example.com/project/internal/service",
+      "resolved_directory": "internal/service",
+      "resolution": "internal_exact",
+      "path": "cmd/app/main.go",
+      "line": 4,
+      "target": true
+    },
+    {
+      "from_package": "cmd/app",
+      "import_path": "fmt",
+      "resolution": "stdlib",
+      "path": "cmd/app/main.go",
+      "line": 3,
+      "target": true
+    },
+    {
+      "from_package": "internal/service",
+      "import_path": "context",
+      "resolution": "stdlib",
+      "path": "internal/service/service.go",
+      "line": 3,
+      "target": false
+    },
+    {
+      "from_package": "internal/service",
+      "import_path": "external.example/lib",
+      "resolution": "external",
+      "path": "internal/service/service.go",
+      "line": 4,
+      "target": false
+    }
+  ],
+  "coverage": {
+    "go_files_discovered": 2,
+    "go_files_parsed": 2,
+    "go_files_failed": 0,
+    "target_files_requested": 1,
+    "target_go_files_found": 1,
+    "packages_emitted": 2,
+    "imports_emitted": 4,
+    "truncated": false
+  },
+  "gaps": []
+}

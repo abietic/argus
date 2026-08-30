@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/repeatability-run-request.schema.json",
+  "title": "Argus RepeatabilityRunRequest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "repeatability_run_id", "repeatability_revision", "baseline_evaluation_run_id", "replay_evaluation_run_ids", "created_at"],
+  "properties": {
+    "schema_version": { "const": "argus.repeatability_run_request.v1alpha1" },
+    "repeatability_run_id": { "$ref": "#/$defs/id" },
+    "repeatability_revision": { "$ref": "#/$defs/id" },
+    "baseline_evaluation_run_id": { "$ref": "#/$defs/id" },
+    "replay_evaluation_run_ids": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 31,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+\\-]*$" }
+  }
+}

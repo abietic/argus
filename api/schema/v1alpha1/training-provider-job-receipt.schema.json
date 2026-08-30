@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/training-provider-job-receipt.schema.json",
+  "title": "Argus TrainingProviderJobReceipt v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "provider_id", "external_job_id", "status", "authority", "contains_secret", "observed_at", "sha256"],
+  "properties": {
+    "schema_version": {"const": "argus.training_provider_job_receipt.v1alpha1"},
+    "provider_id": {"$ref": "#/$defs/id"},
+    "external_job_id": {"$ref": "#/$defs/id"},
+    "status": {"enum": ["submitted", "succeeded", "failed", "canceled"]},
+    "output_model_id": {"$ref": "#/$defs/id"},
+    "authority": {"const": "operator_recorded_unattested"},
+    "contains_secret": {"const": false},
+    "observed_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "allOf": [{
+    "if": {"properties": {"status": {"const": "succeeded"}}},
+    "then": {"required": ["output_model_id"]},
+    "else": {"not": {"required": ["output_model_id"]}}
+  }],
+  "$defs": {"id": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/\\-]*$"}}
+}

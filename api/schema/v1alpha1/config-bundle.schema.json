@@ -1,0 +1,1203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/config-bundle.schema.json",
+  "title": "Argus ConfigBundle v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "sha256",
+    "context",
+    "applied_revisions",
+    "target",
+    "rule_pack",
+    "workflow",
+    "execution",
+    "budget",
+    "verification",
+    "adjudication",
+    "publication",
+    "data",
+    "field_sources",
+    "explain"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "argus.config_bundle.v1alpha1"
+    },
+    "bundle_id": {
+      "type": "string",
+      "pattern": "^bundle-[0-9a-f]{24}$"
+    },
+    "sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "context": {
+      "$ref": "#/$defs/resolutionContext"
+    },
+    "applied_revisions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/appliedSourceRef"
+      }
+    },
+    "target": {
+      "$ref": "#/$defs/targetPolicy"
+    },
+    "rule_pack": {
+      "$ref": "#/$defs/rulePack"
+    },
+    "workflow": {
+      "$ref": "#/$defs/workflowPolicy"
+    },
+    "execution": {
+      "$ref": "#/$defs/executionPolicy"
+    },
+    "agent_review": {
+      "$ref": "#/$defs/agentReviewPolicy"
+    },
+    "budget": {
+      "$ref": "#/$defs/budgetPolicy"
+    },
+    "verification": {
+      "$ref": "#/$defs/verificationPolicy"
+    },
+    "adjudication": {
+      "$ref": "#/$defs/adjudicationPolicy"
+    },
+    "finding_governance": {
+      "$ref": "#/$defs/findingGovernancePolicy"
+    },
+    "publication": {
+      "$ref": "#/$defs/publicationPolicy"
+    },
+    "data": {
+      "$ref": "#/$defs/dataPolicy"
+    },
+    "field_sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/fieldSource"
+      }
+    },
+    "explain": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/mergeExplanation"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "adjudication": {
+            "properties": {
+              "automatic_publication": {
+                "const": "allow"
+              }
+            },
+            "required": [
+              "automatic_publication"
+            ]
+          }
+        },
+        "required": [
+          "adjudication"
+        ]
+      },
+      "then": {
+        "properties": {
+          "publication": {
+            "properties": {
+              "remote_writes": {
+                "const": "allow"
+              },
+              "channels": {
+                "minItems": 1
+              },
+              "max_comments": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "publication": {
+            "properties": {
+              "remote_writes": {
+                "const": "allow"
+              }
+            },
+            "required": [
+              "remote_writes"
+            ]
+          }
+        },
+        "required": [
+          "publication"
+        ]
+      },
+      "then": {
+        "properties": {
+          "publication": {
+            "properties": {
+              "channels": {
+                "minItems": 1
+              },
+              "max_comments": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "data": {
+            "properties": {
+              "training": {
+                "const": "allow"
+              }
+            },
+            "required": [
+              "training"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "properties": {
+              "redaction": {
+                "const": "strict"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[\\p{L}\\p{N}._~-]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "scope": {
+      "enum": [
+        "platform",
+        "tenant",
+        "organization",
+        "repository",
+        "path",
+        "invocation"
+      ]
+    },
+    "permission": {
+      "enum": [
+        "allow",
+        "deny"
+      ]
+    },
+    "severity": {
+      "enum": [
+        "info",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "mergeStrategy": {
+      "enum": [
+        "override",
+        "ordered_stable_id_override",
+        "set_union_subtract",
+        "deny_wins",
+        "replace_only"
+      ]
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\\\:\\x00-\\x1F\\x7F]([^\\\\:\\x00-\\x1F\\x7F]*[^/\\\\:\\x00-\\x1F\\x7F])?$",
+      "not": {
+        "pattern": "(^|/)(\\.|\\.\\.)(/|$)|//"
+      }
+    },
+    "optionalRepositoryPath": {
+      "anyOf": [
+        {
+          "const": ""
+        },
+        {
+          "$ref": "#/$defs/repositoryPath"
+        }
+      ]
+    },
+    "pathPrefix": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/repositoryPath"
+        },
+        {
+          "not": {
+            "pattern": "[*?\\[]"
+          }
+        }
+      ]
+    },
+    "optionalPathPrefix": {
+      "anyOf": [
+        {
+          "const": ""
+        },
+        {
+          "$ref": "#/$defs/pathPrefix"
+        }
+      ]
+    },
+    "globPattern": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^[^/\\\\:?\\[\\]\\x00-\\x1F\\x7F]([^\\\\:?\\[\\]\\x00-\\x1F\\x7F]*[^/\\\\:?\\[\\]\\x00-\\x1F\\x7F])?$",
+      "not": {
+        "pattern": "(^|/)(\\.|\\.\\.)(/|$)|//|\\*\\*\\*"
+      }
+    },
+    "versionedRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "allOf": [
+            {"$ref": "#/$defs/identifier"},
+            {"not": {"pattern": "^[lL][aA][tT][eE][sS][tT]$"}}
+          ]
+        },
+        "revision": {
+          "allOf": [
+            {"$ref": "#/$defs/identifier"},
+            {"not": {"pattern": "^[lL][aA][tT][eE][sS][tT]$"}}
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "secretRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uri"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "pattern": "^secret://[A-Za-z0-9](?:[A-Za-z0-9.-]{0,126}[A-Za-z0-9])?/[A-Za-z0-9._~-]+(?:/[A-Za-z0-9._~-]+)*$"
+        }
+      }
+    },
+    "resolutionContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id",
+        "organization_id",
+        "repository_id",
+        "path",
+        "invocation_id"
+      ],
+      "properties": {
+        "tenant_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "organization_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "repository_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "path": {
+          "$ref": "#/$defs/optionalRepositoryPath"
+        },
+        "invocation_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "selector",
+        "id",
+        "revision",
+        "operation"
+      ],
+      "properties": {
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "selector": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "pattern": "^[^\\x00-\\x1F\\x7F]+$"
+        },
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "operation": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "appliedSourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "selector",
+        "id",
+        "revision",
+        "operation"
+      ],
+      "properties": {
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "selector": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "pattern": "^[^\\x00-\\x1F\\x7F]+$"
+        },
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "operation": {
+          "const": "applied"
+        }
+      }
+    },
+    "ruleDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "kind",
+        "detector",
+        "languages",
+        "path_prefixes",
+        "evidence_kinds",
+        "severity",
+        "enabled"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "kind": {
+          "enum": [
+            "deterministic",
+            "ast",
+            "lsp",
+            "compile",
+            "test",
+            "static",
+            "search",
+            "codegraph",
+            "llm",
+            "agent"
+          ]
+        },
+        "detector": {
+          "$ref": "#/$defs/versionedRef"
+        },
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "path_prefixes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/optionalPathPrefix"
+          }
+        },
+        "evidence_kinds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "severity": {
+          "$ref": "#/$defs/severity"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "contextProviderDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "kind",
+        "adapter"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "kind": {
+          "enum": [
+            "repository_search",
+            "codegraph",
+            "lsp",
+            "dependency",
+            "artifact",
+            "go_ast",
+            "compile"
+          ]
+        },
+        "adapter": {
+          "$ref": "#/$defs/versionedRef"
+        }
+      }
+    },
+    "targetPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_modes",
+        "include",
+        "exclude",
+        "max_files",
+        "max_patch_bytes"
+      ],
+      "properties": {
+        "allowed_modes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "diff",
+              "selection",
+              "scope"
+            ]
+          }
+        },
+        "include": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/globPattern"
+          }
+        },
+        "exclude": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/globPattern"
+          }
+        },
+        "max_files": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_patch_bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "rulePack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "id",
+        "revision",
+        "rules",
+        "sha256"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "argus.rule_pack.v1alpha1"
+        },
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "revision": {
+          "$ref": "#/$defs/identifier"
+        },
+        "rules": {
+          "type": "array",
+          "minItems": 1,
+          "contains": {
+            "properties": {
+              "enabled": {
+                "const": true
+              }
+            },
+            "required": [
+              "enabled"
+            ]
+          },
+          "items": {
+            "$ref": "#/$defs/ruleDefinition"
+          }
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "workflowPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definition"
+      ],
+      "properties": {
+        "definition": {
+          "$ref": "#/$defs/versionedRef"
+        }
+      }
+    },
+    "executionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_profile",
+        "model_profile",
+        "allowed_tools",
+        "context_providers",
+        "context_provider_max_concurrency"
+      ],
+      "properties": {
+        "agent_profile": {
+          "$ref": "#/$defs/versionedRef"
+        },
+        "model_profile": {
+          "$ref": "#/$defs/versionedRef"
+        },
+        "model_credential_ref": {
+          "$ref": "#/$defs/secretRef"
+        },
+        "allowed_tools": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "context_providers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/contextProviderDefinition"
+          }
+        },
+        "context_provider_max_concurrency": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        }
+      }
+    },
+    "agentSkillPackDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "phase", "ref"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "phase": {"enum": ["grouping", "context", "review", "verification"]},
+        "ref": {"$ref": "#/$defs/versionedRef"}
+      }
+    },
+    "agentKnowledgePackDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "ref"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "ref": {"$ref": "#/$defs/versionedRef"}
+      }
+    },
+    "agentAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_egress",
+        "tool_network",
+        "workspace_reads",
+        "workspace_writes",
+        "remote_writes",
+        "max_delegation_depth",
+        "tools"
+      ],
+      "properties": {
+        "model_egress": {"const": "provider_broker_only"},
+        "tool_network": {"const": "deny"},
+        "workspace_reads": {"const": "frozen_input_only"},
+        "workspace_writes": {"const": "deny"},
+        "remote_writes": {"const": "deny"},
+        "max_delegation_depth": {"const": 0},
+        "tools": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        }
+      }
+    },
+    "agentBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_files",
+        "max_groups",
+        "max_hypotheses",
+        "max_model_calls",
+        "max_tool_calls",
+        "max_target_bytes",
+        "max_group_bytes",
+        "max_output_bytes",
+        "max_output_tokens",
+        "max_cost_micros",
+        "timeout_ms",
+        "max_concurrency"
+      ],
+      "properties": {
+        "max_files": {"type": "integer", "minimum": 1},
+        "max_groups": {"type": "integer", "minimum": 1},
+        "max_hypotheses": {"type": "integer", "minimum": 1},
+        "max_model_calls": {"type": "integer", "minimum": 1},
+        "max_tool_calls": {"type": "integer", "minimum": 1},
+        "max_target_bytes": {"type": "integer", "minimum": 1},
+        "max_group_bytes": {"type": "integer", "minimum": 1},
+        "max_output_bytes": {"type": "integer", "minimum": 1},
+        "max_output_tokens": {"type": "integer", "minimum": 1},
+        "max_cost_micros": {"type": "integer", "minimum": 1},
+        "timeout_ms": {"type": "integer", "minimum": 1},
+        "max_concurrency": {"type": "integer", "minimum": 1}
+      }
+    },
+    "agentReviewPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "id",
+        "revision",
+        "agent",
+        "normalization",
+        "provider",
+        "model",
+        "prompt",
+        "skill_packs",
+        "knowledge_packs",
+        "api_protocol",
+        "authority",
+        "budget",
+        "sha256"
+      ],
+      "properties": {
+        "schema_version": {"const": "argus.agent_review_policy.v1alpha1"},
+        "id": {"const": "effective"},
+        "revision": {"const": "resolved"},
+        "agent": {"$ref": "#/$defs/versionedRef"},
+        "normalization": {
+          "allOf": [
+            {"$ref": "#/$defs/versionedRef"},
+            {"properties": {
+              "id": {"const": "candidate-normalization"},
+              "revision": {"enum": ["v0", "v1", "v2"]}
+            }}
+          ]
+        },
+        "provider": {"$ref": "#/$defs/versionedRef"},
+        "model": {"$ref": "#/$defs/versionedRef"},
+        "prompt": {"$ref": "#/$defs/versionedRef"},
+        "model_credential_ref": {"$ref": "#/$defs/secretRef"},
+        "skill_packs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/agentSkillPackDefinition"},
+          "contains": {
+            "type": "object",
+            "properties": {"phase": {"const": "review"}},
+            "required": ["phase"]
+          }
+        },
+        "knowledge_packs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/agentKnowledgePackDefinition"}
+        },
+        "api_protocol": {"$ref": "#/$defs/versionedRef"},
+        "authority": {"$ref": "#/$defs/agentAuthority"},
+        "budget": {"$ref": "#/$defs/agentBudget"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "budgetPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_input_bytes",
+        "max_output_bytes",
+        "max_tokens",
+        "max_cost_micros",
+        "stage_timeout_ms",
+        "max_attempts",
+        "max_concurrency"
+      ],
+      "properties": {
+        "max_input_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_cost_micros": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stage_timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_attempts": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_concurrency": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "verificationPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_evidence_kinds",
+        "minimum_independent_evidence",
+        "partial_evidence"
+      ],
+      "properties": {
+        "required_evidence_kinds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "minimum_independent_evidence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "partial_evidence": {
+          "$ref": "#/$defs/permission"
+        }
+      }
+    },
+    "adjudicationPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minimum_severity",
+        "human_review_inconclusive",
+        "automatic_publication"
+      ],
+      "properties": {
+        "minimum_severity": {
+          "$ref": "#/$defs/severity"
+        },
+        "human_review_inconclusive": {
+          "type": "boolean"
+        },
+        "automatic_publication": {
+          "$ref": "#/$defs/permission"
+        }
+      }
+    },
+    "calibrationPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_ppm", "confidence_ppm"],
+      "properties": {
+        "raw_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "confidence_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000}
+      }
+    },
+    "calibrationProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "id", "revision", "points", "sha256"],
+      "properties": {
+        "schema_version": {"const": "argus.calibration_profile.v1alpha1"},
+        "id": {"$ref": "#/$defs/identifier"},
+        "revision": {"$ref": "#/$defs/identifier"},
+        "points": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/calibrationPoint"}},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "findingGovernancePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "id", "revision", "calibration_profile", "minimum_confidence_ppm", "max_findings", "sha256"],
+      "properties": {
+        "schema_version": {"const": "argus.finding_governance_policy.v1alpha1"},
+        "id": {"const": "effective"},
+        "revision": {"const": "resolved"},
+        "calibration_profile": {"$ref": "#/$defs/calibrationProfile"},
+        "minimum_confidence_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "max_findings": {"type": "integer", "minimum": 0},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "publicationPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "remote_writes",
+        "channels",
+        "max_comments"
+      ],
+      "properties": {
+        "remote_writes": {
+          "$ref": "#/$defs/permission"
+        },
+        "channels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "max_comments": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "dataPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "retention_days",
+        "redaction",
+        "training",
+        "export"
+      ],
+      "properties": {
+        "retention_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "redaction": {
+          "enum": [
+            "none",
+            "basic",
+            "strict"
+          ]
+        },
+        "training": {
+          "$ref": "#/$defs/permission"
+        },
+        "export": {
+          "$ref": "#/$defs/permission"
+        }
+      }
+    },
+    "overrideField": {
+      "enum": [
+        "target.max_files",
+        "target.max_patch_bytes",
+        "budget.max_input_bytes",
+        "budget.max_output_bytes",
+        "budget.max_tokens",
+        "budget.max_cost_micros",
+        "budget.stage_timeout_ms",
+        "budget.max_attempts",
+        "budget.max_concurrency",
+        "execution.context_provider_max_concurrency",
+        "verification.minimum_independent_evidence",
+        "adjudication.minimum_severity",
+        "adjudication.human_review_inconclusive",
+        "finding_governance.minimum_confidence_ppm",
+        "finding_governance.max_findings",
+        "publication.max_comments",
+        "data.retention_days",
+        "agent_review.authority.max_delegation_depth",
+        "agent_review.budget.max_files",
+        "agent_review.budget.max_groups",
+        "agent_review.budget.max_hypotheses",
+        "agent_review.budget.max_model_calls",
+        "agent_review.budget.max_tool_calls",
+        "agent_review.budget.max_target_bytes",
+        "agent_review.budget.max_group_bytes",
+        "agent_review.budget.max_output_bytes",
+        "agent_review.budget.max_output_tokens",
+        "agent_review.budget.max_cost_micros",
+        "agent_review.budget.timeout_ms",
+        "agent_review.budget.max_concurrency"
+      ]
+    },
+    "setUnionField": {
+      "enum": [
+        "target.allowed_modes",
+        "target.include",
+        "target.exclude",
+        "execution.allowed_tools",
+        "verification.required_evidence_kinds",
+        "publication.channels",
+        "agent_review.authority.tools"
+      ]
+    },
+    "denyWinsField": {
+      "enum": [
+        "verification.partial_evidence",
+        "adjudication.automatic_publication",
+        "publication.remote_writes",
+        "data.redaction",
+        "data.training",
+        "data.export",
+        "agent_review.authority.tool_network",
+        "agent_review.authority.workspace_writes",
+        "agent_review.authority.remote_writes"
+      ]
+    },
+    "replaceOnlyField": {
+      "enum": [
+        "workflow.definition",
+        "execution.agent_profile",
+        "execution.model_profile",
+        "execution.model_credential_ref",
+        "agent_review.agent",
+        "agent_review.normalization",
+        "agent_review.provider",
+        "agent_review.model",
+        "agent_review.prompt",
+        "agent_review.model_credential_ref",
+        "agent_review.api_protocol",
+        "agent_review.authority.model_egress",
+        "agent_review.authority.workspace_reads"
+        ,"finding_governance.calibration_profile"
+      ]
+    },
+    "orderedField": {
+      "anyOf": [
+        {
+          "enum": [
+            "rule_pack.rules",
+            "execution.context_providers",
+            "agent_review.skill_packs",
+            "agent_review.knowledge_packs"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^(rule_pack\\.rules|execution\\.context_providers|agent_review\\.skill_packs|agent_review\\.knowledge_packs)\\[[\\p{L}\\p{N}._~-]+\\]$"
+        }
+      ]
+    },
+    "fieldAndStrategy": {
+      "oneOf": [
+        {
+          "properties": {
+            "field": {
+              "$ref": "#/$defs/overrideField"
+            },
+            "strategy": {
+              "const": "override"
+            }
+          },
+          "required": [
+            "field",
+            "strategy"
+          ]
+        },
+        {
+          "properties": {
+            "field": {
+              "$ref": "#/$defs/orderedField"
+            },
+            "strategy": {
+              "const": "ordered_stable_id_override"
+            }
+          },
+          "required": [
+            "field",
+            "strategy"
+          ]
+        },
+        {
+          "properties": {
+            "field": {
+              "$ref": "#/$defs/setUnionField"
+            },
+            "strategy": {
+              "const": "set_union_subtract"
+            }
+          },
+          "required": [
+            "field",
+            "strategy"
+          ]
+        },
+        {
+          "properties": {
+            "field": {
+              "$ref": "#/$defs/denyWinsField"
+            },
+            "strategy": {
+              "const": "deny_wins"
+            }
+          },
+          "required": [
+            "field",
+            "strategy"
+          ]
+        },
+        {
+          "properties": {
+            "field": {
+              "$ref": "#/$defs/replaceOnlyField"
+            },
+            "strategy": {
+              "const": "replace_only"
+            }
+          },
+          "required": [
+            "field",
+            "strategy"
+          ]
+        }
+      ]
+    },
+    "fieldSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "strategy",
+        "sources"
+      ],
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "strategy": {
+          "$ref": "#/$defs/mergeStrategy"
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/sourceRef"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/fieldAndStrategy"
+        }
+      ]
+    },
+    "mergeExplanation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "strategy",
+        "source",
+        "action",
+        "detail"
+      ],
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "strategy": {
+          "$ref": "#/$defs/mergeStrategy"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceRef"
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/fieldAndStrategy"
+        }
+      ]
+    }
+  }
+}

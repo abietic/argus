@@ -1,0 +1,10 @@
+{
+  "schema_version": "argus.training_provider_job_receipt.v1alpha1",
+  "provider_id": "provider-example",
+  "external_job_id": "external-job-1",
+  "status": "submitted",
+  "authority": "operator_recorded_unattested",
+  "contains_secret": false,
+  "observed_at": "2026-08-26T08:03:00Z",
+  "sha256": "ce7476a41bbcbfebc295a59bec445c88fcc2ae820dc3602142bde07c9a433bed"
+}

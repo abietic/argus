@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-trust-key-command.schema.json",
+  "title": "Argus LocalAPITrustKeyCommand v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "registration", "mutation"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_trust_key_command.v1alpha1"},
+    "registration": {"$ref": "governance-trust-key-registration.schema.json"},
+    "mutation": {"$ref": "local-api-mutation.schema.json"}
+  }
+}

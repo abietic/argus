@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/local-api-trust-key-revocation-command.schema.json",
+  "title": "Argus LocalAPITrustKeyRevocationCommand v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "revocation", "mutation"],
+  "properties": {
+    "schema_version": {"const": "argus.local_api_trust_key_revocation_command.v1alpha1"},
+    "revocation": {"$ref": "governance-trust-key-revocation.schema.json"},
+    "mutation": {"$ref": "local-api-mutation.schema.json"}
+  }
+}

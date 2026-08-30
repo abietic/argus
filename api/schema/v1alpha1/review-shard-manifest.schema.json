@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/review-shard-manifest.schema.json",
+  "title": "Argus ReviewShardManifest v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "target_digest", "review_input_ref", "limits", "shards", "gaps", "coverage", "created_at"],
+  "properties": {
+    "schema_version": {"const": "argus.review_shard_manifest.v1alpha1"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "target_digest": {"$ref": "#/$defs/sha256"},
+    "review_input_ref": {"$ref": "#/$defs/reviewInputRef"},
+    "limits": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_files_per_shard", "max_bytes_per_shard", "max_input_bytes_per_shard", "max_shards"],
+      "properties": {
+        "max_files_per_shard": {"type": "integer", "minimum": 1, "maximum": 1024},
+        "max_bytes_per_shard": {"type": "integer", "minimum": 1, "maximum": 1073741824},
+        "max_input_bytes_per_shard": {"type": "integer", "minimum": 1, "maximum": 1073741824},
+        "max_shards": {"type": "integer", "minimum": 1, "maximum": 4096}
+      }
+    },
+    "shards": {"type": "array", "items": {"$ref": "#/$defs/shard"}},
+    "gaps": {"type": "array", "items": {"$ref": "#/$defs/gap"}},
+    "coverage": {"$ref": "#/$defs/coverage"},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifactRef": {
+      "type": "object", "additionalProperties": false,
+      "required": ["uri", "sha256", "size_bytes", "contract"],
+      "properties": {
+        "uri": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "contract": {"type": "string", "minLength": 1}
+      }
+    },
+    "reviewInputRef": {"allOf": [{"$ref": "#/$defs/artifactRef"}, {"properties": {"contract": {"const": "argus.review_input.v1alpha1"}}}]},
+    "file": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "size_bytes"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}, "size_bytes": {"type": "integer", "minimum": 0}}
+    },
+    "shard": {
+      "type": "object", "additionalProperties": false,
+      "required": ["shard_id", "ordinal", "input_ref", "input_sha256", "files", "file_bytes", "input_bytes"],
+      "properties": {
+        "shard_id": {"$ref": "#/$defs/id"}, "ordinal": {"type": "integer", "minimum": 0},
+        "input_ref": {"$ref": "#/$defs/reviewInputRef"}, "input_sha256": {"$ref": "#/$defs/sha256"},
+        "files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/file"}},
+        "file_bytes": {"type": "integer", "minimum": 0}, "input_bytes": {"type": "integer", "minimum": 0}
+      }
+    },
+    "gap": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "size_bytes", "reason_code"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}, "size_bytes": {"type": "integer", "minimum": 0}, "reason_code": {"type": "string", "minLength": 1}}
+    },
+    "coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["total_files", "executable_files", "skipped_files", "total_bytes", "executable_bytes"],
+      "properties": {
+        "total_files": {"type": "integer", "minimum": 0}, "executable_files": {"type": "integer", "minimum": 0}, "skipped_files": {"type": "integer", "minimum": 0},
+        "total_bytes": {"type": "integer", "minimum": 0}, "executable_bytes": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

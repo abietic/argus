@@ -1,0 +1,48 @@
+{
+  "schema_version": "argus.local_api_experiment_batch_submit_command.v1alpha1",
+  "request": {
+    "schema_version": "argus.experiment_batch_request.v1alpha1",
+    "batch_id": "experiment-batch-index-1",
+    "baseline_evaluation_run_id": "evaluation-baseline-1",
+    "variant_evaluation_run_id": "evaluation-index-1",
+    "experiment_run_id": "experiment-index-1",
+    "experiment_revision": "repository-search-v1",
+    "variable": "index",
+    "executor_revision": "argus-local-formal-pi-replay-1",
+    "max_concurrency": 2,
+    "cases": [
+      {
+        "case_id": "case-example-1",
+        "expected_label_revision": 1,
+        "baseline_review_run_id": "review-baseline-1",
+        "expected_baseline_config_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "expected_variant_config_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "exposure_observations": [
+          {"component": "prompt", "status": "not_seen", "revision": "prompt-1"},
+          {"component": "rule", "status": "not_seen", "revision": "rule-1"},
+          {"component": "model", "status": "not_seen", "revision": "model-1"},
+          {"component": "index", "status": "not_seen", "revision": "repository-search-v1"}
+        ]
+      }
+    ],
+    "created_at": "2026-08-26T12:30:00Z"
+  },
+  "context_providers": [
+    {
+      "id": "repository-search",
+      "revision": "1",
+      "kind": "repository_search",
+      "adapter": {
+        "id": "argus-repository-search",
+        "revision": "2",
+        "sha256": "69190b151bb7b60129e820bd0d687b4d0b79ed00b83915d0795ac5b5f274a66d"
+      }
+    }
+  ],
+  "mutation": {
+    "schema_version": "argus.local_api_mutation.v1alpha1",
+    "idempotency_key": "submit-index-experiment-001",
+    "audit": "submit an exact context provider index experiment",
+    "at": "2026-08-26T12:30:00Z"
+  }
+}
