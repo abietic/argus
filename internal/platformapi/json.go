@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"io"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/findingdecision"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/findingdecision"
 )
 
 func decodeStrict[T any](data []byte, target *T) error {

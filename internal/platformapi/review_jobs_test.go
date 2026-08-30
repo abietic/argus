@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/reviewjob"
-	"argus.local/argus/internal/scheduling"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/reviewjob"
+	"github.com/abietic/argus/internal/scheduling"
 )
 
 func TestReviewJobAPIInjectsPrincipalAndKeepsReadExecutePermissionsSeparate(t *testing.T) {

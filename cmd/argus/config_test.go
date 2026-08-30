@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"argus.local/argus/internal/configrepo"
-	"argus.local/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/configrepo"
+	"github.com/abietic/argus/internal/reviewconfig"
 )
 
 func TestConfigCLILifecycleIsExplicitStrictAndIdempotent(t *testing.T) {

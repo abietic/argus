@@ -11,10 +11,10 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/formalreview"
-	"argus.local/argus/internal/piexecution"
-	"argus.local/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/formalreview"
+	"github.com/abietic/argus/internal/piexecution"
+	"github.com/abietic/argus/internal/reviewcore"
 )
 
 const (

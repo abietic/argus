@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/scheduling"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/scheduling"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 func TestCLIUsesSameStoreForReviewAndReplayWorkloadCoordination(t *testing.T) {

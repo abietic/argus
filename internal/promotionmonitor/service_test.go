@@ -8,12 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/analytics"
-	"argus.local/argus/internal/analyticsadapter"
-	"argus.local/argus/internal/calibrationpromotion"
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/analytics"
+	"github.com/abietic/argus/internal/analyticsadapter"
+	"github.com/abietic/argus/internal/calibrationpromotion"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 func TestBuildObservationDetectsRegressionWithoutUsingFeedbackOrModelScores(t *testing.T) {

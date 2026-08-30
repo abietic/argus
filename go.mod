@@ -1,4 +1,4 @@
-module argus.local/argus
+module github.com/abietic/argus
 
 go 1.26.0
 

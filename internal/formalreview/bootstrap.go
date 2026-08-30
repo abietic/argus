@@ -13,13 +13,13 @@ import (
 	"sort"
 	"strings"
 
-	"argus.local/argus/internal/agentcomponentrepo"
-	"argus.local/argus/internal/configdefaults"
-	"argus.local/argus/internal/piexecution"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/workflow"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/agentcomponentrepo"
+	"github.com/abietic/argus/internal/configdefaults"
+	"github.com/abietic/argus/internal/piexecution"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/workflow"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 const (

@@ -8,13 +8,13 @@ import (
 	"errors"
 	"time"
 
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/formalreview"
-	"argus.local/argus/internal/piexecution"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/scheduling"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/formalreview"
+	"github.com/abietic/argus/internal/piexecution"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/scheduling"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const (

@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/scheduling"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/scheduling"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 func TestWorkloadPressureCommandReadsVersionedBackpressureProjection(t *testing.T) {

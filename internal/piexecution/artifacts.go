@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/artifactrepo"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/artifactrepo"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 type GovernedArtifactIO struct {

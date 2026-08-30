@@ -1,12 +1,13 @@
 # Status
 
-**Last verified:** 2026-08-27
+**Last verified:** 2026-08-30
 **Milestone:** formal local Pi execution + governed report + unified ReviewRun terminal
 
 ## 当前已存在
 
 - 产品、需求、技术设计、核心协议、集成边界、指标/评测/收益和旧系统证据文档。
-- Go 1.26 module `argus.local/argus`；远端 module path 尚未决定。
+- Go 1.26 module 已冻结为公开 canonical path `github.com/abietic/argus`；根门禁通过
+  `go list -m` 拒绝 module identity 漂移。
 - `ReviewSpec v1alpha1` Go 类型、strict decoder、validator 和 canonical struct digest。
 - `diff`、`selection`、`scope` 三种严格样例及 JSON Schema。
 - M0 CLI：

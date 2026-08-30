@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"argus.local/argus/internal/agentcomponentrepo"
+	"github.com/abietic/argus/internal/agentcomponentrepo"
 )
 
 func (handler *Handler) handleAgentComponentPublish(writer http.ResponseWriter, request *http.Request) {

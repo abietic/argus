@@ -7,8 +7,8 @@ import (
 	"errors"
 	"time"
 
-	"argus.local/argus/internal/analytics"
-	"argus.local/argus/internal/analyticsadapter"
+	"github.com/abietic/argus/internal/analytics"
+	"github.com/abietic/argus/internal/analyticsadapter"
 )
 
 const (

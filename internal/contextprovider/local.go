@@ -9,13 +9,13 @@ import (
 	"errors"
 	"fmt"
 
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/contextcapture"
-	goastcontext "argus.local/argus/internal/contextcapture/goast"
-	compilecontext "argus.local/argus/internal/contextcapture/gocompile"
-	depscontext "argus.local/argus/internal/contextcapture/godeps"
-	searchcontext "argus.local/argus/internal/contextcapture/reposearch"
-	"argus.local/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/contextcapture"
+	goastcontext "github.com/abietic/argus/internal/contextcapture/goast"
+	compilecontext "github.com/abietic/argus/internal/contextcapture/gocompile"
+	depscontext "github.com/abietic/argus/internal/contextcapture/godeps"
+	searchcontext "github.com/abietic/argus/internal/contextcapture/reposearch"
+	"github.com/abietic/argus/internal/reviewconfig"
 )
 
 const (

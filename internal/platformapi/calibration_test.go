@@ -6,11 +6,11 @@ import (
 	"strings"
 	"testing"
 
-	"argus.local/argus/internal/calibration"
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/calibration"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 type unavailableCalibrationCases struct{}

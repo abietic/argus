@@ -10,11 +10,11 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/analytics"
-	"argus.local/argus/internal/calibrationpromotion"
-	"argus.local/argus/internal/configrepo"
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/promotionmonitor"
+	"github.com/abietic/argus/internal/analytics"
+	"github.com/abietic/argus/internal/calibrationpromotion"
+	"github.com/abietic/argus/internal/configrepo"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/promotionmonitor"
 )
 
 type calibrationPromotionStub struct{ plans []calibrationpromotion.Plan }

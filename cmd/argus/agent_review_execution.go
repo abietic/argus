@@ -6,7 +6,7 @@ import (
 	"io"
 	"time"
 
-	"argus.local/argus/internal/agentshadow"
+	"github.com/abietic/argus/internal/agentshadow"
 )
 
 const agentReviewExecutionUsage = `usage:

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"argus.local/argus/internal/artifactrepo"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/artifactrepo"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 // GovernedArtifactResolver adapts the authority-aware Argus artifact

@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 var testTime = time.Date(2026, 7, 27, 2, 0, 0, 0, time.UTC)

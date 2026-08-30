@@ -3,7 +3,7 @@ package runrepo
 import (
 	"testing"
 
-	"argus.local/argus/internal/workflow"
+	"github.com/abietic/argus/internal/workflow"
 )
 
 func TestFormalWorkflowClassifierTracksCanonicalDefinition(t *testing.T) {

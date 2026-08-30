@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"argus.local/argus/internal/reviewcore"
-	"argus.local/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/runmodel"
 )
 
 // ScopeShardPort is the Argus-owned full-scan boundary. Implementations own

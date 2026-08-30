@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"slices"
 
-	"argus.local/argus/internal/agentplan"
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/reviewconfig"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/agentplan"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/reviewconfig"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 // Resolver is bound to one authenticated composition subject. The application

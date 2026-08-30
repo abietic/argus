@@ -10,10 +10,10 @@ import (
 	"strings"
 	"testing"
 
-	"argus.local/argus/internal/reviewcore"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/source/gitadapter"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/source/gitadapter"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 func TestMaterializeSelectionRejectsUnavailableLineRanges(t *testing.T) {

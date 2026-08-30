@@ -7,8 +7,8 @@ import (
 	"slices"
 	"time"
 
-	"argus.local/argus/internal/execution"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/execution"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 // FormalAgentStageDispatcher is the narrow dispatch port consumed by the

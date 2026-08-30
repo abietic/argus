@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/evaluation"
 )
 
 type evaluationHistoryStub struct {

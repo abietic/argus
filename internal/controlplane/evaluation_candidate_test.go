@@ -9,17 +9,17 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/feedback"
-	"argus.local/argus/internal/findingdecision"
-	"argus.local/argus/internal/findinglineage"
-	"argus.local/argus/internal/reviewcore"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/source/gitadapter"
-	"argus.local/argus/internal/store/local"
-	"argus.local/argus/internal/targetmodel"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/feedback"
+	"github.com/abietic/argus/internal/findingdecision"
+	"github.com/abietic/argus/internal/findinglineage"
+	"github.com/abietic/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/source/gitadapter"
+	"github.com/abietic/argus/internal/store/local"
+	"github.com/abietic/argus/internal/targetmodel"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 func TestDeriveHumanDecisionEvaluationCandidateIsPendingAndCandidateOnly(t *testing.T) {

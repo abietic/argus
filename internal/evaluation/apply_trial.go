@@ -5,7 +5,7 @@ import (
 	"slices"
 	"time"
 
-	"argus.local/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runmodel"
 )
 
 const (

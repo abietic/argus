@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/reviewcore"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 var shardEpoch = time.Date(2026, 8, 25, 14, 0, 0, 0, time.UTC)

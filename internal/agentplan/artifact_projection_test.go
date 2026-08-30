@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"argus.local/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runmodel"
 )
 
 func TestGovernedArtifactProjectionValidatesExactDualReference(t *testing.T) {

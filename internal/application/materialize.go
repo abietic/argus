@@ -20,10 +20,10 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"argus.local/argus/internal/reviewcore"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/source/gitadapter"
-	"argus.local/argus/internal/targetmodel"
+	"github.com/abietic/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/source/gitadapter"
+	"github.com/abietic/argus/internal/targetmodel"
 )
 
 var ErrTargetNotReviewable = errors.New("target is not reviewable")

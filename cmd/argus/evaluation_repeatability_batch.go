@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"argus.local/argus/internal/agentshadowworker"
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/identity"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/agentshadowworker"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/identity"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const evaluationRepeatabilityBatchUsage = `usage:

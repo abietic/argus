@@ -442,6 +442,7 @@ M1 完成必须同时满足：
 当前默认假设：
 
 - Go 1.26 作为服务端和领域实现语言。
+- 公开 Go module path 固定为 `github.com/abietic/argus`。
 - Hailix 是通用平台能力 owner，跨仓通过 API/事件/Artifact 契约集成，不共享
   `internal` Go package。
 - PostgreSQL + ObjectStore 是长期事实存储；M1 可先使用本地 adapter。
@@ -454,7 +455,6 @@ M1 完成必须同时满足：
 - P0 使用 Eino-Agent 还是先用 deterministic fake/runtime adapter 验证闭环；
 - 组织级规则的审核者、发布者与紧急回滚权限；
 - 源码、Trace 和评测样本的默认保留期；
-- `argus.local/argus` 最终替换成哪个远端 module path。
 
 这些问题不会阻塞 M0；会改变生产数据、安全或集成方式的决策必须在进入对应
 里程碑前冻结。

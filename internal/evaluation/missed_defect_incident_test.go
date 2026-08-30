@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"testing"
 
-	"argus.local/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runmodel"
 )
 
 func testDigest(value string) string {

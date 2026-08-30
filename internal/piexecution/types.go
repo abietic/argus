@@ -12,11 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"argus.local/argus/internal/agentshadowworker"
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/execution"
-	"argus.local/argus/internal/runmodel"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/agentshadowworker"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/execution"
+	"github.com/abietic/argus/internal/runmodel"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 const (

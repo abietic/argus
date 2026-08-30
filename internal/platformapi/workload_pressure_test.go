@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/scheduling"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/scheduling"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 func TestWorkloadPressureAPIRequiresReviewReadAndExactUTCObservation(t *testing.T) {

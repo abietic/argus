@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"argus.local/argus/internal/agentshadow"
-	"argus.local/argus/internal/artifactrepo"
+	"github.com/abietic/argus/internal/agentshadow"
+	"github.com/abietic/argus/internal/artifactrepo"
 )
 
 const agentReviewEvidenceUsage = `usage:

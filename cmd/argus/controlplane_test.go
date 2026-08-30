@@ -17,12 +17,12 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	feedbackdomain "argus.local/argus/internal/feedback"
-	"argus.local/argus/internal/findingdecision"
-	"argus.local/argus/internal/publication"
-	"argus.local/argus/internal/publication/githubadapter"
-	"argus.local/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/evaluation"
+	feedbackdomain "github.com/abietic/argus/internal/feedback"
+	"github.com/abietic/argus/internal/findingdecision"
+	"github.com/abietic/argus/internal/publication"
+	"github.com/abietic/argus/internal/publication/githubadapter"
+	"github.com/abietic/argus/internal/runmodel"
 )
 
 type cliUnknownPublicationProvider struct {

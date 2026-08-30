@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"argus.local/argus/internal/configrepo"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/configrepo"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const (

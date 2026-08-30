@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/training"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/training"
 )
 
 type trainingServiceStub struct {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"argus.local/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/evaluation"
 )
 
 func (handler *Handler) authorizeNormalizationPromotion(writer http.ResponseWriter, write bool) bool {

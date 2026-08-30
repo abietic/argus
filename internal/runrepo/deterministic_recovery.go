@@ -5,11 +5,11 @@ import (
 	"slices"
 	"time"
 
-	"argus.local/argus/internal/reviewcore"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/store/local"
-	"argus.local/argus/internal/targetmodel"
-	"argus.local/argus/internal/workflow"
+	"github.com/abietic/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/store/local"
+	"github.com/abietic/argus/internal/targetmodel"
+	"github.com/abietic/argus/internal/workflow"
 )
 
 // DeterministicRecovery is the exact append-only prefix from which a scope

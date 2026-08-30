@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 var ErrPlatformIntegrationDisabled = errors.New("platform execution integration is disabled")

@@ -3,7 +3,7 @@ package calibration
 import (
 	"testing"
 
-	"argus.local/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/reviewconfig"
 )
 
 func TestFitProfileUsesMonotonicIntegerPAV(t *testing.T) {

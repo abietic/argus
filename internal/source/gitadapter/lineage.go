@@ -10,7 +10,7 @@ import (
 	"sort"
 	"strings"
 
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 const (

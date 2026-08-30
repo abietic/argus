@@ -3,8 +3,8 @@ package configdefaults
 import (
 	"testing"
 
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/workflow"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/workflow"
 )
 
 func TestRevisionAndBundleUseTheSameCompleteBaseline(t *testing.T) {
