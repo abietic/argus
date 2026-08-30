@@ -396,9 +396,21 @@ func runPhysicalScopeReviewJobHelper(t *testing.T, mode string) {
 	if mode == "block" {
 		select {}
 	}
-	deadline := time.Now().Add(30 * time.Second)
+	records, err := service.List()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(records) != 1 {
+		t.Fatalf("physical scope helper jobs = %d, want 1", len(records))
+	}
+	// The observer must not expire before the immutable job execution budget.
+	// Loaded Linux CI runners can legitimately take longer than the local
+	// 30-second lease to resume and aggregate all scope shards.
+	observerBudget := time.Duration(records[0].Request.ExecutionTimeoutSeconds)*time.Second +
+		30*time.Second
+	deadline := time.Now().Add(observerBudget)
 	for time.Now().Before(deadline) {
-		records, err := service.List()
+		records, err = service.List()
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -410,5 +422,8 @@ func runPhysicalScopeReviewJobHelper(t *testing.T, mode string) {
 		}
 		time.Sleep(25 * time.Millisecond)
 	}
-	t.Fatal("generation 2 deterministic scope worker did not reach succeeded terminal")
+	t.Fatalf(
+		"generation 2 deterministic scope worker did not reach succeeded terminal within %s",
+		observerBudget,
+	)
 }
