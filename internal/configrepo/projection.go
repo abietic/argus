@@ -7,8 +7,8 @@ import (
 	"os"
 	"sort"
 
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 type projectionState struct {

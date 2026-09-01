@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"argus.local/argus/internal/configdefaults"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/workflow"
+	"github.com/abietic/argus/internal/configdefaults"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/workflow"
 )
 
 func TestResolvePublishedWithReceiptBindsAtomicLedgerSelection(t *testing.T) {

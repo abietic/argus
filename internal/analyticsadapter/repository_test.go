@@ -12,15 +12,15 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/analytics"
-	"argus.local/argus/internal/application"
-	feedbackdomain "argus.local/argus/internal/feedback"
-	"argus.local/argus/internal/publication"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/source/gitadapter"
-	"argus.local/argus/internal/store/local"
-	"argus.local/argus/internal/targetmodel"
+	"github.com/abietic/argus/internal/analytics"
+	"github.com/abietic/argus/internal/application"
+	feedbackdomain "github.com/abietic/argus/internal/feedback"
+	"github.com/abietic/argus/internal/publication"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/source/gitadapter"
+	"github.com/abietic/argus/internal/store/local"
+	"github.com/abietic/argus/internal/targetmodel"
 )
 
 type analyticsPublicationAuthorizer struct{}

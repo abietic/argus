@@ -15,8 +15,8 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/platformapi"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/platformapi"
 )
 
 func TestAPIServeCommandStartsAuthenticatedLoopbackServerAndStops(t *testing.T) {

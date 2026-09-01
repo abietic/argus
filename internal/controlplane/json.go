@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 
-	"argus.local/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/reviewcore"
 )
 
 const findingSetSchemaVersion = "argus.finding_set.v1alpha1"

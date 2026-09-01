@@ -5,8 +5,8 @@ import (
 	"slices"
 	"strings"
 
-	"argus.local/argus/internal/reviewconfig"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/reviewconfig"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 // BuildGovernedReport performs the first deterministic downstream handoff from

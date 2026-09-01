@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/runmodel"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/runmodel"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 type repeatabilityReplayExecutorStub struct {

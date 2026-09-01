@@ -17,11 +17,11 @@ import (
 	"strings"
 	"time"
 
-	"argus.local/argus/internal/analytics"
-	feedbackdomain "argus.local/argus/internal/feedback"
-	"argus.local/argus/internal/publication"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/analytics"
+	feedbackdomain "github.com/abietic/argus/internal/feedback"
+	"github.com/abietic/argus/internal/publication"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 var (

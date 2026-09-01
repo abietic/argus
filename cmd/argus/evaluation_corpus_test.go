@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/formalreview"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/formalreview"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 func TestEvaluationCorpusCLIExecutesTwoFormalCasesAndRecoversExactly(t *testing.T) {

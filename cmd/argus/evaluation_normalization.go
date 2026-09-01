@@ -8,13 +8,13 @@ import (
 	"reflect"
 	"slices"
 
-	"argus.local/argus/internal/configrepo"
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/normalizationeval"
-	"argus.local/argus/internal/normalizationpromotion"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/configrepo"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/normalizationeval"
+	"github.com/abietic/argus/internal/normalizationpromotion"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const evaluationNormalizationUsage = `usage:

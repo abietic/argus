@@ -14,8 +14,8 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"argus.local/argus/internal/agentshadow"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/agentshadow"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 const (

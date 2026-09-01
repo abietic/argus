@@ -7,14 +7,14 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/configdefaults"
-	"argus.local/argus/internal/configrepo"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/scheduling"
-	"argus.local/argus/internal/store/local"
-	"argus.local/argus/internal/workflow"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/configdefaults"
+	"github.com/abietic/argus/internal/configrepo"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/scheduling"
+	"github.com/abietic/argus/internal/store/local"
+	"github.com/abietic/argus/internal/workflow"
 )
 
 func TestSubmitFreezesConfigAndIsIdempotentAcrossLaterPublication(t *testing.T) {

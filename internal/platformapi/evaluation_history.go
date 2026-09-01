@@ -3,7 +3,7 @@ package platformapi
 import (
 	"net/http"
 
-	"argus.local/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/evaluation"
 )
 
 // EvaluationHistoryReader is the read-only application port used by the local

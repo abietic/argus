@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/workflow"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/workflow"
 )
 
 type evaluationBatchControllerStub struct {

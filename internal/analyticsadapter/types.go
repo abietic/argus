@@ -13,7 +13,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"argus.local/argus/internal/analytics"
+	"github.com/abietic/argus/internal/analytics"
 )
 
 const (

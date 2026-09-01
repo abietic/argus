@@ -13,15 +13,15 @@ import (
 	"time"
 	"unicode"
 
-	"argus.local/argus/internal/analytics"
-	feedbackdomain "argus.local/argus/internal/feedback"
-	"argus.local/argus/internal/publication"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/reviewcore"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/source/gitadapter"
-	"argus.local/argus/internal/targetmodel"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/analytics"
+	feedbackdomain "github.com/abietic/argus/internal/feedback"
+	"github.com/abietic/argus/internal/publication"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/source/gitadapter"
+	"github.com/abietic/argus/internal/targetmodel"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 type findingSetArtifact struct {

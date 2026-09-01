@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/publication"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/publication"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 type allowAuthorizer struct{}

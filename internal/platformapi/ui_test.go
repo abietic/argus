@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"argus.local/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/evaluation"
 )
 
 func TestOperatorUIServesCredentialFreeShellWhileAPIRemainsAuthenticated(t *testing.T) {

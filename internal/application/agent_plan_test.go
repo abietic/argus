@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"argus.local/argus/internal/agentplan"
-	"argus.local/argus/internal/reviewconfig"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/agentplan"
+	"github.com/abietic/argus/internal/reviewconfig"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 func TestCompileGovernedAgentStageUsesOnlyStrongerSameCallProvider(t *testing.T) {

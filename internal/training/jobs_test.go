@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/runrepo"
 )
 
 type trainingJobFixture struct {

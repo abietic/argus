@@ -9,11 +9,11 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/artifactrepo"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/store/local"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/artifactrepo"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/store/local"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 func TestResolverPublishesAndClosesExactOrderedComponents(t *testing.T) {

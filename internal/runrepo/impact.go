@@ -12,9 +12,9 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const ImpactSnapshotSchemaVersion = "argus.review_run_impact_snapshot.v1alpha1"

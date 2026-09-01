@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"argus.local/argus/internal/agentshadow"
+	"github.com/abietic/argus/internal/agentshadow"
 )
 
 // executionAttemptBatchSource is mandatory once a source advertises attempt

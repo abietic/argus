@@ -15,9 +15,9 @@ import (
 	"strings"
 	"time"
 
-	"argus.local/argus/internal/agentanalytics"
-	"argus.local/argus/internal/agentshadow"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/agentanalytics"
+	"github.com/abietic/argus/internal/agentshadow"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const agentReviewAnalyticsUsage = `usage:

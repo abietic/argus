@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/runmodel"
 )
 
 var idPattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$`)

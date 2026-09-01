@@ -9,7 +9,6 @@
 | 首个代码平台 | 本地 Git，remote write deny | M1 |
 | 首个目标语言 | Go，用 Argus/Hailix/Eino-Agent fixtures | M1 |
 | 前端归属 | local operator UI 已在 Argus；hosted 多租户入口仍归 Hailix vertical app | M3 |
-| module path | 暂用 `argus.local/argus` | 首次远端发布前 |
 | 数据保留 | 源码/Trace 短期、聚合长期，具体数字待合规/成本证据 | M2 |
 | 用户规则审核 | maintainer publish + org policy deny-wins | M3 |
 | 自动评论门限 | shadow 建立基线前保持关闭 | M5 |

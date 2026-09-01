@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io"
 
-	"argus.local/argus/internal/artifactrepo"
-	"argus.local/argus/internal/formalevidence"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/artifactrepo"
+	"github.com/abietic/argus/internal/formalevidence"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 type formalEvidenceReadFlags struct {

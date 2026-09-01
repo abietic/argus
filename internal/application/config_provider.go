@@ -3,7 +3,7 @@ package application
 import (
 	"context"
 
-	"argus.local/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/reviewconfig"
 )
 
 // ConfigProvider is the application port for lifecycle-governed

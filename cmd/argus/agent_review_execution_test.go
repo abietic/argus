@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/agentshadow"
+	"github.com/abietic/argus/internal/agentshadow"
 )
 
 func TestAgentReviewExecutionListEmptyStore(t *testing.T) {

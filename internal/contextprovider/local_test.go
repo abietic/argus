@@ -5,8 +5,8 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/reviewconfig"
 )
 
 func TestLocalAdapterArtifactsMatchInvocationDefinitions(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runmodel"
 )
 
 func TestEvaluateNormalizationQualityMeasuresFalseMergeWithoutHidingContraction(t *testing.T) {

@@ -14,9 +14,9 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/agentshadowworker"
-	"argus.local/argus/internal/reviewcore"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/agentshadowworker"
+	"github.com/abietic/argus/internal/reviewcore"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 type fakeShadowRunner struct {

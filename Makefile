@@ -1,4 +1,4 @@
-.PHONY: build test fmt fmt-check vet docs-check verify clean pi-install pi-format pi-check pi-test pi-build pi-smoke pi-verify pi-review
+.PHONY: build test fmt fmt-check module-check vet docs-check verify clean pi-install pi-format pi-check pi-test pi-build pi-smoke pi-verify pi-review
 
 SHELL := /bin/bash
 .SHELLFLAGS := -o pipefail -c
@@ -9,6 +9,7 @@ NPM ?= npm
 BUILD_DIR := build
 PI_REVIEW_DIR := runtime/pi-review
 VERSION ?= dev
+MODULE_PATH := github.com/abietic/argus
 GO_FILES := $(shell find . -type f -name '*.go' -not -path './build/*')
 
 build:
@@ -30,6 +31,13 @@ fmt-check:
 		exit 1; \
 	fi
 	$(NPM) --prefix $(PI_REVIEW_DIR) run check
+
+module-check:
+	@actual="$$($(GO) list -m)"; \
+	if [[ "$$actual" != "$(MODULE_PATH)" ]]; then \
+		echo "module path $$actual does not match canonical $(MODULE_PATH)" >&2; \
+		exit 1; \
+	fi
 
 vet:
 	$(GO) vet ./...
@@ -60,7 +68,7 @@ pi-verify: pi-check pi-test pi-smoke
 pi-review:
 	@$(NPM) --silent --prefix $(PI_REVIEW_DIR) run review -- $(ARGS)
 
-verify: fmt-check vet test docs-check build pi-test pi-smoke
+verify: fmt-check module-check vet test docs-check build pi-test pi-smoke
 
 clean:
 	rm -rf $(BUILD_DIR)

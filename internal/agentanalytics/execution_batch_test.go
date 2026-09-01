@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/agentshadow"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/agentshadow"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 // QueryExecutions upgrades the shared attempt-aware fixture to the production

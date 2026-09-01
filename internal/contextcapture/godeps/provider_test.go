@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"argus.local/argus/internal/contextcapture"
-	"argus.local/argus/internal/source/gitadapter"
+	"github.com/abietic/argus/internal/contextcapture"
+	"github.com/abietic/argus/internal/source/gitadapter"
 )
 
 const dependencyTestCommit = "1111111111111111111111111111111111111111"

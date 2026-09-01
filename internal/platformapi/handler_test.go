@@ -18,9 +18,9 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/findingdecision"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/findingdecision"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const testToken = "argus-local-api-test-token-000000000000"

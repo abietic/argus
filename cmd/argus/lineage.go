@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io"
 
-	"argus.local/argus/internal/findinglineage"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/source/gitadapter"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/findinglineage"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/source/gitadapter"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const lineageUsage = `usage:

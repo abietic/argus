@@ -16,14 +16,14 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"argus.local/argus/internal/agentshadowworker"
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/execution"
-	"argus.local/argus/internal/pireviewmap"
-	"argus.local/argus/internal/reviewcore"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/store/local"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/agentshadowworker"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/execution"
+	"github.com/abietic/argus/internal/pireviewmap"
+	"github.com/abietic/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/store/local"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 const (

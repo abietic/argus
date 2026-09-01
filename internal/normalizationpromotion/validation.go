@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/evaluation"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 var idPattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._:@/+\-]{0,255}$`)

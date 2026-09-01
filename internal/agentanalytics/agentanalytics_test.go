@@ -13,9 +13,9 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/agentshadow"
-	"argus.local/argus/internal/store/local"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/agentshadow"
+	"github.com/abietic/argus/internal/store/local"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 var agentAnalyticsTestDigest = strings.Repeat("a", 64)

@@ -11,8 +11,8 @@ import (
 	"time"
 	"unicode"
 
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/reviewcore"
 )
 
 const (

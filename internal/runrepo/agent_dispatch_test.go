@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const (

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"argus.local/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runmodel"
 )
 
 func TestRunWithIOReviewSelectionAndScopeEndToEnd(t *testing.T) {

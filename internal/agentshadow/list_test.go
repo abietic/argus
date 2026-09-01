@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/artifactrepo"
+	"github.com/abietic/argus/internal/artifactrepo"
 )
 
 func TestListCommittedUsesHostWindowAndRepairsMissingIndex(t *testing.T) {

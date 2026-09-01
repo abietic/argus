@@ -10,7 +10,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 func DefaultPolicy() contractsv1alpha1.FindingLineagePolicy {

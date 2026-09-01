@@ -5,11 +5,11 @@ import (
 	"slices"
 	"sort"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/targetmodel"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/targetmodel"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 func (service *Service) deriveMissedDefectIncidentCandidate(request evaluation.CandidateDerivationRequest) (evaluation.EvaluationCase, error) {

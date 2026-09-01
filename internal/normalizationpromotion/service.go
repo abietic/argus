@@ -8,13 +8,13 @@ import (
 	"fmt"
 	"slices"
 
-	"argus.local/argus/internal/configrepo"
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/normalizationeval"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/runrepo"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/configrepo"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/normalizationeval"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runrepo"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 type ConfigRepository interface {

@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"argus.local/argus/internal/publication"
+	"github.com/abietic/argus/internal/publication"
 )
 
 const (

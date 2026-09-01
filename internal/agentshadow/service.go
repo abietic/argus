@@ -13,10 +13,10 @@ import (
 	"strings"
 	"time"
 
-	"argus.local/argus/internal/artifactrepo"
-	"argus.local/argus/internal/reviewcore"
-	"argus.local/argus/internal/runmodel"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/artifactrepo"
+	"github.com/abietic/argus/internal/reviewcore"
+	"github.com/abietic/argus/internal/runmodel"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 type Service struct {

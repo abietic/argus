@@ -7,14 +7,14 @@ import (
 	"io"
 	"strconv"
 
-	"argus.local/argus/internal/analyticsadapter"
-	"argus.local/argus/internal/calibration"
-	"argus.local/argus/internal/calibrationpromotion"
-	"argus.local/argus/internal/configrepo"
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/promotionmonitor"
-	"argus.local/argus/internal/runrepo"
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/analyticsadapter"
+	"github.com/abietic/argus/internal/calibration"
+	"github.com/abietic/argus/internal/calibrationpromotion"
+	"github.com/abietic/argus/internal/configrepo"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/promotionmonitor"
+	"github.com/abietic/argus/internal/runrepo"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const calibrationUsage = `usage:

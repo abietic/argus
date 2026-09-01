@@ -5,7 +5,7 @@ import (
 	"slices"
 	"sort"
 
-	"argus.local/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/reviewconfig"
 )
 
 type isotonicBlock struct {

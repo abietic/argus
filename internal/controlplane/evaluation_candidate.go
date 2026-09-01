@@ -5,13 +5,13 @@ import (
 	"slices"
 	"sort"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/feedback"
-	"argus.local/argus/internal/findingdecision"
-	"argus.local/argus/internal/findinglineage"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/runrepo"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/feedback"
+	"github.com/abietic/argus/internal/findingdecision"
+	"github.com/abietic/argus/internal/findinglineage"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/runrepo"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 type evaluationFindingFacts struct {

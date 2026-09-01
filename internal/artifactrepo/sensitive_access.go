@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"argus.local/argus/internal/store/local"
+	"github.com/abietic/argus/internal/store/local"
 )
 
 const sensitiveAccessSchemaVersion = "argus.artifact_sensitive_access_receipt.v1alpha1"

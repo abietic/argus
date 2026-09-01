@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"argus.local/argus/internal/analytics"
+	"github.com/abietic/argus/internal/analytics"
 	"github.com/parquet-go/parquet-go"
 )
 

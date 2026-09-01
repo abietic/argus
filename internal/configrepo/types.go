@@ -6,7 +6,7 @@ import (
 	"errors"
 	"time"
 
-	"argus.local/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/reviewconfig"
 )
 
 const (

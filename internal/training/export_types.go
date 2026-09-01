@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"argus.local/argus/internal/evaluation"
-	"argus.local/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/evaluation"
+	"github.com/abietic/argus/internal/runmodel"
 )
 
 const (

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"argus.local/argus/internal/application"
-	"argus.local/argus/internal/runmodel"
-	"argus.local/argus/internal/scheduling"
+	"github.com/abietic/argus/internal/application"
+	"github.com/abietic/argus/internal/runmodel"
+	"github.com/abietic/argus/internal/scheduling"
 )
 
 type schedulingWorkloadReader interface {

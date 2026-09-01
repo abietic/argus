@@ -6,11 +6,11 @@ import (
 	"slices"
 	"sort"
 
-	"argus.local/argus/internal/analytics"
-	"argus.local/argus/internal/findinglineage"
-	"argus.local/argus/internal/reviewconfig"
-	"argus.local/argus/internal/runrepo"
-	contractsv1alpha1 "argus.local/argus/pkg/contracts/v1alpha1"
+	"github.com/abietic/argus/internal/analytics"
+	"github.com/abietic/argus/internal/findinglineage"
+	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/runrepo"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
 // FindingLineageProjectionSource converts immutable Argus lineage artifacts
