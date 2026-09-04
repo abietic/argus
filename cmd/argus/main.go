@@ -61,7 +61,7 @@ const usage = `usage:
   argus training <materialize|show|list> --store <absolute-dir> ...
   argus promotion <register|gate|show|rollback> --store <absolute-dir> ...
   argus dashboard <rebuild|show|export> --store <absolute-dir> ...
-  argus agent-review <run|show|evidence|execution|analytics|formal> --store <absolute-dir> ...
+  argus agent-review <quick|run|show|evidence|execution|analytics|formal> --store <absolute-dir> ...
   argus api serve --store <absolute-dir> --config-state-dir <absolute-dir> --principal <absolute-json> [--listen <loopback-ip:port>]
 
 The default local store is <user-config-directory>/argus/local-store.
@@ -95,7 +95,7 @@ func runWithIO(ctx context.Context, arguments []string, stdout io.Writer) error 
 	if len(arguments) >= 2 &&
 		(arguments[len(arguments)-1] == "-h" ||
 			arguments[len(arguments)-1] == "--help") {
-		commandUsage, exists := subcommandUsage(arguments[0])
+		commandUsage, exists := usageForArguments(arguments[:len(arguments)-1])
 		if !exists {
 			return fmt.Errorf("unknown command %q\n%s", arguments[0], usage)
 		}
@@ -1684,6 +1684,27 @@ func subcommandUsage(command string) (string, bool) {
 	}
 	value, exists := usages[command]
 	return value, exists
+}
+
+func usageForArguments(arguments []string) (string, bool) {
+	if len(arguments) == 0 {
+		return "", false
+	}
+	if arguments[0] == "agent-review" && len(arguments) >= 2 {
+		switch arguments[1] {
+		case "quick":
+			return agentReviewQuickUsage, true
+		case "formal":
+			return formalAgentReviewUsage, true
+		case "evidence":
+			return agentReviewEvidenceUsage, true
+		case "execution":
+			return agentReviewExecutionUsage, true
+		case "analytics":
+			return agentReviewAnalyticsUsage, true
+		}
+	}
+	return subcommandUsage(arguments[0])
 }
 
 func validReplayStage(stage string) bool {

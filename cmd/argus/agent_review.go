@@ -15,6 +15,7 @@ import (
 )
 
 const agentReviewUsage = `usage:
+  argus agent-review quick ...
   argus agent-review run --store <absolute-dir> --source-run <id> --idempotency-key <key> --node <absolute-file> --worker-script <absolute-file> --provider-profile <deepseek-anthropic-env|anthropic-official> --model <id> [--skill <builtin>]... [--max-files <n>] [--max-groups <n>] [--max-candidates <n>] [--max-model-calls <n>] [--max-tool-calls <n>] [--max-output-tokens <n>] [--max-group-bytes <n>] [--max-target-bytes <n>] [--timeout-ms <n>] [--max-concurrency <n>] [--allow-partial] [--json]
   argus agent-review show --store <absolute-dir> --manifest-id <id> [--json]
   argus agent-review evidence read --store <absolute-dir> --manifest-id <id> --request-id <id> --actor <id> --purpose <local_debug|evaluation_replay|incident_investigation> --at <RFC3339-UTC> --acknowledge-sensitive-output --json
@@ -69,6 +70,12 @@ func runAgentReview(ctx context.Context, arguments []string, stdout io.Writer) e
 		return fmt.Errorf("%s", agentReviewUsage)
 	}
 	switch arguments[0] {
+	case "quick":
+		options, err := parseAgentReviewQuickFlags(arguments[1:])
+		if err != nil {
+			return fmt.Errorf("agent-review quick flags: %w\n%s", err, agentReviewQuickUsage)
+		}
+		return executeAgentReviewQuick(ctx, options, stdout)
 	case "run":
 		options, err := parseAgentReviewRunFlags(arguments[1:])
 		if err != nil {

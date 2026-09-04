@@ -1,6 +1,6 @@
 # Status
 
-**Last verified:** 2026-08-30
+**Last verified:** 2026-09-04
 **Milestone:** formal local Pi execution + governed report + unified ReviewRun terminal
 
 ## 当前已存在
@@ -364,6 +364,12 @@
 	安全的内部 component ID 与 exact provider wire model 分离，已验证 `deepseek-v4-pro[1m]` 不被改写。
 	runtime/agent/worker-owned skill revision 绑定 build digest；bootstrap 复用已发布 exact component，完整
 	config semantics 独立生成 config revision，因此 worker 或预算演进不会再争用旧 identity。
+- `argus agent-review quick` 已把 source target materialization、formal bootstrap 和正式 Pi run
+	组合为一个 CLI 入口；`--` 后继续复用 `review` 的 diff/selection/scope parser，store/config/JSON
+	由 quick 单独拥有。bootstrap/formal 失败仍返回已提交 `source_run_id`，随后用相同 quick key、
+	publication time 与 `--source-run` 恢复时复用 exact formal terminal，不重复调用 provider。由于 source
+	review 尚无调用方幂等键，不带 `--source-run` 重跑首次命令会显式创建新 review，文档不把它伪称为
+	exact retry。嵌套 `agent-review formal run --help` 等入口也已路由到实际子命令 usage。
 - terminal workload 重入会从 exact dispatch coordinate、terminal gate、canonical result 与
 	hypothesis evidence 恢复，不再 claim 已结束 workload，也不会二次调用 provider。CLI E2E
 	分别覆盖成功与失败链路，并验证 exact retry 的 runner 调用次数保持 1。
@@ -947,8 +953,9 @@ Hailix 条目是 2026-08-25 本地 checkout 事实；Eino-Agent 条目仍是 202
   非 canonical excerpt 均被拒绝，最终 evidence 只引用冻结目标 `src/approval.ts`。这证明可纠错链路和
   index 上下文能在该 case 暴露缺陷，但 2 个 Finding 是同一状态迁移问题跨 dimension 的重复，不能把它
   计为 2 个 unique defect 或据此声称总体索引收益。仍缺足量预注册 oracle 的 dev/holdout 重复运行、跨
-  dimension 语义去重、质量、稳定性和成本验收。当前按 `--no-renames`
-  捕获 diff，纯 rename 可能表现为 delete + add，不能把 rename-only 内容当作新缺陷。
+	dimension 语义去重、质量、稳定性和成本验收。当前 canonical name-status 与 patch 均固定使用
+	`--find-renames=50%`，rename mapping 进入冻结 target；仍未启用 Git copy detection，且不能把
+	纯 rename 内容当作新缺陷。
 - 为修复上述 duplicate inflation，Pi normalization 新增可版本化、保守的 `semantic_duplicate`：只允许同
   group/path、target-side、重叠 anchor 的不同 fingerprint Candidate 合并；exact duplicate 继续使用
   `duplicate_fingerprint`。第一版只接受固定 ASCII title-token Jaccard 至少 3/4。raw claim 与 reason

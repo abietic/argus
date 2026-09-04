@@ -307,6 +307,44 @@ ARGUS_LIVE_DEEPSEEK_CHECKPOINT_RESTART=1 \
 # runtime/worker-owned component revision 绑定 build digest；相同 exact component 会直接复用。
 NODE_PATH="$(command -v node)"
 WORKER_PATH="$PWD/runtime/pi-review/dist/worker.js"
+
+# 推荐的首次本地 formal Pi 评审入口：`--` 前是受治理的 formal/runtime 参数，
+# `--` 后原样使用 review 的 diff/selection/scope 目标参数。它会依次提交 source ReviewRun、
+# exact component/config bootstrap 和 formal ReviewRun，并输出 source_run_id/formal_run_id。
+./build/argus agent-review quick \
+  --store /absolute/argus-store \
+  --config-state-dir /absolute/argus-config-state \
+  --idempotency-key <stable-quick-key> \
+  --at 2026-09-04T01:02:03Z \
+  --node "$NODE_PATH" \
+  --worker-script "$WORKER_PATH" \
+  --provider-profile deepseek-anthropic-env \
+  --model "$ANTHROPIC_MODEL" \
+  --knowledge /absolute/repository-invariants.md \
+  --input-micros-per-million <governed-input-ceiling> \
+  --output-micros-per-million <governed-output-ceiling> \
+  --max-bytes-per-input-token 4 \
+  --json -- \
+  --repo /absolute/repository --mode diff --base main --head HEAD \
+  --context-provider repository_search --context-provider go_ast
+
+# 若 bootstrap/formal 阶段失败，输出仍包含已提交的 source_run_id。使用相同 quick key、
+# --at 和 formal 参数恢复；此路径精确复用已提交 source 与 formal terminal，不重复调用 provider。
+# 不带 --source-run 重跑首次命令会按设计创建一次新的 source review，不属于精确重试。
+./build/argus agent-review quick \
+  --store /absolute/argus-store \
+  --config-state-dir /absolute/argus-config-state \
+  --source-run <source_run_id-from-prior-output> \
+  --idempotency-key <same-stable-quick-key> \
+  --at 2026-09-04T01:02:03Z \
+  --node "$NODE_PATH" --worker-script "$WORKER_PATH" \
+  --provider-profile deepseek-anthropic-env --model "$ANTHROPIC_MODEL" \
+  --knowledge /absolute/repository-invariants.md \
+  --input-micros-per-million <same-governed-input-ceiling> \
+  --output-micros-per-million <same-governed-output-ceiling> \
+  --max-bytes-per-input-token 4 --json
+
+# 分阶段入口仍保留，用于调试、平台集成或显式控制 bootstrap/run 生命周期。
 ./build/argus agent-review formal bootstrap \
   --store /absolute/argus-store \
   --config-state-dir /absolute/argus-config-state \
