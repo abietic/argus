@@ -1499,6 +1499,8 @@ func TestRunWithIOVersionHelpAndUsage(t *testing.T) {
 		{[]string{"version", "--help"}, "usage: argus version"},
 		{[]string{"validate", "review-spec", "--help"}, "usage: argus validate review-spec <file>"},
 		{[]string{"agent-review", "run", "--help"}, "--allow-partial"},
+		{[]string{"agent-review", "quick", "--help"}, "--source-run"},
+		{[]string{"agent-review", "formal", "run", "--help"}, "--input-micros-per-million"},
 		{[]string{"agent-review", "execution", "list", "--help"}, "--start"},
 		{[]string{"agent-review", "analytics", "rebuild", "--help"}, "--group-by"},
 		{[]string{"dashboard", "rebuild", "--help"}, "--repository"},

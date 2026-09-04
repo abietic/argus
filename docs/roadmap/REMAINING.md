@@ -171,7 +171,8 @@
   train/dev/holdout、多仓 precision/recall/repeatability/cost，以及
   provider/Hailix attestation。
   zero-candidate partial 不是 proven-clean label。
-- rename-aware diff 与金额 budget。committed formal receipt 已提供带
+- Git copy detection 与金额 budget。canonical diff/name-status 已固定使用 50% rename detection；
+  committed formal receipt 已提供带
   `worker_self_report_diagnostic` authority 的 input/output/cache/reasoning/total token facts 和 paired
   delta；金额、provider bill 和成本在 Hailix authoritative billing 接入前保持 unknown，不从
   PricingCeiling 或 worker self-report 推算。
