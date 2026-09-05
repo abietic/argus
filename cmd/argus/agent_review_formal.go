@@ -276,7 +276,7 @@ type formalAgentBootstrapOutput struct {
 	StorePath              string                           `json:"store_path"`
 	ConfigID               string                           `json:"config_id"`
 	ConfigRevision         string                           `json:"config_revision"`
-	Manifest               any                              `json:"runtime_manifest"`
+	Manifest               piexecution.RuntimeManifest      `json:"runtime_manifest"`
 	Components             []contractsv1alpha1.VersionedRef `json:"components"`
 	RuntimeFileManifestRef runmodel.ArtifactRef             `json:"runtime_file_manifest_ref"`
 }
@@ -783,7 +783,7 @@ func executeFormalAgentBootstrap(
 	if err := runs.ReadJSONArtifact(sourceSnapshot.ReviewSpecRef, &sourceSpec); err != nil {
 		return fmt.Errorf("load committed source ReviewSpec: %w", err)
 	}
-	subject := agentcomponentrepo.Subject{
+	subject := application.AgentPlanningSubject{
 		TenantID: sourceSpec.TenantID, OrganizationID: "local",
 		WorkspaceID:  sourceSpec.WorkspaceID,
 		RepositoryID: sourceSpec.Repository.RepositoryID,
@@ -792,55 +792,13 @@ func executeFormalAgentBootstrap(
 	if err != nil {
 		return err
 	}
-	runtimeEvidenceRef, err := persistFormalRuntimeEvidence(runs, bootstrap)
+	output, err := publishFormalAgentBootstrap(
+		ctx, subject, bootstrap, store.Root(), options.configState, options.idempotencyKey, at,
+	)
 	if err != nil {
 		return err
 	}
-	artifacts, err := artifactrepo.Open(store, nil)
-	if err != nil {
-		return err
-	}
-	components, err := agentcomponentrepo.New(store, artifacts, artifactrepo.DefaultAuthority)
-	if err != nil {
-		return err
-	}
-	componentRefs := make([]contractsv1alpha1.VersionedRef, 0, len(bootstrap.Publications))
-	for _, publication := range bootstrap.Publications {
-		publication.PublishedAt = at
-		binding, publishErr := resolveOrPublishFormalComponent(
-			ctx,
-			components,
-			subject,
-			publication,
-		)
-		if publishErr != nil {
-			return fmt.Errorf("publish component %s@%s: %w", publication.Ref.ID, publication.Ref.Revision, publishErr)
-		}
-		componentRefs = append(componentRefs, binding.Ref)
-	}
-	configStore, err := local.Open(options.configState)
-	if err != nil {
-		return fmt.Errorf("open config state: %w", err)
-	}
-	configs, err := configrepo.New(configStore)
-	if err != nil {
-		return err
-	}
-	mutation := func(suffix string, audit string) configrepo.Mutation {
-		return configrepo.Mutation{
-			IdempotencyKey: options.idempotencyKey + "-" + suffix,
-			Actor:          "argus-local-pi-bootstrap", Audit: audit, At: at,
-		}
-	}
-	if err := resolveOrPublishFormalConfig(ctx, configs, bootstrap.Revision, mutation); err != nil {
-		return err
-	}
-	output := formalAgentBootstrapOutput{
-		SourceRunID: options.sourceRun, ConfigState: configStore.Root(), StorePath: store.Root(),
-		ConfigID: bootstrap.Revision.ID, ConfigRevision: bootstrap.Revision.Revision,
-		Manifest: bootstrap.Manifest, Components: componentRefs,
-		RuntimeFileManifestRef: runtimeEvidenceRef,
-	}
+	output.SourceRunID = options.sourceRun
 	if options.json {
 		return writeJSON(stdout, output)
 	}
@@ -852,6 +810,87 @@ func executeFormalAgentBootstrap(
 	return err
 }
 
+// publishFormalAgentBootstrap admits an already-built runtime for one verified
+// subject without requiring source execution to have started. The caller owns
+// the source-run identity and must persist the exact bootstrap and mutation
+// coordinates before relying on this helper for crash recovery.
+func publishFormalAgentBootstrap(
+	ctx context.Context,
+	subject application.AgentPlanningSubject,
+	bootstrap formalreview.LocalPiBootstrap,
+	storePath string,
+	configStateDir string,
+	idempotencyKey string,
+	at time.Time,
+) (formalAgentBootstrapOutput, error) {
+	at = at.UTC()
+	store, err := local.Open(storePath)
+	if err != nil {
+		return formalAgentBootstrapOutput{}, fmt.Errorf("open Argus store: %w", err)
+	}
+	runs, err := runrepo.New(store)
+	if err != nil {
+		return formalAgentBootstrapOutput{}, err
+	}
+	runtimeEvidenceRef, err := persistFormalRuntimeEvidence(runs, bootstrap)
+	if err != nil {
+		return formalAgentBootstrapOutput{}, err
+	}
+	artifacts, err := artifactrepo.Open(store, nil)
+	if err != nil {
+		return formalAgentBootstrapOutput{}, err
+	}
+	components, err := agentcomponentrepo.New(store, artifacts, artifactrepo.DefaultAuthority)
+	if err != nil {
+		return formalAgentBootstrapOutput{}, err
+	}
+	componentRefs := make([]contractsv1alpha1.VersionedRef, 0, len(bootstrap.Components))
+	for _, component := range bootstrap.Components {
+		// Components are the persisted source of truth; Publications is an
+		// in-memory convenience which intentionally is not JSON-encoded.
+		publication := agentcomponentrepo.Publication{
+			Ref: component.Ref, Contract: component.Contract,
+			Content: slices.Clone(component.Content), PublishedAt: at,
+		}
+		binding, publishErr := resolveOrPublishFormalComponent(
+			ctx,
+			components,
+			agentcomponentrepo.Subject{
+				TenantID: subject.TenantID, OrganizationID: subject.OrganizationID,
+				WorkspaceID: subject.WorkspaceID, RepositoryID: subject.RepositoryID,
+			},
+			publication,
+		)
+		if publishErr != nil {
+			return formalAgentBootstrapOutput{}, fmt.Errorf("publish component %s@%s: %w", publication.Ref.ID, publication.Ref.Revision, publishErr)
+		}
+		componentRefs = append(componentRefs, binding.Ref)
+	}
+	configStore, err := local.Open(configStateDir)
+	if err != nil {
+		return formalAgentBootstrapOutput{}, fmt.Errorf("open config state: %w", err)
+	}
+	configs, err := configrepo.New(configStore)
+	if err != nil {
+		return formalAgentBootstrapOutput{}, err
+	}
+	mutation := func(suffix string, audit string) configrepo.Mutation {
+		return configrepo.Mutation{
+			IdempotencyKey: idempotencyKey + "-" + suffix,
+			Actor:          "argus-local-pi-bootstrap", Audit: audit, At: at,
+		}
+	}
+	if err := resolveOrPublishFormalConfig(ctx, configs, bootstrap.Revision, mutation); err != nil {
+		return formalAgentBootstrapOutput{}, err
+	}
+	return formalAgentBootstrapOutput{
+		ConfigState: configStore.Root(), StorePath: store.Root(),
+		ConfigID: bootstrap.Revision.ID, ConfigRevision: bootstrap.Revision.Revision,
+		Manifest: bootstrap.Manifest, Components: componentRefs,
+		RuntimeFileManifestRef: runtimeEvidenceRef,
+	}, nil
+}
+
 func resolveOrPublishFormalConfig(
 	ctx context.Context,
 	repository *configrepo.Repository,
@@ -860,6 +899,9 @@ func resolveOrPublishFormalConfig(
 ) error {
 	if repository == nil {
 		return fmt.Errorf("formal config repository is required")
+	}
+	if mutation == nil {
+		return fmt.Errorf("formal config mutation factory is required")
 	}
 	record, err := repository.Get(revision.ID, revision.Revision)
 	if err == nil {
@@ -872,13 +914,19 @@ func resolveOrPublishFormalConfig(
 			return fmt.Errorf("formal config %s@%s exists with different content",
 				revision.ID, revision.Revision)
 		}
-		if record.Status != configrepo.StatusPublished {
+		switch record.Status {
+		case configrepo.StatusPublished:
+			return nil
+		case configrepo.StatusDraft, configrepo.StatusValidated:
+			// Re-run the same lifecycle operations so each existing step checks
+			// its complete idempotency identity, including actor, audit, and time.
+			// Equal content alone must not let a new request take over a draft.
+		default:
 			return fmt.Errorf("formal config %s@%s exists with status %s, want published",
 				revision.ID, revision.Revision, record.Status)
 		}
-		return nil
 	}
-	if !errors.Is(err, configrepo.ErrNotFound) {
+	if err != nil && !errors.Is(err, configrepo.ErrNotFound) {
 		return fmt.Errorf("resolve formal config revision: %w", err)
 	}
 	if _, err := repository.Create(ctx, revision,
@@ -889,10 +937,15 @@ func resolveOrPublishFormalConfig(
 		mutation("validate", "validate formal local Pi config")); err != nil {
 		return fmt.Errorf("validate formal config revision: %w", err)
 	}
-	if _, err := repository.Publish(ctx, revision.ID, revision.Revision,
+	published, err := repository.Publish(ctx, revision.ID, revision.Revision,
 		configrepo.Rollout{Percentage: 100},
-		mutation("publish", "publish formal local Pi config")); err != nil {
+		mutation("publish", "publish formal local Pi config"))
+	if err != nil {
 		return fmt.Errorf("publish formal config revision: %w", err)
+	}
+	if published.Status != configrepo.StatusPublished {
+		return fmt.Errorf("formal config %s@%s publication recovered with inactive status %s",
+			revision.ID, revision.Revision, published.Status)
 	}
 	return nil
 }
@@ -902,6 +955,10 @@ func executeFormalAgentShow(
 	options formalAgentShowFlags,
 	stdout io.Writer,
 ) error {
+	return executeFormalAgentShowWithPolicy(ctx, options, stdout, scheduling.DefaultLocalPolicy())
+}
+
+func executeFormalAgentShowWithPolicy(ctx context.Context, options formalAgentShowFlags, stdout io.Writer, policy scheduling.Policy) error {
 	store, err := local.Open(options.store)
 	if err != nil {
 		return fmt.Errorf("open Argus store: %w", err)
@@ -943,7 +1000,7 @@ func executeFormalAgentShow(
 	if err != nil {
 		return err
 	}
-	workloads, err := scheduling.NewRepository(store, scheduling.DefaultLocalPolicy())
+	workloads, err := scheduling.NewRepository(store, policy)
 	if err != nil {
 		return err
 	}

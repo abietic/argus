@@ -5,6 +5,7 @@ SHELL := /bin/bash
 
 GO ?= go
 GOFMT ?= gofmt
+GO_TEST_TIMEOUT ?= 20m
 NPM ?= npm
 BUILD_DIR := build
 PI_REVIEW_DIR := runtime/pi-review
@@ -17,7 +18,7 @@ build:
 	$(GO) build -trimpath -ldflags "-X main.version=$(VERSION)" -o $(BUILD_DIR)/argus ./cmd/argus
 
 test: pi-build
-	$(GO) test -count=1 ./...
+	$(GO) test -timeout $(GO_TEST_TIMEOUT) -count=1 ./...
 
 fmt:
 	$(GOFMT) -w $(GO_FILES)

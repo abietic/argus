@@ -4,10 +4,24 @@
     "schema_version": "argus.review_job_request.v1alpha1",
     "execution_profile": "deterministic_review_v1",
     "repository_path": "/absolute/path/to/repository",
-    "mode": "diff",
-    "base_revision": "main",
-    "head_revision": "HEAD",
+    "mode": "selection",
+    "revision": "HEAD",
+    "selection_path": "review.go",
+    "start_line": 1,
+    "end_line": 2,
     "selection_ranges": null,
+    "overlay_content": "package example\n// TODO review this buffer\n",
+    "contexts": [{
+      "gap": {
+        "context_id": "context-caller",
+        "kind": "repository_search",
+        "revision": "commit-example",
+        "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "coverage": {"spans": [{"path": "caller.go", "start_line": 1, "end_line": 2}], "symbols": []},
+        "provenance": {"provider": "local", "producer_id": "repository-search", "producer_revision": "1"},
+        "reason_code": "unavailable"
+      }
+    }],
     "include": null,
     "exclude": null,
     "execution_timeout_seconds": 1800

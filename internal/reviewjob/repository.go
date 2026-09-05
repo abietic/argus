@@ -72,6 +72,11 @@ func (repository *Repository) CreateFormal(
 ) (Submission, Command, error) {
 	jobID, _ := deterministicIDs(mutation.Actor, mutation.IdempotencyKey)
 	runID := formalreview.FormalRunID(request.SourceRunID, mutation.IdempotencyKey)
+	// Publications is an in-memory convenience omitted from the immutable
+	// command JSON. Normalize the by-value copy before identity comparisons so
+	// a concurrent exact submission matches a command loaded from persistence.
+	// Components remains the authoritative, content-bearing runtime closure.
+	runtime.Bootstrap.Publications = nil
 	return repository.create(ctx, request, mutation, bundle, receipt, jobID, runID, &runtime)
 }
 
@@ -90,6 +95,9 @@ func (repository *Repository) create(
 	}
 	if err := request.Validate(); err != nil {
 		return Submission{}, Command{}, err
+	}
+	if len(request.Contexts) == 0 {
+		request.Contexts = nil
 	}
 	if err := mutation.Validate(); err != nil {
 		return Submission{}, Command{}, err
@@ -397,6 +405,8 @@ func idempotencyLookupKey(actor, key string) string { return actor + "\x00" + ke
 func cloneSubmission(submission Submission) Submission {
 	submission.Request.SelectionRanges = slices.Clone(submission.Request.SelectionRanges)
 	submission.Request.SelectionSymbol = cloneSymbol(submission.Request.SelectionSymbol)
+	submission.Request.OverlayContent = cloneString(submission.Request.OverlayContent)
+	submission.Request.Contexts = cloneContexts(submission.Request.Contexts)
 	submission.Request.Include = slices.Clone(submission.Request.Include)
 	submission.Request.Exclude = slices.Clone(submission.Request.Exclude)
 	return submission

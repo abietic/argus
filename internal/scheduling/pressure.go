@@ -152,7 +152,7 @@ func (repository *Repository) Pressure(observedAt time.Time) (PressureSnapshot, 
 			global.oldestWait = max(global.oldestWait, wait)
 			classes[record.Spec.Class].oldestWait = max(classes[record.Spec.Class].oldestWait, wait)
 			tenants[record.Spec.TenantID].oldestWait = max(tenants[record.Spec.TenantID].oldestWait, wait)
-			if !observedAt.Before(record.Admission.AdmissionDeadline) ||
+			if !observedAt.Before(effectiveAdmissionDeadline(repository.policy, record)) ||
 				!observedAt.Before(record.Spec.ExecutionDeadline) {
 				snapshot.Stale.PendingRequiresReconcile++
 			}

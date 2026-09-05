@@ -56,7 +56,8 @@ func (request Request) Validate() error {
 		if request.RepositoryPath != "" || request.Mode != "" || request.BaseRevision != "" ||
 			request.HeadRevision != "" || request.Revision != "" || request.SelectionPath != "" ||
 			request.StartLine != 0 || request.EndLine != 0 || request.SelectionRanges != nil ||
-			request.SelectionSymbol != nil || request.Include != nil || request.Exclude != nil {
+			request.SelectionSymbol != nil || request.Include != nil || request.Exclude != nil ||
+			request.OverlayContent != nil || request.Contexts != nil {
 			return fmt.Errorf("formal_pi_review_v1 accepts only source_run_id and execution timeout")
 		}
 		return nil
@@ -77,9 +78,38 @@ func (request Request) ApplicationRequest() application.ReviewRequest {
 		EndLine:         request.EndLine,
 		SelectionRanges: slices.Clone(request.SelectionRanges),
 		SelectionSymbol: cloneSymbol(request.SelectionSymbol),
+		OverlayContent:  cloneString(request.OverlayContent),
+		Contexts:        cloneContexts(request.Contexts),
 		Include:         slices.Clone(request.Include),
 		Exclude:         slices.Clone(request.Exclude),
 	}
+}
+
+func cloneString(value *string) *string {
+	if value == nil {
+		return nil
+	}
+	copy := *value
+	return &copy
+}
+
+func cloneContexts(bindings []reviewcore.ContextBinding) []reviewcore.ContextBinding {
+	result := slices.Clone(bindings)
+	for index, binding := range result {
+		if binding.Ref != nil {
+			copy := *binding.Ref
+			copy.Coverage.Spans = slices.Clone(copy.Coverage.Spans)
+			copy.Coverage.Symbols = slices.Clone(copy.Coverage.Symbols)
+			result[index].Ref = &copy
+		}
+		if binding.Gap != nil {
+			copy := *binding.Gap
+			copy.Coverage.Spans = slices.Clone(copy.Coverage.Spans)
+			copy.Coverage.Symbols = slices.Clone(copy.Coverage.Symbols)
+			result[index].Gap = &copy
+		}
+	}
+	return result
 }
 
 func cloneSymbol(symbol *application.SymbolSelector) *application.SymbolSelector {
@@ -194,6 +224,12 @@ func deterministicIDs(actor, idempotencyKey string) (jobID, runID string) {
 	sum := sha256.Sum256([]byte(actor + "\x00" + idempotencyKey))
 	digest := hex.EncodeToString(sum[:16])
 	return "job-" + digest, "run-" + digest
+}
+
+// DeterministicIDs returns the immutable deterministic job and source run IDs.
+// Callers must validate actor and idempotencyKey through Mutation.Validate.
+func DeterministicIDs(actor, idempotencyKey string) (jobID, runID string) {
+	return deterministicIDs(actor, idempotencyKey)
 }
 
 func validateID(name, value string) error {

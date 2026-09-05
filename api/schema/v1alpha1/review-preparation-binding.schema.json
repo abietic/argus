@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/review-preparation-binding.schema.json",
+  "title": "Argus deterministic review preparation binding v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "preparation_ref"],
+  "properties": {
+    "schema_version": {"const": "argus.review_preparation_binding.v1alpha1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "preparation_ref": {
+      "allOf": [
+        {"$ref": "review-preparation.schema.json#/$defs/artifactRef"},
+        {"properties": {"contract": {"const": "argus.review_preparation.v1alpha1"}}}
+      ]
+    }
+  }
+}

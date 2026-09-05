@@ -47,7 +47,7 @@ func NewRepository(store *local.Store, policy Policy) (*Repository, error) {
 	return repository, nil
 }
 
-func (repository *Repository) Submit(
+func (repository *Repository) submitOnce(
 	ctx context.Context,
 	spec WorkloadSpec,
 	mutation Mutation,
@@ -97,7 +97,7 @@ func (repository *Repository) Submit(
 		Audit:         mutation.Audit,
 		OccurredAt:    mutation.At,
 	}
-	if err := repository.append(mutation.IdempotencyKey, mutation.At, event); err != nil {
+	if err := repository.append(state.sequence, mutation.IdempotencyKey, mutation.At, event); err != nil {
 		return WorkloadRecord{}, err
 	}
 	reloaded, err := repository.load()
@@ -107,7 +107,7 @@ func (repository *Repository) Submit(
 	return reloaded.record(spec.WorkloadID)
 }
 
-func (repository *Repository) Claim(
+func (repository *Repository) claimOnce(
 	ctx context.Context,
 	request ClaimRequest,
 ) (Dispatch, error) {
@@ -122,6 +122,11 @@ func (repository *Repository) Claim(
 	state, err := repository.load()
 	if err != nil {
 		return Dispatch{}, err
+	}
+	for _, id := range request.AllowedWorkloadIDs {
+		if _, err := state.record(id); err != nil {
+			return Dispatch{}, err
+		}
 	}
 	if existing, ok := state.events[request.IdempotencyKey]; ok {
 		event, err := repository.decodeEnvelope(existing)
@@ -175,13 +180,13 @@ func (repository *Repository) Claim(
 		Audit:      "dispatch lease claimed",
 		OccurredAt: request.At,
 	}
-	if err := repository.append(request.IdempotencyKey, request.At, event); err != nil {
+	if err := repository.append(state.sequence, request.IdempotencyKey, request.At, event); err != nil {
 		return Dispatch{}, err
 	}
 	return Dispatch{Spec: cloneValue(record.Spec), Lease: lease}, nil
 }
 
-func (repository *Repository) Heartbeat(
+func (repository *Repository) heartbeatOnce(
 	ctx context.Context,
 	heartbeat Heartbeat,
 ) (WorkloadRecord, error) {
@@ -235,7 +240,7 @@ func (repository *Repository) Heartbeat(
 		Audit:      "dispatch lease heartbeat",
 		OccurredAt: heartbeat.At,
 	}
-	if err := repository.append(heartbeat.IdempotencyKey, heartbeat.At, event); err != nil {
+	if err := repository.append(state.sequence, heartbeat.IdempotencyKey, heartbeat.At, event); err != nil {
 		return WorkloadRecord{}, err
 	}
 	reloaded, err := repository.load()
@@ -247,7 +252,7 @@ func (repository *Repository) Heartbeat(
 
 // Complete durably records both accepted and fenced callbacks. A fenced
 // callback returns ErrFenced after its rejection fact is appended.
-func (repository *Repository) Complete(
+func (repository *Repository) completeOnce(
 	ctx context.Context,
 	callback Callback,
 ) (WorkloadRecord, error) {
@@ -306,7 +311,7 @@ func (repository *Repository) Complete(
 		OccurredAt: callback.OccurredAt,
 	}
 	if err := repository.append(
-		callback.IdempotencyKey, callback.OccurredAt, event,
+		state.sequence, callback.IdempotencyKey, callback.OccurredAt, event,
 	); err != nil {
 		return WorkloadRecord{}, err
 	}
@@ -324,7 +329,7 @@ func (repository *Repository) Complete(
 	return result, nil
 }
 
-func (repository *Repository) CancelRun(
+func (repository *Repository) cancelRunOnce(
 	ctx context.Context,
 	runID string,
 	reason string,
@@ -382,7 +387,7 @@ func (repository *Repository) CancelRun(
 		Audit:      mutation.Audit,
 		OccurredAt: mutation.At,
 	}
-	if err := repository.append(mutation.IdempotencyKey, mutation.At, event); err != nil {
+	if err := repository.append(state.sequence, mutation.IdempotencyKey, mutation.At, event); err != nil {
 		return nil, err
 	}
 	reloaded, err := repository.load()
@@ -398,6 +403,29 @@ func (repository *Repository) Reconcile(
 	ctx context.Context,
 	mutation Mutation,
 ) ([]WorkloadRecord, error) {
+	return repository.reconcile(ctx, nil, mutation)
+}
+
+// ReconcileWorkloads records timeout transitions for an exact, non-empty set of
+// workload IDs. Scope is part of the durable event and idempotency identity.
+func (repository *Repository) ReconcileWorkloads(
+	ctx context.Context,
+	workloadIDs []string,
+	mutation Mutation,
+) ([]WorkloadRecord, error) {
+	ids := slices.Clone(workloadIDs)
+	slices.Sort(ids)
+	if err := validateReconcileScope(ids); err != nil {
+		return nil, err
+	}
+	return repository.reconcile(ctx, ids, mutation)
+}
+
+func (repository *Repository) reconcileOnce(
+	ctx context.Context,
+	workloadIDs []string,
+	mutation Mutation,
+) ([]WorkloadRecord, error) {
 	if err := contextError(ctx); err != nil {
 		return nil, err
 	}
@@ -410,28 +438,36 @@ func (repository *Repository) Reconcile(
 	if err != nil {
 		return nil, err
 	}
+	for _, id := range workloadIDs {
+		if _, err := state.record(id); err != nil {
+			return nil, err
+		}
+	}
 	if existing, ok := state.events[mutation.IdempotencyKey]; ok {
 		event, err := repository.decodeEnvelope(existing)
 		if err != nil {
 			return nil, err
 		}
 		if event.Type != eventReconciled || event.ReconcileActions == nil ||
+			!reflect.DeepEqual(event.ReconcileWorkloadIDs, workloadIDs) ||
 			!sameMutation(event, mutation) {
 			return nil, idempotencyConflict(mutation.IdempotencyKey)
 		}
 		return state.recordsForActions(event.ReconcileActions), nil
 	}
-	actions := state.reconcileActions(repository.policy, mutation.At)
+	actions := state.reconcileActionsFor(repository.policy, mutation.At, workloadIDs)
 	event := schedulingEvent{
-		SchemaVersion:    schedulingEventSchema,
-		PolicySHA256:     repository.policySHA256,
-		Type:             eventReconciled,
-		ReconcileActions: actions,
-		Actor:            mutation.Actor,
-		Audit:            mutation.Audit,
-		OccurredAt:       mutation.At,
+		SchemaVersion:        schedulingEventSchema,
+		PolicySHA256:         repository.policySHA256,
+		Type:                 eventReconciled,
+		ReconcileActions:     actions,
+		ReconcileWorkloadIDs: workloadIDs,
+		RetryAdmissionWindow: true,
+		Actor:                mutation.Actor,
+		Audit:                mutation.Audit,
+		OccurredAt:           mutation.At,
 	}
-	if err := repository.append(mutation.IdempotencyKey, mutation.At, event); err != nil {
+	if err := repository.append(state.sequence, mutation.IdempotencyKey, mutation.At, event); err != nil {
 		return nil, err
 	}
 	reloaded, err := repository.load()
@@ -612,25 +648,28 @@ type CallbackFact struct {
 }
 
 type schedulingEvent struct {
-	SchemaVersion    string              `json:"schema_version"`
-	PolicySHA256     string              `json:"policy_sha256"`
-	Type             schedulingEventType `json:"type"`
-	Spec             *WorkloadSpec       `json:"spec,omitempty"`
-	Admission        *AdmissionFact      `json:"admission,omitempty"`
-	Claim            *claimFact          `json:"claim,omitempty"`
-	Heartbeat        *HeartbeatFact      `json:"heartbeat,omitempty"`
-	Callback         *CallbackFact       `json:"callback,omitempty"`
-	Cancel           *CancelFact         `json:"cancel,omitempty"`
-	ReconcileActions []ReconcileAction   `json:"reconcile_actions"`
-	Actor            string              `json:"actor"`
-	Audit            string              `json:"audit"`
-	OccurredAt       time.Time           `json:"occurred_at"`
+	SchemaVersion        string              `json:"schema_version"`
+	PolicySHA256         string              `json:"policy_sha256"`
+	Type                 schedulingEventType `json:"type"`
+	Spec                 *WorkloadSpec       `json:"spec,omitempty"`
+	Admission            *AdmissionFact      `json:"admission,omitempty"`
+	Claim                *claimFact          `json:"claim,omitempty"`
+	Heartbeat            *HeartbeatFact      `json:"heartbeat,omitempty"`
+	Callback             *CallbackFact       `json:"callback,omitempty"`
+	Cancel               *CancelFact         `json:"cancel,omitempty"`
+	ReconcileActions     []ReconcileAction   `json:"reconcile_actions"`
+	ReconcileWorkloadIDs []string            `json:"reconcile_workload_ids,omitempty"`
+	RetryAdmissionWindow bool                `json:"retry_admission_window,omitempty"`
+	Actor                string              `json:"actor"`
+	Audit                string              `json:"audit"`
+	OccurredAt           time.Time           `json:"occurred_at"`
 }
 
 type projectionState struct {
 	workloads    map[string]WorkloadRecord
 	canceledRuns map[string]CancelFact
 	events       map[string]local.Envelope
+	sequence     uint64
 }
 
 func newProjectionState() *projectionState {
@@ -659,6 +698,7 @@ func (repository *Repository) load() (*projectionState, error) {
 				ErrCorrupt, envelope.ID, envelope.Sequence, err)
 		}
 		state.events[envelope.ID] = envelope
+		state.sequence = envelope.Sequence
 	}
 	return state, nil
 }
@@ -670,6 +710,9 @@ func (repository *Repository) apply(
 	event, err := repository.decodeEnvelope(envelope)
 	if err != nil {
 		return err
+	}
+	if event.Type != eventReconciled && (event.ReconcileWorkloadIDs != nil || event.RetryAdmissionWindow) {
+		return fmt.Errorf("reconciliation scope is only valid for reconciled events")
 	}
 	switch event.Type {
 	case eventSubmitted:
@@ -710,6 +753,11 @@ func (repository *Repository) apply(
 		}
 		if err := event.Claim.Request.Validate(); err != nil {
 			return err
+		}
+		for _, id := range event.Claim.Request.AllowedWorkloadIDs {
+			if _, err := state.record(id); err != nil {
+				return err
+			}
 		}
 		if err := event.Claim.Lease.Validate(); err != nil {
 			return err
@@ -886,7 +934,17 @@ func (repository *Repository) apply(
 			event.Cancel != nil {
 			return fmt.Errorf("reconciled event has invalid payload shape")
 		}
-		expected := state.reconcileActions(repository.policy, event.OccurredAt)
+		if event.ReconcileWorkloadIDs != nil {
+			if err := validateReconcileScope(event.ReconcileWorkloadIDs); err != nil {
+				return err
+			}
+			for _, id := range event.ReconcileWorkloadIDs {
+				if _, err := state.record(id); err != nil {
+					return err
+				}
+			}
+		}
+		expected := state.reconcileActionsFor(repository.policy, event.OccurredAt, event.ReconcileWorkloadIDs)
 		if !reflect.DeepEqual(expected, event.ReconcileActions) {
 			return fmt.Errorf("reconcile actions do not match timeout projection")
 		}
@@ -910,6 +968,9 @@ func (repository *Repository) apply(
 				}
 			case ActionLeaseExpired, ActionUnknownExpired:
 				record.State = StatePending
+				if event.RetryAdmissionWindow {
+					record.retryQueuedAt = event.OccurredAt
+				}
 				record.StateReason = string(action.Type)
 				record.ActiveLease = nil
 				record.UnknownSince = nil
@@ -952,16 +1013,21 @@ func (repository *Repository) decodeEnvelope(
 }
 
 func (repository *Repository) append(
+	expectedSequence uint64,
 	idempotencyKey string,
 	at time.Time,
 	event schedulingEvent,
 ) error {
-	_, err := repository.store.AppendJSONL(schedulingLedger, local.Event{
+	_, err := repository.store.AppendJSONLAtSequence(schedulingLedger, expectedSequence, local.Event{
 		ID: idempotencyKey, Schema: schedulingEventSchema, Time: at, Payload: event,
 	})
 	if err != nil {
 		if errors.Is(err, local.ErrEventConflict) {
-			return idempotencyConflict(idempotencyKey)
+			// A competing writer may have committed either another event or
+			// this same request with newly computed projection facts. Reload
+			// once more so the public operation compares request identity;
+			// generated admission depths are not part of caller intent.
+			return errProjectionAdvanced
 		}
 		return fmt.Errorf("append scheduling event: %w", err)
 	}
@@ -1087,9 +1153,12 @@ func (state *projectionState) selectCandidate(
 	}
 	candidates := make([]candidate, 0)
 	for id, record := range state.workloads {
+		if request.AllowedWorkloadIDs != nil && !slices.Contains(request.AllowedWorkloadIDs, id) {
+			continue
+		}
 		if record.State != StatePending ||
 			!slices.Contains(request.SupportedClasses, record.Spec.Class) ||
-			!request.At.Before(record.Admission.AdmissionDeadline) ||
+			!request.At.Before(effectiveAdmissionDeadline(policy, record)) ||
 			!request.At.Before(record.Spec.ExecutionDeadline) ||
 			request.At.Before(record.Spec.SubmittedAt) ||
 			request.At.Before(record.UpdatedAt) {
@@ -1215,11 +1284,44 @@ func (state *projectionState) reconcileActions(
 	policy Policy,
 	at time.Time,
 ) []ReconcileAction {
-	ids := make([]string, 0, len(state.workloads))
-	for id := range state.workloads {
-		ids = append(ids, id)
+	return state.reconcileActionsFor(policy, at, nil)
+}
+
+func effectiveAdmissionDeadline(policy Policy, record WorkloadRecord) time.Time {
+	if record.Generation > 0 && !record.retryQueuedAt.IsZero() {
+		return minTime(record.retryQueuedAt.Add(policy.AdmissionTimeout), record.Spec.ExecutionDeadline)
 	}
-	sort.Strings(ids)
+	return record.Admission.AdmissionDeadline
+}
+
+func validateReconcileScope(ids []string) error {
+	if len(ids) == 0 || !slices.IsSorted(ids) {
+		return fmt.Errorf("reconciliation scope must contain sorted workload IDs")
+	}
+	for index, id := range ids {
+		if err := validateID("workload_id", id); err != nil {
+			return err
+		}
+		if index > 0 && ids[index-1] == id {
+			return fmt.Errorf("reconciliation scope contains duplicate workload ID %q", id)
+		}
+	}
+	return nil
+}
+
+func (state *projectionState) reconcileActionsFor(
+	policy Policy,
+	at time.Time,
+	scope []string,
+) []ReconcileAction {
+	ids := slices.Clone(scope)
+	if scope == nil {
+		ids = make([]string, 0, len(state.workloads))
+		for id := range state.workloads {
+			ids = append(ids, id)
+		}
+		sort.Strings(ids)
+	}
 	actions := make([]ReconcileAction, 0)
 	for _, id := range ids {
 		record := state.workloads[id]
@@ -1232,7 +1334,7 @@ func (state *projectionState) reconcileActions(
 			switch {
 			case !at.Before(record.Spec.ExecutionDeadline):
 				action.Type = ActionExecutionExpired
-			case !at.Before(record.Admission.AdmissionDeadline):
+			case !at.Before(effectiveAdmissionDeadline(policy, record)):
 				action.Type = ActionAdmissionExpired
 			}
 		case StateLeased:

@@ -12,6 +12,7 @@ import (
 	"github.com/abietic/argus/internal/formalreview"
 	"github.com/abietic/argus/internal/piexecution"
 	"github.com/abietic/argus/internal/reviewconfig"
+	"github.com/abietic/argus/internal/reviewcore"
 	"github.com/abietic/argus/internal/runmodel"
 	"github.com/abietic/argus/internal/scheduling"
 	"github.com/abietic/argus/internal/store/local"
@@ -50,6 +51,8 @@ type Request struct {
 	EndLine         uint32                       `json:"end_line,omitempty"`
 	SelectionRanges []application.SelectionRange `json:"selection_ranges"`
 	SelectionSymbol *application.SymbolSelector  `json:"selection_symbol,omitempty"`
+	OverlayContent  *string                      `json:"overlay_content,omitempty"`
+	Contexts        []reviewcore.ContextBinding  `json:"contexts,omitempty"`
 
 	Include []string `json:"include"`
 	Exclude []string `json:"exclude"`
@@ -142,6 +145,12 @@ type Scheduler interface {
 	Get(string) (scheduling.WorkloadRecord, error)
 	List() ([]scheduling.WorkloadRecord, error)
 	Timeline(string) ([]scheduling.WorkloadTimelineEvent, error)
+}
+
+// ScopedScheduler is required by StartJobs so a bounded CLI invocation cannot
+// reconcile timeouts belonging to other jobs in the same store.
+type ScopedScheduler interface {
+	ReconcileWorkloads(context.Context, []string, scheduling.Mutation) ([]scheduling.WorkloadRecord, error)
 }
 
 type Executor interface {

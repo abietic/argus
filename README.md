@@ -328,9 +328,10 @@ WORKER_PATH="$PWD/runtime/pi-review/dist/worker.js"
   --repo /absolute/repository --mode diff --base main --head HEAD \
   --context-provider repository_search --context-provider go_ast
 
-# 若 bootstrap/formal 阶段失败，输出仍包含已提交的 source_run_id。使用相同 quick key、
-# --at 和 formal 参数恢复；此路径精确复用已提交 source 与 formal terminal，不重复调用 provider。
-# 不带 --source-run 重跑首次命令会按设计创建一次新的 source review，不属于精确重试。
+# 原命令可直接重试：相同 key + 参数复用被冻结的 commit OID、overlay/context 字节、
+# runtime 与两套 ConfigBundle/receipt；不会因 HEAD 或配置后续变化创建新 source。
+# 输出含 intent_id/source_job_id/formal_job_id，可经现有 ReviewJob API 查询和取消。
+# 也可使用以下 source-run 形式；相同 key 改变参数会冲突，开始新评审必须换 key。
 ./build/argus agent-review quick \
   --store /absolute/argus-store \
   --config-state-dir /absolute/argus-config-state \
@@ -343,6 +344,12 @@ WORKER_PATH="$PWD/runtime/pi-review/dist/worker.js"
   --input-micros-per-million <same-governed-input-ceiling> \
   --output-micros-per-million <same-governed-output-ceiling> \
   --max-bytes-per-input-token 4 --json
+
+# quick 只运行自身两个 job；配置落在 <config-state-dir>/quick/<intent_id>/{source,formal}。
+# SIGKILL 后原命令恢复等待旧 lease 到期（默认最多约30分钟），不强抢活跃 owner；
+# 每个 job 的总执行期限为首次 submission 后24小时。已结束的失败/取消保持终态，
+# Ctrl-C 的协作式取消不等同 SIGKILL，不保证可恢复。runtime文件漂移在调用provider前拒绝。
+# 新 quick intent 仅支持 local-pi；Hailix 使用既有 formal run/batch 入口。
 
 # 分阶段入口仍保留，用于调试、平台集成或显式控制 bootstrap/run 生命周期。
 ./build/argus agent-review formal bootstrap \

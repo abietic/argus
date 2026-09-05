@@ -156,10 +156,13 @@ type ClaimRequest struct {
 	// workload. It does not bypass capacity or queue ordering: the pinned
 	// workload must still be the next eligible candidate for the advertised
 	// classes. Provider workers normally leave this empty.
-	WorkloadID       string          `json:"workload_id,omitempty"`
-	WorkerID         string          `json:"worker_id"`
-	SupportedClasses []WorkloadClass `json:"supported_classes"`
-	At               time.Time       `json:"at"`
+	WorkloadID string `json:"workload_id,omitempty"`
+	// AllowedWorkloadIDs restricts candidate ordering to a bounded worker's
+	// explicit scope. Global, class and tenant active limits still apply.
+	AllowedWorkloadIDs []string        `json:"allowed_workload_ids,omitempty"`
+	WorkerID           string          `json:"worker_id"`
+	SupportedClasses   []WorkloadClass `json:"supported_classes"`
+	At                 time.Time       `json:"at"`
 }
 
 type Heartbeat struct {
@@ -218,6 +221,9 @@ type TerminalFact struct {
 }
 
 type WorkloadRecord struct {
+	// retryQueuedAt is rebuilt from versioned reconciliation events. It is
+	// not a second persisted authority and must not move on rejected callbacks.
+	retryQueuedAt      time.Time
 	Spec               WorkloadSpec        `json:"spec"`
 	Admission          AdmissionFact       `json:"admission"`
 	State              WorkloadState       `json:"state"`

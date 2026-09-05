@@ -24,6 +24,8 @@
       ]
     },
     "selection_symbol": {"$ref": "review-spec.schema.json#/$defs/symbolSelector"},
+    "overlay_content": {"type": "string", "pattern": "^[^\u0000\r]*$"},
+    "contexts": {"type": "array", "items": {"$ref": "review-input.schema.json#/$defs/contextBinding"}},
     "include": {
       "oneOf": [
         {"type": "null"},
@@ -54,14 +56,15 @@
             {"required": ["revision"]}, {"required": ["selection_path"]},
             {"required": ["start_line"]}, {"required": ["end_line"]},
             {"required": ["selection_ranges"]}, {"required": ["selection_symbol"]},
-            {"required": ["include"]}, {"required": ["exclude"]}
+            {"required": ["include"]}, {"required": ["exclude"]},
+            {"required": ["overlay_content"]}, {"required": ["contexts"]}
           ]
         }
       }
     },
     {
       "if": {"required": ["mode"], "properties": {"mode": {"const": "diff"}}},
-      "then": {"required": ["base_revision", "head_revision"]}
+      "then": {"required": ["base_revision", "head_revision"], "not": {"required": ["overlay_content"]}}
     },
     {
       "if": {"required": ["mode"], "properties": {"mode": {"const": "selection"}}},
@@ -86,7 +89,7 @@
     },
     {
       "if": {"required": ["mode"], "properties": {"mode": {"const": "scope"}}},
-      "then": {"required": ["revision", "include", "exclude"]}
+      "then": {"required": ["revision", "include", "exclude"], "not": {"required": ["overlay_content"]}}
     }
   ]
 }

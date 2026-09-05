@@ -423,9 +423,12 @@ skill/knowledge 必须满足有界 UTF-8 contract。publication 的 actor/audit/
 
 ReviewJob transport 使用 `argus.local_api_review_job_submit_command.v1alpha1` 与
 `argus.local_api_review_job_cancel_command.v1alpha1`。submit 需要独立 `review_execute` permission；请求以
-`execution_profile` 选择互斥输入：`deterministic_review_v1` 只描述 repository target，
-`formal_pi_review_v1` 只描述已成功 committed 的 `source_run_id`；二者都携带 deadline，均不允许 actor、credential、
-inline overlay、外部 ContextRef 或 remote-write authority。服务用 principal actor + idempotency key 确定性生成 job/run identity，先按该 run 的 exact
+`execution_profile` 选择互斥输入：`deterministic_review_v1` 描述 repository target，selection 可携带
+LF-only UTF-8 `overlay_content`，各模式可携带已冻结且按 context_id 唯一排序的 `contexts`；
+ContextRef/ContextGap 保持独立 provenance，不能扩展授权评审范围。
+`formal_pi_review_v1` 只描述已成功 committed 的 `source_run_id`；二者都携带 deadline，均不允许 actor、credential
+或 remote-write authority；formal profile 拒绝 overlay/context 二次输入。新增可选字段缺省时保持既有 command JSON bytes。
+服务用 principal actor + idempotency key 确定性生成 job/run identity，先按该 run 的 exact
 ResolutionContext 从 lifecycle repository 解析 ConfigBundle/ConfigResolutionReceipt，再把两者和请求封成
 content-addressed `argus.review_job_command.v1alpha1`，最后提交绑定 command URI 的 scheduling Workload。formal command
 额外冻结 non-secret LocalPiBootstrap options、runtime/component exact bytes 与 governed pricing ceiling；credential value
@@ -434,14 +437,44 @@ content-addressed `argus.review_job_command.v1alpha1`，最后提交绑定 comma
 
 后台 local coordinator 复用 scheduling 的 class admission、lease、heartbeat、generation/fencing、callback、timeout
 reconcile 与 permanent run cancellation；HTTP request context 不成为 execution context。显式 cancel 才同时写 run
-cancel fence 并取消同进程活跃 execution。进程丢失后，过期 lease 可重派发；如果 exact run 已 terminal，worker
-只补 scheduling callback。deterministic run ledger 已有 nonterminal authority 时以 `orphaned_nonterminal_run` 失败关闭，
-不得用同一 run ID 重放部分执行；formal Pi profile 则使用同一 coordinator claim 的 lease/generation/fencing token 驱动
+cancel fence 并取消同进程活跃 execution。`StartJobs` 要求显式非空 job ID 集合，只派发这些 job，
+claim 的 `allowed_workload_ids` 将候选排序限定到该集合，仍受全局/class/tenant active capacity 约束；
+未知 ID 在写调度事实前拒绝。timeout reconcile 同样绑定持久化 workload scope；相同 reconcile key 改写 scope 冲突。
+未限定的 `Start` 保持全局 worker 行为。`Wait` 等待 coordinator、execution 和 heartbeat 全部退出。
+所有 scheduling mutation 用读取时的 ledger sequence 做跨进程 CAS；序列竞争后有界重算，真实幂等冲突
+不重试。重新入队的任务有独立、由 requeue fact 派生的 admission window，避免 30 分钟 lease 过期后被
+初次 5 分钟 admission deadline 永久挡住；不改初次 admission 事实，不延长 execution deadline，迟到
+rejected callback 不延长排队期限。旧 ledger 的 timeout 事件保持原语义回放。
+该 v1alpha1 扩展在新 reconciliation fact 中增加 `retry_admission_window`：新版本兼容旧事实，
+旧二进制的严格 decoder 不识别新字段，因此产生新事件后的 store 不支持直接降级读取。
+进程丢失后，过期 lease 可重派发；如果 exact run 已 terminal，worker
+只补 scheduling callback。deterministic diff/selection/scope 仅对已验证的内置 workflow、exact config/build/target
+恢复：复用成功 stage prefix，为中断 stage 追加 retryable cancellation/evidence 后以新 generation 继续。
+`run.created` 已写但 `run.started` 缺失的窗口可补齐；未知 workflow 或身份漂移失败关闭。scope 另需 exact
+shard manifest。application 在每次 repair/stage/lifecycle/terminal 写入前重验活跃 lease；这不是 scheduler 与
+artifact 跨仓库的单一原子事务，也不声称远端 provider exactly-once。formal Pi profile 使用同一 coordinator claim 的 lease/generation/fencing token 驱动
 既有 stage ledger 恢复，不创建第二个 workload。formal 执行前必须重建并 exact-compare 已冻结 runtime/component，
 漂移在 provider 调用前失败。该 local profile 不等于 Hailix production worker；本地物理
 kill/restart 已覆盖 lease 接管与 generation fence；2026-08-27 真实 DeepSeek 又在 Pi revision 1
 candidate-verification checkpoint 后切断 generation 1 lease owner，证明 generation 2 复用已完成 verifier、
 提交正式成功终态并拒绝旧代 callback。Hailix worker recovery 和 platform attestation 仍是开放项。
+
+永久取消之后的收尾使用单独的 cancellation authority：只允许精确 last lease owner 修复已有 lineage 并写
+canceled terminal，不允许执行 stage 或写 succeeded。created-only、成功写入/最终提交处被 cancel fence 拒绝
+的窗口均使用该窄路径；没有 created authority 时不凭空创建 ReviewRun。
+
+`agent-review quick` 只编排两个上述 job，不新增 runtime。内部 immutable intent 保存参数、resolved commit OID、
+overlay/explicit ContextBinding 与 non-secret runtime；配置 plan 绑定该 intent digest 和两套 published bundle/receipt。
+原命令的同 key 重试必须匹配冻结参数，不重新解析移动的 ref 或外部 context 文件。两次 submission 各有独立
+first-writer-wins timestamp，避免把用户指定的配置 publication time 当作执行期限起点。配置 namespace 为
+`<config-state-dir>/quick/<intent_id>/{source,formal}`，后续发布不改变已冻结 plan。credential 值不落盘。
+新 intent 仅支持 local-pi；旧版本 source-run resume 保持原路径。terminal failed/canceled/rejected/throttled 均
+返回保留的失败事实；新执行需新 key。SIGKILL 的恢复等待租约自然到期；协作式 Ctrl-C 可能留下 canceled terminal。
+
+claimed deterministic review 在 PlanScope 前保存 `argus.review_preparation.v1alpha1` artifact，以
+`argus.review_preparation_binding.v1alpha1` 按 run 绑定。preparation 校验 request/config/build identity，保存
+exact TargetRef、InputRef 和 ContextProviderReceiptRefs，覆盖分片计划或 ExecutionSnapshot 已保存而 lifecycle
+尚未写入的中断窗口。重试复用这些 bytes；不重新调用 Git/context provider 来构造另一个 input。
 
 `GET /v1/review-jobs/{job_id}/timeline` 需要 `review_read`，返回
 `argus.workload_timeline_event.v1alpha1` 的 sequence-ordered page。它只投影属于该 workload 的 scheduling facts；
