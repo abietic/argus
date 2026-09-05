@@ -10,6 +10,7 @@ import (
 	"github.com/abietic/argus/internal/application"
 	"github.com/abietic/argus/internal/configdefaults"
 	"github.com/abietic/argus/internal/configrepo"
+	"github.com/abietic/argus/internal/reviewcore"
 	"github.com/abietic/argus/internal/runmodel"
 	"github.com/abietic/argus/internal/runrepo"
 	"github.com/abietic/argus/internal/scheduling"
@@ -25,6 +26,7 @@ func TestSubmitFreezesConfigAndIsIdempotentAcrossLaterPublication(t *testing.T) 
 		return application.RunOutcome{}, errors.New("worker is not started")
 	}))
 	request := testRequest(t)
+	request.Contexts = []reviewcore.ContextBinding{}
 	mutation := testMutation("submit-review-1", 10)
 	first, err := service.Submit(context.Background(), request, mutation)
 	if err != nil {
@@ -222,6 +224,106 @@ func TestWorkerRecoversIntentPersistedBeforeSchedulingFailure(t *testing.T) {
 		t.Fatal(err)
 	}
 	awaitState(t, service, jobID, scheduling.StateSucceeded)
+}
+
+func TestStartJobsBoundsDispatchAndReconciliationAndWaitsForExecution(t *testing.T) {
+	started := make(chan string, 2)
+	canceled := make(chan struct{})
+	release := make(chan struct{})
+	service, _, _ := newJobService(t, ExecuteFunc(func(ctx context.Context, command Command) (application.RunOutcome, error) {
+		started <- command.JobID
+		<-ctx.Done()
+		close(canceled)
+		<-release
+		return application.RunOutcome{}, ctx.Err()
+	}))
+	oldMutation := testMutation("unrelated-expired-review", 0)
+	oldMutation.At = time.Now().UTC().Add(-time.Hour)
+	unrelated, err := service.Submit(context.Background(), testRequest(t), oldMutation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pendingMutation := testMutation("unrelated-pending-review", 0)
+	pendingMutation.At = time.Now().UTC().Add(-time.Second)
+	pending, err := service.Submit(context.Background(), testRequest(t), pendingMutation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	selected, err := service.Submit(context.Background(), testRequest(t), testMutation("selected-review", 0))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	if err := service.StartJobs(ctx, []string{selected.JobID}); err != nil {
+		t.Fatal(err)
+	}
+	select {
+	case id := <-started:
+		if id != selected.JobID {
+			t.Fatalf("executed unrelated job %s", id)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("selected job did not start")
+	}
+	other, err := service.Get(unrelated.JobID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if other.Workload.State != scheduling.StatePending || other.Workload.Generation != 0 {
+		t.Fatalf("bounded worker mutated unrelated expired workload: %+v", other.Workload)
+	}
+	otherPending, err := service.Get(pending.JobID)
+	if err != nil || otherPending.Workload.State != scheduling.StatePending || otherPending.Workload.Generation != 0 {
+		t.Fatalf("bounded worker mutated unrelated pending workload: %+v %v", otherPending.Workload, err)
+	}
+	if err := service.Start(ctx); err == nil {
+		t.Fatal("coordinator started twice")
+	}
+	cancel()
+	select {
+	case <-canceled:
+	case <-time.After(5 * time.Second):
+		t.Fatal("executor did not observe coordinator cancellation")
+	}
+	waited := make(chan struct{})
+	go func() { service.Wait(); close(waited) }()
+	select {
+	case <-waited:
+		t.Fatal("Wait returned before executor finished its terminal writes")
+	case <-time.After(50 * time.Millisecond):
+	}
+	close(release)
+	select {
+	case <-waited:
+	case <-time.After(5 * time.Second):
+		t.Fatal("Wait did not drain completed executor")
+	}
+	other, err = service.Get(unrelated.JobID)
+	if err != nil || other.Workload.State != scheduling.StatePending {
+		t.Fatalf("shutdown mutated unrelated job: %+v %v", other, err)
+	}
+}
+
+func TestStartJobsRejectsInvalidOrUnknownScopeBeforeStarting(t *testing.T) {
+	service, _, _ := newJobService(t, ExecuteFunc(func(context.Context, Command) (application.RunOutcome, error) {
+		return application.RunOutcome{}, nil
+	}))
+	record, err := service.Submit(context.Background(), testRequest(t), testMutation("scoped-validation", 0))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, ids := range [][]string{nil, {}, {""}, {"job-missing"}, {record.JobID, record.JobID}} {
+		if err := service.StartJobs(context.Background(), ids); err == nil {
+			t.Fatalf("invalid scope accepted: %v", ids)
+		}
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	if err := service.StartJobs(ctx, []string{record.JobID}); err != nil {
+		t.Fatal(err)
+	}
+	cancel()
+	service.Wait()
 }
 
 func newJobService(

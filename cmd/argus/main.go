@@ -420,9 +420,24 @@ func runReview(ctx context.Context, arguments []string, stdout io.Writer) error 
 	if err != nil {
 		return err
 	}
-	contexts, err := publishReviewContextFiles(ctx, storePath, options.contextFiles)
+	request, err := materializeReviewCLIRequest(ctx, options, storePath)
 	if err != nil {
 		return err
+	}
+	outcome, err := service.Review(ctx, request)
+	if err != nil {
+		if outcome.Run.RunID != "" {
+			return fmt.Errorf("review run %s: %w", outcome.Run.RunID, err)
+		}
+		return err
+	}
+	return writeRunOutcome(stdout, outcome, repository, storePath, options.json)
+}
+
+func materializeReviewCLIRequest(ctx context.Context, options reviewFlags, storePath string) (application.ReviewRequest, error) {
+	contexts, err := publishReviewContextFiles(ctx, storePath, options.contextFiles)
+	if err != nil {
+		return application.ReviewRequest{}, err
 	}
 	request := application.ReviewRequest{
 		RepositoryPath: options.repository,
@@ -456,19 +471,12 @@ func runReview(ctx context.Context, arguments []string, stdout io.Writer) error 
 	if options.overlay != "" {
 		overlay, readErr := readSelectionOverlay(options.overlay)
 		if readErr != nil {
-			return readErr
+			return application.ReviewRequest{}, readErr
 		}
 		request.OverlayContent = &overlay
 	}
 	sortContextBindings(request.Contexts)
-	outcome, err := service.Review(ctx, request)
-	if err != nil {
-		if outcome.Run.RunID != "" {
-			return fmt.Errorf("review run %s: %w", outcome.Run.RunID, err)
-		}
-		return err
-	}
-	return writeRunOutcome(stdout, outcome, repository, storePath, options.json)
+	return request, nil
 }
 
 type stringList []string

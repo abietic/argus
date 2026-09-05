@@ -18,7 +18,7 @@ const agentReviewQuickUsage = `usage:
 
 The first form materializes one source review, publishes the exact formal configuration, and runs the governed Pi review. Review target flags after -- are the same flags accepted by argus review, except --store, --config-state-dir, and --json, which are owned by quick.
 
-If bootstrap or formal execution fails, the output retains source_run_id. Resume with the second form and the same idempotency key and publication time. Repeating the first form intentionally creates a new source review; it is not an exact retry.`
+The first form durably freezes the target revisions, explicit context/overlay bytes, runtime identity, and both configurations before execution. Repeating it with the same key is an exact retry; changed arguments under that key are rejected. Each invocation executes only its own ReviewJobs. After a crash, recovery waits for the existing lease to expire and reuses completed stages. Terminal failures are retained; use a new key for a new execution. New quick intents require local-pi. The second form also supports source-run resumes created by earlier versions.`
 
 const quickPendingSourceRun = "quick-source-run-pending"
 
@@ -32,6 +32,9 @@ type agentReviewQuickFlags struct {
 }
 
 type agentReviewQuickOutput struct {
+	IntentID        string                      `json:"intent_id,omitempty"`
+	SourceJobID     string                      `json:"source_job_id,omitempty"`
+	FormalJobID     string                      `json:"formal_job_id,omitempty"`
 	Phase           string                      `json:"phase"`
 	SourceRunID     string                      `json:"source_run_id"`
 	Source          *runOutput                  `json:"source,omitempty"`
@@ -80,7 +83,7 @@ func parseAgentReviewQuickFlags(arguments []string) (agentReviewQuickFlags, erro
 	}
 	for _, argument := range reviewArgs {
 		for _, reserved := range []string{"store", "config-state-dir", "json"} {
-			if argument == "--"+reserved || strings.HasPrefix(argument, "--"+reserved+"=") {
+			if hasCLIFlag([]string{argument}, reserved) {
 				return agentReviewQuickFlags{}, fmt.Errorf("--%s is owned by agent-review quick", reserved)
 			}
 		}
@@ -134,16 +137,17 @@ func removeQuickStringFlag(arguments []string, name string) ([]string, string, e
 }
 
 func hasCLIFlag(arguments []string, name string) bool {
-	prefix := "--" + name
 	for _, argument := range arguments {
-		if argument == prefix || strings.HasPrefix(argument, prefix+"=") {
-			return true
+		for _, prefix := range []string{"--" + name, "-" + name} {
+			if argument == prefix || strings.HasPrefix(argument, prefix+"=") {
+				return true
+			}
 		}
 	}
 	return false
 }
 
-func executeAgentReviewQuickWithRunner(
+func executeLegacyAgentReviewQuickWithRunner(
 	ctx context.Context,
 	options agentReviewQuickFlags,
 	stdout io.Writer,

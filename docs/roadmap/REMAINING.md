@@ -17,8 +17,9 @@
 
 - 通用 stage 级 durable dispatch 与远端 crash-resume；当前本地 HTTP ReviewJob 已用 immutable command、exact config
   binding 和既有 workload admission/lease/heartbeat/reconciler/callback 实现 run-level async execution；terminal
-  run 可在重派发后补 callback；deterministic diff/selection orphaned nonterminal 失败关闭，scope 仅从冻结
-  manifest 与可验证 prefix 恢复；formal Pi 已复用其 stage
+  run 可在重派发后补 callback；deterministic diff/selection/scope 已从验证后的冻结输入与 stage prefix 恢复，
+  scope 另需 manifest；quick 已复用该执行链实现原命令 exact retry。未知 workflow、远端 runtime recovery、
+  scheduler/artifact 跨仓单事务和 provider exactly-once 不在该保证内；formal Pi 已复用其 stage
   ledger 作为 resumable authority，并消费同一 coordinator workload lease。跨进程 SIGKILL acceptance 已验证
   lease expiry、generation 2 接管、受控失败终态收敛和 generation 1 stale callback fence。deterministic scope 已有
   Argus-owned immutable shard inputs、并行 checkpoint、outer-generation fence、aggregate/fan-in 与非终态

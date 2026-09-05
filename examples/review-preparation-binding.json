@@ -1,0 +1,10 @@
+{
+  "schema_version": "argus.review_preparation_binding.v1alpha1",
+  "run_id": "run-example-preparation",
+  "preparation_ref": {
+    "uri": "artifact://local/sha256/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "size_bytes": 1000,
+    "contract": "argus.review_preparation.v1alpha1"
+  }
+}

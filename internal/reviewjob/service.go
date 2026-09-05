@@ -35,10 +35,14 @@ type Service struct {
 	workerID   string
 	now        func() time.Time
 
-	notify chan struct{}
-	done   chan struct{}
-	mu     sync.Mutex
-	active map[string]context.CancelFunc
+	notify        chan struct{}
+	done          chan struct{}
+	mu            sync.Mutex
+	active        map[string]context.CancelFunc
+	started       bool
+	workers       sync.WaitGroup
+	jobScope      map[string]struct{}
+	workloadScope []string
 }
 
 // ConfigureFormalProfile enables formal_pi_review_v1 admission. It is kept
@@ -98,6 +102,9 @@ func (service *Service) Submit(
 ) (Record, error) {
 	if err := request.Validate(); err != nil {
 		return Record{}, err
+	}
+	if len(request.Contexts) == 0 {
+		request.Contexts = nil
 	}
 	if err := mutation.Validate(); err != nil {
 		return Record{}, err
@@ -319,19 +326,65 @@ func (service *Service) Cancel(
 }
 
 func (service *Service) Start(ctx context.Context) error {
+	return service.start(ctx, nil, nil)
+}
+
+// StartJobs executes only the named durable jobs and reconciles only their
+// scheduling workloads. All IDs must already have durable submission records.
+func (service *Service) StartJobs(ctx context.Context, jobIDs []string) error {
+	if len(jobIDs) == 0 {
+		return fmt.Errorf("at least one review job ID is required")
+	}
+	if _, ok := service.scheduler.(ScopedScheduler); !ok {
+		return fmt.Errorf("bounded review jobs require scoped scheduling reconciliation")
+	}
+	scope := make(map[string]struct{}, len(jobIDs))
+	workloads := make([]string, 0, len(jobIDs))
+	for _, jobID := range jobIDs {
+		if err := validateID("job_id", jobID); err != nil {
+			return err
+		}
+		if _, duplicate := scope[jobID]; duplicate {
+			return fmt.Errorf("duplicate review job ID %q", jobID)
+		}
+		submission, err := service.repository.Get(jobID)
+		if err != nil {
+			return err
+		}
+		scope[jobID] = struct{}{}
+		workloads = append(workloads, submission.WorkloadID)
+	}
+	slices.Sort(workloads)
+	return service.start(ctx, scope, workloads)
+}
+
+func (service *Service) start(ctx context.Context, scope map[string]struct{}, workloads []string) error {
 	if ctx == nil {
 		return fmt.Errorf("context is required")
 	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	service.mu.Lock()
+	if service.started {
+		service.mu.Unlock()
+		return fmt.Errorf("review job coordinator is already started")
+	}
+	service.started = true
+	service.jobScope = scope
+	service.workloadScope = workloads
+	service.mu.Unlock()
 	go func() {
 		defer close(service.done)
 		service.loop(ctx)
+		service.workers.Wait()
 	}()
 	service.signal()
 	return nil
 }
 
-// Wait blocks until the coordinator loop has observed cancellation and stopped
-// issuing repository mutations. Composition roots use it before releasing a
+// Wait blocks until the coordinator, executions, and heartbeat goroutines have
+// stopped issuing repository mutations. Composition roots use it before releasing a
 // temporary store or exiting a process.
 func (service *Service) Wait() {
 	if service != nil {
@@ -391,10 +444,25 @@ func (service *Service) reconcile(ctx context.Context) {
 	if at.IsZero() {
 		return
 	}
-	_, _ = service.scheduler.Reconcile(ctx, scheduling.Mutation{
+	mutation := scheduling.Mutation{
 		IdempotencyKey: "review-job-reconcile-" + at.Format("20060102t150405.000000000z"),
 		Actor:          service.workerID, Audit: "reconcile local review job scheduling timeouts", At: at,
-	})
+	}
+	if service.jobScope != nil {
+		// A submission may have committed before scheduler admission. Dispatch
+		// repairs that boundary; only already admitted IDs can be reconciled.
+		workloads := make([]string, 0, len(service.workloadScope))
+		for _, id := range service.workloadScope {
+			if _, err := service.scheduler.Get(id); err == nil {
+				workloads = append(workloads, id)
+			}
+		}
+		if len(workloads) > 0 {
+			_, _ = service.scheduler.(ScopedScheduler).ReconcileWorkloads(ctx, workloads, mutation)
+		}
+		return
+	}
+	_, _ = service.scheduler.Reconcile(ctx, mutation)
 }
 
 func (service *Service) dispatch(ctx context.Context) {
@@ -403,6 +471,11 @@ func (service *Service) dispatch(ctx context.Context) {
 		return
 	}
 	for _, submission := range submissions {
+		if service.jobScope != nil {
+			if _, allowed := service.jobScope[submission.JobID]; !allowed {
+				continue
+			}
+		}
 		record, getErr := service.scheduler.Get(submission.WorkloadID)
 		if errors.Is(getErr, scheduling.ErrNotFound) {
 			record, getErr = service.ensureScheduled(ctx, submission)
@@ -424,7 +497,8 @@ func (service *Service) dispatch(ctx context.Context) {
 		dispatch, claimErr := service.scheduler.Claim(ctx, scheduling.ClaimRequest{
 			IdempotencyKey: fmt.Sprintf("%s-claim-g%d", submission.JobID, record.Generation+1),
 			WorkloadID:     submission.WorkloadID, WorkerID: service.workerID,
-			SupportedClasses: []scheduling.WorkloadClass{class}, At: at,
+			AllowedWorkloadIDs: slices.Clone(service.workloadScope),
+			SupportedClasses:   []scheduling.WorkloadClass{class}, At: at,
 		})
 		if claimErr != nil {
 			continue
@@ -433,6 +507,7 @@ func (service *Service) dispatch(ctx context.Context) {
 		service.mu.Lock()
 		service.active[submission.WorkloadID] = cancel
 		service.mu.Unlock()
+		service.workers.Add(1)
 		go service.execute(executionContext, cancel, submission, dispatch)
 	}
 }
@@ -443,6 +518,7 @@ func (service *Service) execute(
 	submission Submission,
 	dispatch scheduling.Dispatch,
 ) {
+	defer service.workers.Done()
 	defer func() {
 		cancel()
 		service.mu.Lock()
@@ -464,7 +540,11 @@ func (service *Service) execute(
 		return
 	}
 	heartbeatDone := make(chan struct{})
-	go service.heartbeat(ctx, cancel, dispatch, heartbeatDone)
+	heartbeatExited := make(chan struct{})
+	go func() {
+		defer close(heartbeatExited)
+		service.heartbeat(ctx, cancel, dispatch, heartbeatDone)
+	}()
 	var outcome application.RunOutcome
 	var executeErr error
 	if canExecuteClaimed {
@@ -473,6 +553,7 @@ func (service *Service) execute(
 		outcome, executeErr = service.executor.Execute(ctx, command)
 	}
 	close(heartbeatDone)
+	<-heartbeatExited
 	if current, getErr := service.scheduler.Get(submission.WorkloadID); getErr == nil &&
 		current.State == scheduling.StateCanceled {
 		return

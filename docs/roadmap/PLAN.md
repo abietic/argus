@@ -333,8 +333,9 @@ receipt，不发布上下文 artifact。下一步在 Hailix sandbox 中增加真
 	run-intent 后 publication 和 terminal no-rerun；它仍不是分布式 Hailix worker transport。
    durable async ReviewJob 现已用 immutable command + exact published config binding 接到既有 scheduling
    admission/lease/heartbeat/fencing/callback/reconcile，提供 submit/list/show/cancel；客户端断开不取消，terminal
-   run 可补 callback；deterministic diff/selection orphaned nonterminal 仍禁止重复执行，scope 仅在冻结
-   shard manifest 与可验证 stage prefix 存在时恢复。formal_pi_review_v1 已作为互斥 profile
+   run 可补 callback；deterministic diff/selection/scope 仅从 exact config/build/target 与可验证 stage prefix 恢复，
+   scope 另需冻结 shard manifest；prepared-input binding 覆盖 lifecycle 前窗口。quick 已接同一 job 链，
+   原命令同 key 复用冻结输入和两套配置。formal_pi_review_v1 已作为互斥 profile
    接入同一 job 契约，冻结 source/config/runtime/component/pricing 并复用单一 workload lease；进程级 SIGKILL
    acceptance 已验证 lease expiry、generation 2 接管、stage ledger 恢复、终态 callback 和 stale generation fence；
    跨进程 cancel acceptance 也已验证另一个进程追加永久 fence 后，worker heartbeat 会取消 Pi runner 且不接受

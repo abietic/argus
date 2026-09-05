@@ -5,17 +5,17 @@ import (
 	"slices"
 	"time"
 
+	"github.com/abietic/argus/internal/reviewconfig"
 	"github.com/abietic/argus/internal/reviewcore"
 	"github.com/abietic/argus/internal/runmodel"
 	"github.com/abietic/argus/internal/store/local"
 	"github.com/abietic/argus/internal/targetmodel"
 	"github.com/abietic/argus/internal/workflow"
+	contractsv1alpha1 "github.com/abietic/argus/pkg/contracts/v1alpha1"
 )
 
-// DeterministicRecovery is the exact append-only prefix from which a scope
-// ReviewRun may continue. Recovery is deliberately narrow to deterministic
-// scope reviews with a frozen shard manifest, but it closes crash windows at
-// every stage of that workflow.
+// DeterministicRecovery is the exact append-only prefix from which a
+// deterministic diff, selection, or sharded scope ReviewRun may continue.
 type DeterministicRecovery struct {
 	Snapshot      runmodel.ExecutionSnapshot
 	CreatedAt     time.Time
@@ -40,6 +40,42 @@ func (repository *Repository) RecoverScopeReview(
 	runID string,
 	recoveredAt time.Time,
 ) (DeterministicRecovery, error) {
+	snapshot, err := repository.ExecutionSnapshotForRun(runID)
+	if err != nil {
+		return DeterministicRecovery{}, err
+	}
+	if snapshot.ReviewShardManifestRef == nil {
+		return DeterministicRecovery{}, fmt.Errorf("run %q has no frozen scope shard manifest", runID)
+	}
+	return repository.RecoverReview(runID, recoveredAt)
+}
+
+// RecoverReview repairs abandoned deterministic stage attempts using their
+// immutable inputs and successful prefix. The caller owns the current
+// scheduling lease and must validate its executable/configuration before this
+// method appends recovery facts.
+func (repository *Repository) RecoverReview(
+	runID string,
+	recoveredAt time.Time,
+) (DeterministicRecovery, error) {
+	return repository.RecoverReviewWithAuthority(runID, recoveredAt, nil)
+}
+
+// RecoverReviewWithAuthority verifies the caller's current lease before each
+// recovery ledger write. This does not claim an atomic scheduler/store commit.
+func (repository *Repository) RecoverReviewWithAuthority(
+	runID string,
+	recoveredAt time.Time,
+	authority func() error,
+) (DeterministicRecovery, error) {
+	appendRecoveryEvent := func(id string, at time.Time, event RunEvent) error {
+		if authority != nil {
+			if err := authority(); err != nil {
+				return err
+			}
+		}
+		return repository.AppendEvent(id, at, event)
+	}
 	if recoveredAt.IsZero() || recoveredAt.Location() != time.UTC {
 		return DeterministicRecovery{}, fmt.Errorf("recovered_at must be a non-zero UTC timestamp")
 	}
@@ -47,7 +83,7 @@ func (repository *Repository) RecoverScopeReview(
 	if err != nil {
 		return DeterministicRecovery{}, err
 	}
-	if len(events) < 2 {
+	if len(events) == 0 {
 		return DeterministicRecovery{}, fmt.Errorf("run %q has no recoverable lifecycle", runID)
 	}
 	if recoveredAt.Before(events[len(events)-1].Envelope.Time) {
@@ -65,16 +101,12 @@ func (repository *Repository) RecoverScopeReview(
 	startedIndex := slices.IndexFunc(events, func(event persistedRunEvent) bool {
 		return event.Event.EventType == EventRunStarted
 	})
-	if startedIndex < 0 {
-		return DeterministicRecovery{}, fmt.Errorf("run %q has no run.started fact", runID)
+	if startedIndex < 0 && len(events) != 1 {
+		return DeterministicRecovery{}, fmt.Errorf("run %q has execution facts without run.started", runID)
 	}
-	started := events[startedIndex]
 	snapshot, err := repository.ExecutionSnapshotForRun(runID)
 	if err != nil {
 		return DeterministicRecovery{}, err
-	}
-	if snapshot.ReviewShardManifestRef == nil {
-		return DeterministicRecovery{}, fmt.Errorf("run %q has no frozen scope shard manifest", runID)
 	}
 	inputData, err := repository.ReadArtifact(snapshot.ReviewInputRef)
 	if err != nil {
@@ -84,8 +116,17 @@ func (repository *Repository) RecoverScopeReview(
 	if err != nil {
 		return DeterministicRecovery{}, err
 	}
-	if input.TargetMode != reviewcore.TargetModeScope {
-		return DeterministicRecovery{}, fmt.Errorf("run %q is not a scope review", runID)
+	switch input.TargetMode {
+	case reviewcore.TargetModeDiff, reviewcore.TargetModeSelection:
+		if snapshot.ReviewShardManifestRef != nil {
+			return DeterministicRecovery{}, fmt.Errorf("non-scope run carries a shard manifest")
+		}
+	case reviewcore.TargetModeScope:
+		if snapshot.ReviewShardManifestRef == nil {
+			return DeterministicRecovery{}, fmt.Errorf("run %q has no frozen scope shard manifest", runID)
+		}
+	default:
+		return DeterministicRecovery{}, fmt.Errorf("unsupported deterministic recovery target %q", input.TargetMode)
 	}
 	var target targetmodel.MaterializedTarget
 	if err := repository.ReadJSONArtifact(snapshot.TargetSnapshotRef, &target); err != nil {
@@ -100,6 +141,56 @@ func (repository *Repository) RecoverScopeReview(
 	}
 	var definition workflow.Definition
 	if err := decodeStrictJSON(definitionData, &definition); err != nil {
+		return DeterministicRecovery{}, err
+	}
+	if err := validateDeterministicRecoveryDefinition(definition); err != nil {
+		return DeterministicRecovery{}, err
+	}
+	var spec contractsv1alpha1.ReviewSpec
+	if err := repository.ReadJSONArtifact(snapshot.ReviewSpecRef, &spec); err != nil {
+		return DeterministicRecovery{}, err
+	}
+	if err := spec.Validate(); err != nil {
+		return DeterministicRecovery{}, fmt.Errorf("validate frozen recovery ReviewSpec: %w", err)
+	}
+	configData, err := repository.ReadArtifact(snapshot.ConfigBundleRef)
+	if err != nil {
+		return DeterministicRecovery{}, err
+	}
+	config, err := reviewconfig.DecodeBundle(configData)
+	if err != nil {
+		return DeterministicRecovery{}, err
+	}
+	if spec.RequestID != runID || config.Context.InvocationID != runID ||
+		string(spec.Target.Mode) != string(input.TargetMode) ||
+		spec.WorkflowRef.SHA256 != snapshot.Workflow.SHA256 ||
+		spec.WorkflowRef.ID != definition.ID || spec.WorkflowRef.Revision != definition.Revision ||
+		config.Workflow.Definition.SHA256 != snapshot.Workflow.SHA256 ||
+		spec.ConfigBundleRef.SHA256 != snapshot.ConfigBundleRef.SHA256 ||
+		spec.ConfigBundleRef.ID != config.BundleID || spec.ConfigBundleRef.Revision != config.SHA256[:16] ||
+		config.Context.OrganizationID != "local" ||
+		config.Context.TenantID != spec.TenantID ||
+		config.Context.RepositoryID != spec.Repository.RepositoryID {
+		return DeterministicRecovery{}, fmt.Errorf("recovery snapshot does not bind review identity and configuration")
+	}
+	if spec.Target.Mode == contractsv1alpha1.ReviewModeSelection {
+		if config.Context.Path != spec.Target.Selection.Path {
+			return DeterministicRecovery{}, fmt.Errorf("recovery configuration path differs from selection")
+		}
+	} else if config.Context.Path != "" {
+		return DeterministicRecovery{}, fmt.Errorf("repository-wide recovery requires an empty configuration path")
+	}
+	projection := runmodel.ReviewRun{
+		RunID: runID, Kind: runmodel.RunKindReview,
+		TargetMode:   runmodel.TargetMode(input.TargetMode),
+		BaseRevision: target.Snapshot.Base.CommitOID, HeadRevision: target.Snapshot.Head.CommitOID,
+		TargetSnapshotRef: snapshot.TargetSnapshotRef,
+	}
+	if err := repository.verifyMaterializedTargetClosure(target, spec, projection, input, config); err != nil {
+		return DeterministicRecovery{}, fmt.Errorf("validate frozen recovery target: %w", err)
+	}
+	targetDigest, err := reviewcore.DigestReviewInput(input)
+	if err != nil {
 		return DeterministicRecovery{}, err
 	}
 	order, err := definition.TopologicalOrder()
@@ -149,6 +240,17 @@ func (repository *Repository) RecoverScopeReview(
 			coordinate.evidence = &copy
 		}
 	}
+	started := persistedRunEvent{Envelope: localEnvelopeAt(recoveredAt)}
+	if startedIndex >= 0 {
+		started = events[startedIndex]
+	} else {
+		if err := appendRecoveryEvent(runID+"-started", recoveredAt, RunEvent{
+			RunID: runID, Kind: runmodel.RunKindReview, Status: runmodel.RunStatusRunning,
+			EventType: EventRunStarted, ExecutionSnapshotID: snapshot.ExecutionSnapshotID,
+		}); err != nil {
+			return DeterministicRecovery{}, err
+		}
+	}
 
 	result := DeterministicRecovery{
 		Snapshot: snapshot, CreatedAt: created.Envelope.Time, StartedAt: started.Envelope.Time,
@@ -170,7 +272,7 @@ func (repository *Repository) RecoverScopeReview(
 			return DeterministicRecovery{}, fmt.Errorf("binding %q is outside the sequential workflow prefix", binding.BindingID)
 		}
 		if coordinate.started == nil {
-			if err := repository.AppendEvent(
+			if err := appendRecoveryEvent(
 				fmt.Sprintf("%s-%s-%d-%d-started", runID, binding.StageID, binding.Attempt, binding.Generation),
 				recoveredAt,
 				RunEvent{RunID: runID, Kind: runmodel.RunKindReview, Status: runmodel.RunStatusRunning,
@@ -187,7 +289,7 @@ func (repository *Repository) RecoverScopeReview(
 				Code: "recovered_abandoned_attempt", Message: "prior process ended without a terminal stage fact",
 				StageID: binding.StageID, Retryable: true,
 			}
-			if err := repository.AppendEvent(
+			if err := appendRecoveryEvent(
 				fmt.Sprintf("%s-%s-%d-%d-canceled", runID, binding.StageID, binding.Attempt, binding.Generation),
 				recoveredAt,
 				RunEvent{RunID: runID, Kind: runmodel.RunKindReview, Status: runmodel.RunStatusRunning,
@@ -229,6 +331,9 @@ func (repository *Repository) RecoverScopeReview(
 			if err != nil || string(stageResult.Stage) != binding.StageID {
 				return DeterministicRecovery{}, fmt.Errorf("decode recovered %s output: %w", binding.StageID, err)
 			}
+			if stageResult.TargetDigest != targetDigest {
+				return DeterministicRecovery{}, fmt.Errorf("recovered %s output targets another review input", binding.StageID)
+			}
 			if coordinate.evidence == nil {
 				completeness, notes := targetEvidenceCompleteness(target)
 				evidence := runmodel.RunEvidence{
@@ -239,7 +344,7 @@ func (repository *Repository) RecoverScopeReview(
 					ArtifactRef: outputRef, Completeness: completeness,
 					CompletenessNotes: notes, RecordedAt: finishedAt,
 				}
-				if err := repository.AppendEvent(
+				if err := appendRecoveryEvent(
 					fmt.Sprintf("%s-%s-%d-%d-evidence", runID, binding.StageID, binding.Attempt, binding.Generation),
 					finishedAt,
 					RunEvent{RunID: runID, Kind: runmodel.RunKindReview, Status: runmodel.RunStatusRunning,
@@ -278,6 +383,30 @@ func (repository *Repository) RecoverScopeReview(
 	}
 	result.StartStage = reviewcore.StageName(order[stageIndex])
 	return result, nil
+}
+
+func validateDeterministicRecoveryDefinition(definition workflow.Definition) error {
+	if err := definition.Validate(); err != nil {
+		return err
+	}
+	expected := workflow.DefaultReviewDefinition()
+	if len(definition.Stages) != len(expected.Stages) {
+		return fmt.Errorf("recovery requires the complete deterministic review workflow")
+	}
+	for index, stage := range definition.Stages {
+		want := expected.Stages[index]
+		if stage.ID != want.ID || stage.Kind != want.Kind ||
+			stage.ImplementationRevision != want.ImplementationRevision ||
+			stage.InputContract != want.InputContract || stage.OutputContract != want.OutputContract ||
+			!slices.Equal(stage.DependsOn, want.DependsOn) || stage.Executor != want.Executor ||
+			len(stage.RequiredCapabilities) != 0 || stage.AuthorityCeiling != nil ||
+			stage.Retry.Jitter || stage.Retry.UnknownOutcome != want.Retry.UnknownOutcome ||
+			stage.FailurePolicy != want.FailurePolicy || stage.SideEffect != want.SideEffect ||
+			stage.ReplayPolicy != want.ReplayPolicy {
+			return fmt.Errorf("recovery stage %q is not a supported deterministic implementation", stage.ID)
+		}
+	}
+	return nil
 }
 
 func stageCoordinate(stage string, attempt int, generation int) string {

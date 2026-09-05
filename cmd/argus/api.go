@@ -18,7 +18,6 @@ import (
 	"github.com/abietic/argus/internal/calibration"
 	"github.com/abietic/argus/internal/calibrationpromotion"
 	"github.com/abietic/argus/internal/configrepo"
-	"github.com/abietic/argus/internal/contextprovider"
 	"github.com/abietic/argus/internal/controlplane"
 	"github.com/abietic/argus/internal/evaluation"
 	feedbackdomain "github.com/abietic/argus/internal/feedback"
@@ -31,7 +30,6 @@ import (
 	"github.com/abietic/argus/internal/promotionmonitor"
 	"github.com/abietic/argus/internal/publication"
 	"github.com/abietic/argus/internal/reviewjob"
-	"github.com/abietic/argus/internal/reviewshard"
 	"github.com/abietic/argus/internal/runrepo"
 	"github.com/abietic/argus/internal/scheduling"
 	"github.com/abietic/argus/internal/source/gitadapter"
@@ -193,79 +191,16 @@ func runAPI(ctx context.Context, arguments []string, stdout io.Writer) error {
 	if err != nil {
 		return fmt.Errorf("open local API review job repository: %w", err)
 	}
-	shardRepository, err := reviewshard.NewRepository(store)
+	workerID, err := identity.NewGenerator().New("apiworker")
 	if err != nil {
-		return fmt.Errorf("open local API scope shard repository: %w", err)
+		return err
 	}
-	contextExecutor, err := contextprovider.NewLocalExecutor(gitSource)
+	jobExecutor, err := newLocalReviewJobExecutor(store, runs, workloads, workerID, agentshadowworker.NewSubprocessRunner())
 	if err != nil {
-		return fmt.Errorf("initialize local API context providers: %w", err)
-	}
-	workerGenerator := identity.NewGenerator()
-	workerID, err := workerGenerator.New("apiworker")
-	if err != nil {
-		return fmt.Errorf("create local API worker identity: %w", err)
-	}
-	deterministicExecutor := reviewjob.ExecuteFunc(func(
-		executionContext context.Context,
-		command reviewjob.Command,
-	) (application.RunOutcome, error) {
-		ids := &reviewJobIDGenerator{
-			runID:    command.RunID,
-			fallback: identity.NewGenerator(),
-		}
-		service, serviceErr := application.NewService(gitSource, runs, application.ServiceOptions{
-			ConfigBundle: command.ConfigBundle,
-			IDs:          ids, BuildIdentity: "argus-" + version,
-			DisableScheduling: true, ContextProviders: contextExecutor,
-		})
-		if serviceErr != nil {
-			return application.RunOutcome{}, serviceErr
-		}
-		return service.Review(executionContext, command.Request.ApplicationRequest())
-	})
-	deterministicClaimed := func(
-		executionContext context.Context,
-		command reviewjob.Command,
-		dispatch scheduling.Dispatch,
-	) (application.RunOutcome, error) {
-		ids := &reviewJobIDGenerator{runID: command.RunID, fallback: identity.NewGenerator()}
-		shards, shardErr := reviewshard.NewScopeExecutor(
-			shardRepository, runs, dispatch, workerID, nil,
-		)
-		if shardErr != nil {
-			return application.RunOutcome{}, shardErr
-		}
-		service, serviceErr := application.NewService(gitSource, runs, application.ServiceOptions{
-			ConfigBundle: command.ConfigBundle,
-			IDs:          ids, BuildIdentity: "argus-" + version,
-			DisableScheduling: true, ContextProviders: contextExecutor,
-			ScopeShards: shards, ExecutionDispatch: &dispatch,
-		})
-		if serviceErr != nil {
-			return application.RunOutcome{}, serviceErr
-		}
-		history, historyErr := runs.History(0)
-		if historyErr != nil {
-			return application.RunOutcome{}, historyErr
-		}
-		for _, entry := range history {
-			if entry.RunID == command.RunID {
-				return service.ResumeScopeReview(
-					executionContext, command.RunID, command.Request.RepositoryPath,
-				)
-			}
-		}
-		return service.Review(executionContext, command.Request.ApplicationRequest())
-	}
-	jobExecutor := &localReviewJobExecutor{
-		deterministic: deterministicExecutor, deterministicClaimed: deterministicClaimed,
-		runner:    agentshadowworker.NewSubprocessRunner(),
-		storePath: store.Root(), workloads: workloads,
+		return fmt.Errorf("initialize local API review executor: %w", err)
 	}
 	jobService, err := reviewjob.NewService(
-		jobRepository, workloads, runs, configRepository, jobExecutor,
-		workerID, nil,
+		jobRepository, workloads, runs, configRepository, jobExecutor, workerID, nil,
 	)
 	if err != nil {
 		return fmt.Errorf("initialize local API review jobs: %w", err)
@@ -282,9 +217,12 @@ func runAPI(ctx context.Context, arguments []string, stdout io.Writer) error {
 			return fmt.Errorf("configure local API formal Pi jobs: %w", err)
 		}
 	}
-	if err := jobService.Start(ctx); err != nil {
+	jobContext, cancelJobs := context.WithCancel(ctx)
+	if err := jobService.Start(jobContext); err != nil {
+		cancelJobs()
 		return fmt.Errorf("start local API review jobs: %w", err)
 	}
+	defer func() { cancelJobs(); jobService.Wait() }()
 	batchControllerArguments := []formalAgentRunFlags{}
 	if options.formalOn {
 		batchFormal := cloneFormalAgentRunFlags(options.formal)
@@ -338,6 +276,7 @@ func runAPI(ctx context.Context, arguments []string, stdout io.Writer) error {
 		)
 		return err
 	})
+	cancelJobs()
 	jobService.Wait()
 	evaluationBatches.Wait()
 	return serveErr
@@ -411,8 +350,7 @@ func (executor *localReviewJobExecutor) Execute(
 
 func (executor *localReviewJobExecutor) CanResumeNonterminal(command reviewjob.Command) bool {
 	return command.ExecutionProfile == reviewjob.FormalPiExecutionProfile ||
-		command.ExecutionProfile == reviewjob.DeterministicExecutionProfile &&
-			command.Request.Mode == "scope"
+		command.ExecutionProfile == reviewjob.DeterministicExecutionProfile
 }
 
 func (executor *localReviewJobExecutor) ExecuteClaimed(

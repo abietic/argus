@@ -171,6 +171,14 @@ func (request ClaimRequest) Validate() error {
 			return err
 		}
 	}
+	if request.AllowedWorkloadIDs != nil {
+		if err := validateReconcileScope(request.AllowedWorkloadIDs); err != nil {
+			return fmt.Errorf("claim scope: %w", err)
+		}
+		if request.WorkloadID != "" && !slices.Contains(request.AllowedWorkloadIDs, request.WorkloadID) {
+			return fmt.Errorf("pinned workload_id is outside claim scope")
+		}
+	}
 	if err := validateID("worker_id", request.WorkerID); err != nil {
 		return err
 	}

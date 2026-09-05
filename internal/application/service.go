@@ -62,6 +62,12 @@ type ServiceOptions struct {
 	// ExecutionDispatch is the already-authenticated outer ReviewJob lease when
 	// this service is embedded under the asynchronous coordinator.
 	ExecutionDispatch *scheduling.Dispatch
+	// ExecutionAuthority revalidates the current outer lease before durable
+	// run facts are appended. It must fail after cancellation or reassignment.
+	ExecutionAuthority func(context.Context, scheduling.Dispatch) error
+	// ExecutionCancellationAuthority permits only cancellation closure after
+	// the scheduler has canceled this exact lease without a successor owner.
+	ExecutionCancellationAuthority func(context.Context, scheduling.Dispatch) error
 	// WorkloadTimeout freezes the run-level execution deadline. Zero selects
 	// the bounded local default.
 	WorkloadTimeout time.Duration
@@ -73,29 +79,31 @@ type ServiceOptions struct {
 }
 
 type Service struct {
-	source               TargetSource
-	repository           *runrepo.Repository
-	config               LocalConfig
-	configSource         LocalConfig
-	configBundle         reviewconfig.ConfigBundle
-	defaultBundle        bool
-	configProvider       ConfigProvider
-	workflow             workflow.Definition
-	ids                  IDGenerator
-	now                  func() time.Time
-	clockMu              sync.Mutex
-	executeStage         StageExecutor
-	customExecutor       bool
-	executorKind         string
-	executorID           string
-	executorCapabilities map[string]workflow.ExecutorCapabilities
-	buildIdentity        string
-	workloads            scheduling.WorkloadPort
-	workerID             string
-	workloadTimeout      time.Duration
-	contextProviders     ContextProviderExecutor
-	scopeShards          ScopeShardPort
-	executionDispatch    *scheduling.Dispatch
+	source                         TargetSource
+	repository                     *runrepo.Repository
+	config                         LocalConfig
+	configSource                   LocalConfig
+	configBundle                   reviewconfig.ConfigBundle
+	defaultBundle                  bool
+	configProvider                 ConfigProvider
+	workflow                       workflow.Definition
+	ids                            IDGenerator
+	now                            func() time.Time
+	clockMu                        sync.Mutex
+	executeStage                   StageExecutor
+	customExecutor                 bool
+	executorKind                   string
+	executorID                     string
+	executorCapabilities           map[string]workflow.ExecutorCapabilities
+	buildIdentity                  string
+	workloads                      scheduling.WorkloadPort
+	workerID                       string
+	workloadTimeout                time.Duration
+	contextProviders               ContextProviderExecutor
+	scopeShards                    ScopeShardPort
+	executionDispatch              *scheduling.Dispatch
+	executionAuthority             func(context.Context, scheduling.Dispatch) error
+	executionCancellationAuthority func(context.Context, scheduling.Dispatch) error
 }
 
 type RunOutcome struct {
@@ -252,6 +260,12 @@ func NewService(
 	if options.Workloads != nil && options.DisableScheduling {
 		return nil, fmt.Errorf("workloads and disable_scheduling are mutually exclusive")
 	}
+	if options.ExecutionAuthority != nil && options.ExecutionDispatch == nil {
+		return nil, fmt.Errorf("execution_authority requires an outer execution_dispatch")
+	}
+	if options.ExecutionCancellationAuthority != nil && options.ExecutionAuthority == nil {
+		return nil, fmt.Errorf("execution_cancellation_authority requires execution_authority")
+	}
 	if options.ExecutionDispatch != nil {
 		if !options.DisableScheduling || options.Workloads != nil {
 			return nil, fmt.Errorf("execution_dispatch requires externally coordinated scheduling")
@@ -298,14 +312,16 @@ func NewService(
 		ids:            ids, now: now, executeStage: executeStage,
 		customExecutor: executeStage != nil,
 		executorKind:   executorKind, executorID: executorIdentity,
-		executorCapabilities: executorCapabilities,
-		buildIdentity:        buildIdentity,
-		workloads:            options.Workloads,
-		workerID:             workerID,
-		workloadTimeout:      workloadTimeout,
-		contextProviders:     options.ContextProviders,
-		scopeShards:          options.ScopeShards,
-		executionDispatch:    options.ExecutionDispatch,
+		executorCapabilities:           executorCapabilities,
+		buildIdentity:                  buildIdentity,
+		workloads:                      options.Workloads,
+		workerID:                       workerID,
+		workloadTimeout:                workloadTimeout,
+		contextProviders:               options.ContextProviders,
+		scopeShards:                    options.ScopeShards,
+		executionDispatch:              options.ExecutionDispatch,
+		executionAuthority:             options.ExecutionAuthority,
+		executionCancellationAuthority: options.ExecutionCancellationAuthority,
 	}, nil
 }
 
@@ -317,23 +333,14 @@ func (service *Service) Review(
 	if err != nil {
 		return RunOutcome{}, err
 	}
+	if err := service.verifyExecutionAuthority(ctx, runID); err != nil {
+		return RunOutcome{}, err
+	}
 	bundle, runtimeConfig, err := service.configForReview(ctx, runID, request)
 	if err != nil {
 		return RunOutcome{}, err
 	}
-	request, providerReceiptRefs, err := service.prepareConfiguredContexts(
-		ctx, request, bundle, runtimeConfig,
-	)
-	if err != nil {
-		return RunOutcome{}, err
-	}
-	materialized, err := Materialize(
-		ctx,
-		service.source,
-		service.repository,
-		request,
-		runtimeConfig,
-	)
+	materialized, providerReceiptRefs, err := service.prepareReviewInput(ctx, runID, request, bundle, runtimeConfig)
 	if err != nil {
 		return RunOutcome{}, err
 	}
@@ -362,6 +369,9 @@ func (service *Service) Review(
 	var shardManifestRef *runmodel.ArtifactRef
 	shardCoverage := ScopeShardCoverage{Complete: true, ReasonCodes: []string{}}
 	if materialized.Input.TargetMode == reviewcore.TargetModeScope && service.scopeShards != nil {
+		if err := service.verifyExecutionAuthority(ctx, runID); err != nil {
+			return RunOutcome{}, err
+		}
 		plannedAt, err := service.timestamp()
 		if err != nil {
 			return RunOutcome{}, err
@@ -375,6 +385,9 @@ func (service *Service) Review(
 		}
 		shardManifestRef = &plan.ManifestRef
 		shardCoverage = plan.Coverage
+	}
+	if err := service.verifyExecutionAuthority(ctx, runID); err != nil {
+		return RunOutcome{}, err
 	}
 	specRef, snapshot, err := service.persistExecutionSnapshot(
 		runID,
@@ -467,9 +480,7 @@ func (service *Service) Review(
 	)
 }
 
-// ResumeScopeReview continues the narrowly proven crash-safe deterministic
-// scope path whose ExecutionSnapshot freezes a shard manifest. The caller must supply the
-// repository path from the already-validated immutable ReviewJob command.
+// ResumeScopeReview retains the scope-only entry point for existing embedders.
 func (service *Service) ResumeScopeReview(
 	ctx context.Context,
 	runID string,
@@ -478,22 +489,83 @@ func (service *Service) ResumeScopeReview(
 	if service.scopeShards == nil || service.executionDispatch == nil {
 		return RunOutcome{}, fmt.Errorf("scope recovery requires shard execution and outer dispatch authority")
 	}
-	recoveredAt, err := service.timestamp()
+	snapshot, err := service.repository.ExecutionSnapshotForRun(runID)
 	if err != nil {
 		return RunOutcome{}, err
 	}
-	recovery, err := service.repository.RecoverScopeReview(runID, recoveredAt)
+	if snapshot.ReviewShardManifestRef == nil {
+		return RunOutcome{}, fmt.Errorf("scope recovery requires a frozen shard manifest")
+	}
+	return service.ResumeReview(ctx, runID, repositoryPath)
+}
+
+// ResumeReview continues the frozen deterministic diff, selection, or sharded
+// scope workflow under the caller's current ReviewJob dispatch. All executable
+// and authorization checks precede mutations to the abandoned run ledger.
+func (service *Service) ResumeReview(
+	ctx context.Context,
+	runID string,
+	repositoryPath string,
+) (RunOutcome, error) {
+	return service.recoverReview(ctx, runID, repositoryPath, false)
+}
+
+// CancelReview closes an already-created run after cancellation won a race
+// with a stage or lifecycle write. It only repairs previously durable facts;
+// no stage is executed and no newly successful stage output is admitted.
+func (service *Service) CancelReview(
+	ctx context.Context,
+	runID string,
+	repositoryPath string,
+) (RunOutcome, error) {
+	return service.recoverReview(ctx, runID, repositoryPath, true)
+}
+
+func (service *Service) recoverReview(
+	ctx context.Context,
+	runID string,
+	repositoryPath string,
+	cancellation bool,
+) (RunOutcome, error) {
+	if err := ctx.Err(); err != nil {
+		return RunOutcome{}, err
+	}
+	if service.executionDispatch == nil || service.executionDispatch.Spec.RunID != runID {
+		return RunOutcome{}, fmt.Errorf("review recovery requires outer dispatch authority for the exact run")
+	}
+	authorize := func() error { return service.verifyExecutionAuthority(ctx, runID) }
+	if cancellation {
+		authorize = func() error { return service.verifyExecutionCancellation(ctx, runID) }
+	}
+	if err := authorize(); err != nil {
+		return RunOutcome{}, err
+	}
+	snapshot, err := service.repository.ExecutionSnapshotForRun(runID)
 	if err != nil {
-		return RunOutcome{}, fmt.Errorf("recover scope review ledger: %w", err)
+		return RunOutcome{}, err
 	}
 	configuredDigest, err := reviewconfig.DigestBundleArtifact(service.configBundle)
 	if err != nil {
 		return RunOutcome{}, err
 	}
-	if configuredDigest != recovery.Snapshot.ConfigBundleRef.SHA256 {
+	if configuredDigest != snapshot.ConfigBundleRef.SHA256 {
 		return RunOutcome{}, fmt.Errorf("configured bundle differs from frozen recovery snapshot")
 	}
-	inputData, err := service.repository.ReadArtifact(recovery.Snapshot.ReviewInputRef)
+	workflowDigest, err := workflow.DigestDefinition(service.workflow)
+	if err != nil {
+		return RunOutcome{}, err
+	}
+	if workflowDigest != snapshot.Workflow.SHA256 || service.buildIdentity != snapshot.BuildIdentity {
+		return RunOutcome{}, fmt.Errorf("executable workflow or build differs from frozen recovery snapshot")
+	}
+	var spec contractsv1alpha1.ReviewSpec
+	if err := service.repository.ReadJSONArtifact(snapshot.ReviewSpecRef, &spec); err != nil {
+		return RunOutcome{}, err
+	}
+	if err := service.admitReview(spec, false); err != nil {
+		return RunOutcome{}, err
+	}
+	inputData, err := service.repository.ReadArtifact(snapshot.ReviewInputRef)
 	if err != nil {
 		return RunOutcome{}, err
 	}
@@ -502,17 +574,37 @@ func (service *Service) ResumeScopeReview(
 		return RunOutcome{}, err
 	}
 	var target MaterializedTarget
-	if err := service.repository.ReadJSONArtifact(recovery.Snapshot.TargetSnapshotRef, &target); err != nil {
+	if err := service.repository.ReadJSONArtifact(snapshot.TargetSnapshotRef, &target); err != nil {
 		return RunOutcome{}, err
 	}
 	if err := target.Validate(); err != nil {
 		return RunOutcome{}, err
+	}
+	if input.TargetMode == reviewcore.TargetModeScope &&
+		(service.scopeShards == nil || snapshot.ReviewShardManifestRef == nil) {
+		return RunOutcome{}, fmt.Errorf("scope recovery requires shard execution and a frozen manifest")
 	}
 	policy, err := runtimePolicyFromBundle(service.configBundle)
 	if err != nil {
 		return RunOutcome{}, err
 	}
 	policy.TargetComplete = target.Snapshot.Completeness == gitadapter.CompletenessComplete
+	completeness, notes := targetCompleteness(target)
+	if snapshot.ReviewShardManifestRef != nil {
+		shardCoverage, err := service.scopeShards.ScopeCoverage(ctx, runID, *snapshot.ReviewShardManifestRef)
+		if err != nil {
+			return RunOutcome{}, err
+		}
+		completeness, notes = combineShardCompleteness(completeness, notes, shardCoverage)
+	}
+	recoveredAt, err := service.timestamp()
+	if err != nil {
+		return RunOutcome{}, err
+	}
+	recovery, err := service.repository.RecoverReviewWithAuthority(runID, recoveredAt, authorize)
+	if err != nil {
+		return RunOutcome{}, fmt.Errorf("recover deterministic review ledger: %w", err)
+	}
 	startedAt := recovery.StartedAt
 	run := runmodel.ReviewRun{
 		SchemaVersion: runmodel.RunSchemaVersion, RunID: runID, Kind: runmodel.RunKindReview,
@@ -524,19 +616,19 @@ func (service *Service) ResumeScopeReview(
 		StageAttempts:       recovery.StageAttempts, Bindings: recovery.Bindings,
 		Evidence: recovery.Evidence, CreatedAt: recovery.CreatedAt, StartedAt: &startedAt,
 	}
-	completeness, notes := targetCompleteness(target)
-	shardCoverage, err := service.scopeShards.ScopeCoverage(
-		ctx, runID, *recovery.Snapshot.ReviewShardManifestRef,
-	)
-	if err != nil {
-		return RunOutcome{}, err
+	if cancellation {
+		return service.finalizeTerminal(run, runmodel.RunStatusCanceled,
+			&runmodel.Failure{Code: "canceled", Message: "outer review job was canceled"}, nil, "")
 	}
-	completeness, notes = combineShardCompleteness(completeness, notes, shardCoverage)
 	if recovery.StartStage == "" {
 		for index := range recovery.Upstream {
 			if recovery.Upstream[index].Stage == reviewcore.StageReport &&
 				recovery.Upstream[index].Output.Report != nil {
-				return service.finalizeSucceeded(run, *recovery.Upstream[index].Output.Report, nil)
+				outcome, err := service.finalizeSucceeded(run, *recovery.Upstream[index].Output.Report, nil)
+				for _, reused := range recovery.Upstream {
+					outcome.Reused = append(outcome.Reused, reused.Stage)
+				}
+				return outcome, err
 			}
 		}
 		return RunOutcome{}, fmt.Errorf("completed recovered prefix contains no report")
@@ -545,13 +637,17 @@ func (service *Service) ResumeScopeReview(
 	if service.executionDispatch.Lease.Generation > generationFloor {
 		generationFloor = service.executionDispatch.Lease.Generation
 	}
-	return service.executeAndFinalize(
+	outcome, err := service.executeAndFinalize(
 		ctx, run, input, recovery.Snapshot.ReviewInputRef,
 		recovery.Snapshot.ReviewShardManifestRef,
 		recovery.StartStage, recovery.Upstream, recovery.UpstreamRefs,
 		completeness, notes, policy, service.configBundle.Budget, service.workflow, nil,
 		generationFloor,
 	)
+	for _, reused := range recovery.Upstream {
+		outcome.Reused = append(outcome.Reused, reused.Stage)
+	}
+	return outcome, err
 }
 
 func (service *Service) Replay(
@@ -1064,10 +1160,16 @@ func (service *Service) appendRunLifecycleEvents(
 	createdAt time.Time,
 	startedAt time.Time,
 ) error {
+	if err := service.verifyExecutionAuthority(context.Background(), run.RunID); err != nil {
+		return err
+	}
 	if err := service.repository.AppendEvent(run.RunID+"-created", createdAt, runrepo.RunEvent{
 		RunID: run.RunID, Kind: run.Kind, Status: runmodel.RunStatusPending,
 		EventType: runrepo.EventRunCreated, ExecutionSnapshotID: run.ExecutionSnapshotID,
 	}); err != nil {
+		return err
+	}
+	if err := service.verifyExecutionAuthority(context.Background(), run.RunID); err != nil {
 		return err
 	}
 	return service.repository.AppendEvent(run.RunID+"-started", startedAt, runrepo.RunEvent{
@@ -1516,6 +1618,9 @@ func (service *Service) finalizeTerminal(
 	report *reviewcore.Report,
 	markdown string,
 ) (RunOutcome, error) {
+	if err := service.verifyExecutionWriteAuthority(context.Background(), run.RunID, status == runmodel.RunStatusCanceled); err != nil {
+		return RunOutcome{}, err
+	}
 	completedAt, err := service.timestamp()
 	if err != nil {
 		return RunOutcome{}, err
@@ -1556,6 +1661,9 @@ func (service *Service) appendStageFact(
 	evidence *runmodel.RunEvidence,
 	failure *runmodel.Failure,
 ) error {
+	if err := service.verifyExecutionWriteAuthority(context.Background(), run.RunID, eventType == runrepo.EventStageCanceled); err != nil {
+		return err
+	}
 	eventID := fmt.Sprintf(
 		"%s-%s-%d-%d-%s", run.RunID, stage, attempt, generation, suffix,
 	)
@@ -1565,6 +1673,46 @@ func (service *Service) appendStageFact(
 		StageID: string(stage), Attempt: attempt, Generation: generation,
 		Artifact: artifact, Binding: binding, Evidence: evidence, Failure: failure,
 	})
+}
+
+func (service *Service) verifyExecutionAuthority(ctx context.Context, runID string) error {
+	return service.verifyExecutionWriteAuthority(ctx, runID, false)
+}
+
+func (service *Service) verifyExecutionWriteAuthority(ctx context.Context, runID string, cancellation bool) error {
+	if service.executionDispatch == nil {
+		return nil
+	}
+	if service.executionDispatch.Spec.RunID != runID {
+		return fmt.Errorf("execution dispatch does not authorize run %q", runID)
+	}
+	if service.executionAuthority == nil {
+		return nil
+	}
+	checkContext, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	if err := service.executionAuthority(checkContext, *service.executionDispatch); err != nil {
+		if cancellation && service.executionCancellationAuthority != nil {
+			if cancelErr := service.executionCancellationAuthority(checkContext, *service.executionDispatch); cancelErr == nil {
+				return nil
+			}
+		}
+		return fmt.Errorf("verify outer execution authority: %w", err)
+	}
+	return nil
+}
+
+func (service *Service) verifyExecutionCancellation(ctx context.Context, runID string) error {
+	if service.executionDispatch == nil || service.executionDispatch.Spec.RunID != runID ||
+		service.executionCancellationAuthority == nil {
+		return fmt.Errorf("cancellation recovery requires exact canceled lease authority")
+	}
+	checkContext, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	if err := service.executionCancellationAuthority(checkContext, *service.executionDispatch); err != nil {
+		return fmt.Errorf("verify canceled execution authority: %w", err)
+	}
+	return nil
 }
 
 func (service *Service) loadReplayPrefix(

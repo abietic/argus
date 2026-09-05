@@ -1,0 +1,21 @@
+{
+  "schema_version": "argus.review_preparation.v1alpha1",
+  "run_id": "run-example-preparation",
+  "request_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "config_bundle_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "build_identity": "argus-dev",
+  "repository_root": "/workspace/example",
+  "target_ref": {
+    "uri": "artifact://local/sha256/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "size_bytes": 100,
+    "contract": "argus.materialized_target.v1alpha1"
+  },
+  "input_ref": {
+    "uri": "artifact://local/sha256/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "size_bytes": 100,
+    "contract": "argus.review_input.v1alpha1"
+  },
+  "context_provider_receipt_refs": []
+}

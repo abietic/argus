@@ -56,7 +56,8 @@
 - API 新增 `review_execute` 与 ReviewJob submit/list/show/cancel。submit 在返回 202 前冻结 published
   ConfigBundle/receipt 与 immutable command，再复用 scheduling admission/lease/heartbeat/generation/fencing/
   callback/reconcile；request disconnect 不取消，显式 cancel 建立永久 run fence。`deterministic_review_v1` 的
-  orphaned nonterminal run 失败关闭避免重复；`formal_pi_review_v1` 已接受 committed source run，冻结 exact config、
+  diff/selection/scope 已从验证后的冻结输入与 stage prefix 恢复，身份漂移/未知workflow失败关闭；
+  `formal_pi_review_v1` 已接受 committed source run，冻结 exact config、
   Pi runtime/component bytes 与 pricing ceiling，并消费 coordinator 已认领的同一 workload lease。fake provider E2E 已验证
   formal job 的单一 job/run/workload 与失败终态；跨进程 physical acceptance 进一步验证 generation 1 worker 在
   provider runner 内持久化 Pi group checkpoint 后被 SIGKILL，lease expiry reconcile 后 generation 2 接管并收到
@@ -364,12 +365,14 @@
 	安全的内部 component ID 与 exact provider wire model 分离，已验证 `deepseek-v4-pro[1m]` 不被改写。
 	runtime/agent/worker-owned skill revision 绑定 build digest；bootstrap 复用已发布 exact component，完整
 	config semantics 独立生成 config revision，因此 worker 或预算演进不会再争用旧 identity。
-- `argus agent-review quick` 已把 source target materialization、formal bootstrap 和正式 Pi run
-	组合为一个 CLI 入口；`--` 后继续复用 `review` 的 diff/selection/scope parser，store/config/JSON
-	由 quick 单独拥有。bootstrap/formal 失败仍返回已提交 `source_run_id`，随后用相同 quick key、
-	publication time 与 `--source-run` 恢复时复用 exact formal terminal，不重复调用 provider。由于 source
-	review 尚无调用方幂等键，不带 `--source-run` 重跑首次命令会显式创建新 review，文档不把它伪称为
-	exact retry。嵌套 `agent-review formal run --help` 等入口也已路由到实际子命令 usage。
+- `argus agent-review quick` 通过两个 durable ReviewJob 组合 source materialization 与正式 Pi run；
+	`--` 后复用 diff/selection/scope parser。first-writer-wins intent 冻结原参数、解析后的 commit OID、
+	overlay/context 字节和 non-secret runtime，独立 plan 冻结两套 published ConfigBundle/receipt。
+	原命令同 key 重试不受 HEAD/外部文件/后续配置变化影响，同 key 改参数拒绝；已提交终态不重复调用
+	provider。配置使用每个 intent 的独立 namespace，CLI 仅 claim/reconcile 自己的 job，保持全局容量。
+	输出包含 intent/source job/formal job ID；旧 `--source-run` 入口仍兼容。新 intent 限定 local-pi，
+	runtime 文件漂移在 provider 前拒绝。SIGKILL 后等待旧 lease 自然过期，不强制夺取执行权；总期限
+	为每个 job 首次 submission 后 24 小时。终态失败/取消保持终态，需新 key 发起新执行。
 - terminal workload 重入会从 exact dispatch coordinate、terminal gate、canonical result 与
 	hypothesis evidence 恢复，不再 claim 已结束 workload，也不会二次调用 provider。CLI E2E
 	分别覆盖成功与失败链路，并验证 exact retry 的 runner 调用次数保持 1。
