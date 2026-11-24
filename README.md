@@ -12,6 +12,11 @@ subagent prompt。它把变更评审、圈选代码评审和仓库/目录扫描�
 验收的 marker baseline 和一条基于冻结源码的 Go AST context-cancel rule。它仍不代表
 完整生产评审质量。
 
+`argus report-review` 对冻结交付报告执行独立的离线审核。首个 profile
+`lets-quant-report.v1` 对照可信事实与净值证据核对 Markdown 报告。作为 Switchback
+审核子进程调用时，宿主负责提供冻结文件、写回回执和保留用户验收权限。
+命令、文件名和幂等语义见 [冻结报告审核契约](docs/contracts/core-protocols.md#冻结报告审核)。
+
 `runtime/pi-review` 提供真实 Agentic Code Review runtime：直接嵌入 Pi Agent SDK，
 对 working changes、exact commit diff 或显式文件执行分组上下文收集、多 Skill 并行
 评审和独立候选验证。默认 pack 已按 correctness、concurrency/data、error/outcome、
