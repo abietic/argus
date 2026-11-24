@@ -1785,6 +1785,35 @@ decoder/validator、Schema 和规范样例位于
 [`api/schema/v1alpha1/governed-review-report.schema.json`](../../api/schema/v1alpha1/governed-review-report.schema.json)
 与 [`examples/governed-review-report.json`](../../examples/governed-review-report.json)。
 
+## 冻结报告审核
+
+Switchback 是 Task、Artifact 读取授权、审核调度和用户验收的权威。Argus 审核宿主已校验的
+文件并保存完整结构化结果。宿主启动固定版本二进制，向进程提供私有 staging 和持久 store，
+由宿主写入 `gateway.delivery_review.v1` 回执。`passed` 只表示对应 profile 的检查完成且未发现问题。
+
+```sh
+argus report-review --store /absolute/reviewer-store \
+  --request /absolute/request.json --input-dir /absolute/staging
+```
+
+- [请求 Schema](../../api/schema/v1alpha1/report-review-request.schema.json) 与
+  [样例](../../examples/report-review-request.json) 绑定 `idempotency_key`、`task_id`、`task_revision`、
+  `worker_run_id`、`artifact_id`、`artifact_sha256`、`profile` 与 `evidence_sha256`。
+  key 以 store 为作用域，建议由宿主稳定派生。`lets-quant-report.v1` 只读取 `report.md`、`facts.json`、
+  `configured-costs.csv`、`high-friction.csv`、`delayed-execution.csv`。单文件上限为 1 MiB，所有摘要均为
+  bare lowercase SHA-256。证据及摘要来自宿主配置，其中 facts 包含独立的实验与 CSV 摘要。
+- Argus 在检查前校验并保存所有输入。该 profile 检查实验输入与结果引用、清单链接、表格指标、
+  场景差值及执行参数，适用于既有 lets-quant 离线研究样本的三个场景和 260 个交易日窗口。
+  缺失、漂移或无效证据返回非零退出码，不生成回执。发现报告问题会正常完成并输出 `rework_required`。
+- [结果 Schema](../../api/schema/v1alpha1/report-review-result.schema.json) 与
+  [样例](../../examples/report-review-result.json) 回显交付绑定和 profile，并返回稳定的 `review_run_id`、
+  `request_sha256`、verdict 和 findings。`request_sha256` 为 Go `ReportReviewRequest` 的紧凑 JSON 编码摘要，
+  按 Go 字段声明顺序编码，`evidence_sha256` 键按字典序。宿主应核对交付绑定，对整行 stdout 原始字节
+  （含末尾 LF）取 SHA-256 填 `review_result_sha256`，并在写入前重新校验当前交付与作业执有权。
+- 结果持久化后才写 stdout。终态同键同请求返回完全相同的字节。冻结输入已提交后可以使用同一 store
+  恢复，无需重建 staging。重复键的不同请求失败关闭，并发精确重试只保留一份结果。
+  审核进程不访问 Task API 或运行模型。Rework 和 Accept 由 Switchback 原有命令处理。
+
 ## 7. ReplaySpec
 
 ReplaySpec 必填：

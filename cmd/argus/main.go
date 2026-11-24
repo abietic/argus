@@ -40,6 +40,7 @@ const usage = `usage:
   argus review --repo <absolute-path> --mode diff --base <revision> --head <revision> [--context-provider <repository_search|go_ast|go_dependencies|go_compile>]... [--context-file <kind>@<coverage-symbol>=<absolute-file>...] [--config-state-dir <absolute-dir>] [--store <dir>] [--json]
   argus review --repo <absolute-path> --mode selection --revision <revision> --path <file> (--start-line <n> --end-line <n> | --range <START:END> [--range <START:END>...] | --symbol-language go --symbol-kind <function|method|type> --symbol-qualified-name <name>) [--overlay-file <absolute-path>] [--context-provider <repository_search|go_ast|go_dependencies|go_compile>]... [--context-file <kind>@<coverage-symbol>=<absolute-file>...] [--config-state-dir <absolute-dir>] [--store <dir>] [--json]
   argus review --repo <absolute-path> --mode scope --revision <revision> --include <glob> [--include <glob>...] [--exclude <glob>...] [--context-provider <repository_search|go_ast|go_dependencies|go_compile>]... [--context-file <kind>@<coverage-symbol>=<absolute-file>...] [--config-state-dir <absolute-dir>] [--store <dir>] [--json]
+  argus report-review --store <absolute-dir> --request <absolute-json> --input-dir <absolute-dir>
   argus replay --run <id> --from <stage> [--change <variable> --variant-config-bundle <absolute-json> [--variant-workflow <absolute-json>]] [--config-state-dir <absolute-dir>] [--store <dir>] [--json]
   argus compare --baseline <id> --variant <id> [--store <dir>] [--json]
   argus lineage <build|show|list> --store <absolute-dir> ...
@@ -126,6 +127,8 @@ func runWithIO(ctx context.Context, arguments []string, stdout io.Writer) error 
 		return runConfig(ctx, arguments[1:], stdout)
 	case "review":
 		return runReview(ctx, arguments[1:], stdout)
+	case "report-review":
+		return runReportReview(ctx, arguments[1:], stdout)
 	case "replay":
 		return runReplay(ctx, arguments[1:], stdout)
 	case "compare":
@@ -1668,16 +1671,17 @@ func subcommandUsage(command string) (string, bool) {
 		"replay": "usage: argus replay --run <id> --from <stage> " +
 			"[--change <variable> --variant-config-bundle <absolute-json>] " +
 			"[--config-state-dir <absolute-dir>] [--store <dir>] [--json]",
-		"compare":     "usage: argus compare --baseline <id> --variant <id> [--store <dir>] [--json]",
-		"lineage":     lineageUsage,
-		"history":     "usage: argus history [--limit <n>] [--store <dir>] [--json]",
-		"show":        "usage: argus show --run <id> [--store <dir>] [--json]",
-		"candidate":   candidateUsage,
-		"finding":     "usage: argus finding show --store <absolute-dir> --run <id> --finding <id> [--json]",
-		"decision":    decisionUsage,
-		"publication": publicationUsage,
-		"artifact":    artifactUsage,
-		"workload":    workloadUsage,
+		"report-review": reportReviewUsage,
+		"compare":       "usage: argus compare --baseline <id> --variant <id> [--store <dir>] [--json]",
+		"lineage":       lineageUsage,
+		"history":       "usage: argus history [--limit <n>] [--store <dir>] [--json]",
+		"show":          "usage: argus show --run <id> [--store <dir>] [--json]",
+		"candidate":     candidateUsage,
+		"finding":       "usage: argus finding show --store <absolute-dir> --run <id> --finding <id> [--json]",
+		"decision":      decisionUsage,
+		"publication":   publicationUsage,
+		"artifact":      artifactUsage,
+		"workload":      workloadUsage,
 		"feedback": "usage: argus feedback record --store <absolute-dir> " +
 			"--input <absolute-json> [--json]",
 		"outcome": "usage: argus outcome record --store <absolute-dir> " +

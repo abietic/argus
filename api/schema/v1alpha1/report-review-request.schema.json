@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/report-review-request.schema.json",
+  "title": "Argus report review request v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "idempotency_key",
+    "task_id",
+    "task_revision",
+    "worker_run_id",
+    "artifact_id",
+    "artifact_sha256",
+    "profile",
+    "evidence_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "argus.report_review_request.v1alpha1"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "task_revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "worker_run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "artifact_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "profile": {
+      "const": "lets-quant-report.v1"
+    },
+    "evidence_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "facts.json",
+        "configured-costs.csv",
+        "high-friction.csv",
+        "delayed-execution.csv"
+      ],
+      "properties": {
+        "facts.json": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "configured-costs.csv": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "high-friction.csv": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "delayed-execution.csv": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": "argus.report_review_request.v1alpha1",
+  "idempotency_key": "review-job-example",
+  "task_id": "task-example",
+  "task_revision": 4,
+  "worker_run_id": "run-example",
+  "artifact_id": "artifact-report-example",
+  "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "profile": "lets-quant-report.v1",
+  "evidence_sha256": {
+    "facts.json": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "configured-costs.csv": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "high-friction.csv": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "delayed-execution.csv": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+  }
+}

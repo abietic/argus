@@ -5,6 +5,15 @@
 
 ## 当前已存在
 
+- `argus report-review` 支持受控子进程的冻结报告审核，首个 `lets-quant-report.v1` profile
+  从原始 Markdown、实验 facts 和三份净值 CSV 离线核对报告。报告、证据、请求及结果内容持久化，
+  同请求重试输出完全相同的回执原料；证据漂移、请求冲突及无效证据显式失败。
+  原有 lets-quant 离线报告两版在 Argus CLI 单独验证得到 3 条、0 条发现。
+  2026-11-24 在隔离 Switchback 环境使用真实 Linux/arm64 Argus 二进制，验证两轮自动回执、
+  同 Task 返工和发起人 Accept。Switchback 修复驻留 Worker 的终态重连校验后，首轮结果持久化、回执提交前
+  SIGKILL Backend。重启后首轮回执以第二次认领复用原结果，原 Worker 保持容器、PID、generation 和 epoch，
+  以新控制流恢复心跳并执行返工，第二轮自动复审通过。重复投递幂等、旧交付新回执拒绝，模型请求为 0。
+
 - 产品、需求、技术设计、核心协议、集成边界、指标/评测/收益和旧系统证据文档。
 - Go 1.26 module 已冻结为公开 canonical path `github.com/abietic/argus`；根门禁通过
   `go list -m` 拒绝 module identity 漂移。

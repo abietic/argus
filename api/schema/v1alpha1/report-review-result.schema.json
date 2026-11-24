@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://argus.local/schema/v1alpha1/report-review-result.schema.json",
+  "title": "Argus report review result v1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_sha256",
+    "review_run_id",
+    "task_id",
+    "task_revision",
+    "worker_run_id",
+    "artifact_id",
+    "artifact_sha256",
+    "profile",
+    "verdict",
+    "findings"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "argus.report_review_result.v1alpha1"
+    },
+    "request_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "review_run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "task_revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "worker_run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "artifact_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "profile": {
+      "const": "lets-quant-report.v1"
+    },
+    "verdict": {
+      "enum": [
+        "passed",
+        "rework_required"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "summary"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 800,
+            "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+$"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      }
+    }
+  },
+  "if": {
+    "properties": {
+      "verdict": {
+        "const": "passed"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "findings": {
+        "maxItems": 0
+      }
+    }
+  },
+  "else": {
+    "properties": {
+      "findings": {
+        "minItems": 1
+      }
+    }
+  }
+}
