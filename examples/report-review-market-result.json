@@ -1,0 +1,19 @@
+{
+  "schema_version": "argus.report_review_result.v1alpha1",
+  "request_sha256": "cb211289b0e00c99225978dacf040875c76ab14c8042753163def3078d3dd692",
+  "review_run_id": "report-review-example",
+  "task_id": "task-example",
+  "task_revision": 4,
+  "worker_run_id": "run-example",
+  "artifact_id": "artifact-report-example",
+  "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "profile": "lets-quant-market-report.v1",
+  "verdict": "rework_required",
+  "findings": [
+    {
+      "code": "unregistered-evidence-link",
+      "summary": "报告引用的证据清单未登记。",
+      "line": 25
+    }
+  ]
+}

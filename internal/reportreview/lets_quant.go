@@ -30,6 +30,13 @@ type reportFacts struct {
 	Cases             map[string]reportCase        `json:"cases"`
 	Scenarios         []map[string]json.RawMessage `json:"execution_scenarios"`
 	FormalV1SHA256    string                       `json:"formal_v1_sha256,omitempty"`
+	Market            json.RawMessage              `json:"market,omitempty"`
+}
+
+type reportMarketEvidence struct {
+	DatasetID        string   `json:"dataset_id"`
+	SourceSnapshotID string   `json:"source_snapshot_id"`
+	EvaluationDates  []string `json:"evaluation_dates"`
 }
 
 type reportCase struct {
@@ -45,13 +52,24 @@ type reportMetrics struct {
 
 // This profile implements the checks of the existing offline evidence pack.
 // A validated profile is a prerequisite for issuing any review verdict.
-func auditLetsQuant(inputs map[string][]byte) ([]contract.ReportFinding, error) {
+func auditLetsQuant(inputs map[string][]byte, profile string) ([]contract.ReportFinding, error) {
 	if !utf8.Valid(inputs[reportName]) || bytes.IndexByte(inputs[reportName], 0) >= 0 {
 		return nil, fmt.Errorf("report must be UTF-8 Markdown")
 	}
 	facts, err := readReportFacts(inputs["facts.json"])
 	if err != nil {
 		return nil, err
+	}
+	marketProfile := profile == contract.LetsQuantMarketReportProfile
+	if marketProfile != (len(facts.Market) > 0) {
+		return nil, fmt.Errorf("market evidence must match the selected review profile")
+	}
+	var market reportMarketEvidence
+	if marketProfile {
+		market, err = readReportMarketEvidence(facts.Market)
+		if err != nil {
+			return nil, err
+		}
 	}
 	report := string(inputs[reportName])
 	lines := strings.Split(strings.ReplaceAll(report, "\r\n", "\n"), "\n")
@@ -73,6 +91,13 @@ func auditLetsQuant(inputs map[string][]byte) ([]contract.ReportFinding, error) 
 		"source-binding", "需要绑定冻结实验输入 ID 和结果 SHA-256。", "可复核证据")
 	check(!unregisteredLink.MatchString(report), "unregistered-evidence-link",
 		"报告正文的相对清单链接没有对应的已登记产物。改为明确本地交付包信息。", "delivery-manifest.json")
+	if marketProfile {
+		dates := market.EvaluationDates
+		window := fmt.Sprintf("评估窗口 %s 至 %s，共 %d 个交易日", dates[0], dates[len(dates)-1], len(dates))
+		check(strings.Contains(report, window), "market-window", "报告评估窗口与冻结交易日历不一致。", "评估窗口")
+		check(strings.Contains(report, market.DatasetID) && strings.Contains(report, market.SourceSnapshotID),
+			"market-source-binding", "需要列出冻结行情快照和清洗数据集的完整标识。", "可复核证据")
+	}
 	returns := make(map[string]*big.Rat, len(caseNames))
 	for _, name := range caseNames {
 		entry := facts.Cases[name]
@@ -80,7 +105,7 @@ func auditLetsQuant(inputs map[string][]byte) ([]contract.ReportFinding, error) 
 		if digest(nav) != entry.SourceSHA {
 			return nil, fmt.Errorf("scenario %s CSV does not match its facts digest", name)
 		}
-		metrics, err := readReportMetrics(nav)
+		metrics, err := readReportMetrics(nav, market.EvaluationDates)
 		if err != nil {
 			return nil, fmt.Errorf("scenario %s: %w", name, err)
 		}
@@ -95,7 +120,14 @@ func auditLetsQuant(inputs map[string][]byte) ([]contract.ReportFinding, error) 
 	friction := new(big.Rat).Sub(base, returns["high-friction"])
 	delay := new(big.Rat).Sub(base, returns["delayed-execution"])
 	comparison := fmt.Sprintf("低 %s 和 %s 个基点", formatReportMetric(friction, 10000, 2), formatReportMetric(delay, 10000, 2))
-	check(friction.Sign() >= 0 && delay.Sign() >= 0 && strings.Contains(report, comparison),
+	comparisonValid := friction.Sign() >= 0 && delay.Sign() >= 0
+	if marketProfile {
+		comparison = fmt.Sprintf("相对配置成本的期末收益差为 %s / %s 个基点",
+			formatReportMetric(friction.Neg(friction), 10000, 2),
+			formatReportMetric(delay.Neg(delay), 10000, 2))
+		comparisonValid = true
+	}
+	check(comparisonValid && strings.Contains(report, comparison),
 		"basis-point-reconciliation", "场景之间的期末差值与净值证据不一致。", "个基点")
 	for _, scenario := range facts.Scenarios {
 		var name string
@@ -169,7 +201,26 @@ func readReportFacts(data []byte) (reportFacts, error) {
 	return facts, nil
 }
 
-func readReportMetrics(data []byte) (reportMetrics, error) {
+func readReportMarketEvidence(raw []byte) (reportMarketEvidence, error) {
+	var market reportMarketEvidence
+	decoder := json.NewDecoder(bytes.NewReader(raw))
+	decoder.DisallowUnknownFields()
+	if decoder.Decode(&market) != nil || decoder.Decode(new(any)) != io.EOF ||
+		!factsSHA.MatchString(market.DatasetID) || !factsSHA.MatchString(market.SourceSnapshotID) ||
+		len(market.EvaluationDates) < 2 || len(market.EvaluationDates) > 5000 {
+		return reportMarketEvidence{}, fmt.Errorf("invalid frozen market evidence")
+	}
+	var previous string
+	for _, date := range market.EvaluationDates {
+		if _, err := time.Parse(time.DateOnly, date); err != nil || date <= previous {
+			return reportMarketEvidence{}, fmt.Errorf("invalid frozen market trading date")
+		}
+		previous = date
+	}
+	return market, nil
+}
+
+func readReportMetrics(data []byte, marketDates []string) (reportMetrics, error) {
 	reader := csv.NewReader(bytes.NewReader(data))
 	header, err := reader.Read()
 	if err != nil || !slices.Equal(header, []string{"date", "nav", "cash", "drawdown", "risk_frozen", "positions"}) {
@@ -177,7 +228,10 @@ func readReportMetrics(data []byte) (reportMetrics, error) {
 	}
 	var firstNAV, finalNAV *big.Rat
 	minimumDrawdown := new(big.Rat)
-	const firstDate, lastDate, count = "2024-01-01", "2024-12-27", 260
+	firstDate, lastDate, count := "2024-01-01", "2024-12-27", 260
+	if len(marketDates) > 0 {
+		firstDate, lastDate, count = marketDates[0], marketDates[len(marketDates)-1], len(marketDates)
+	}
 	prevDate := ""
 	for index := 0; index < count; index++ {
 		row, err := reader.Read()
@@ -186,7 +240,8 @@ func readReportMetrics(data []byte) (reportMetrics, error) {
 		}
 		date := row[0]
 		if _, err := time.Parse(time.DateOnly, date); err != nil || date <= prevDate ||
-			(index == 0 && date != firstDate) || (index == count-1 && date != lastDate) {
+			(index == 0 && date != firstDate) || (index == count-1 && date != lastDate) ||
+			(len(marketDates) > 0 && date != marketDates[index]) {
 			return reportMetrics{}, fmt.Errorf("invalid date in NAV CSV row %d", index+1)
 		}
 		prevDate = date

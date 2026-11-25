@@ -13,6 +13,8 @@
   同 Task 返工和发起人 Accept。Switchback 修复驻留 Worker 的终态重连校验后，首轮结果持久化、回执提交前
   SIGKILL Backend。重启后首轮回执以第二次认领复用原结果，原 Worker 保持容器、PID、generation 和 epoch，
   以新控制流恢复心跳并执行返工，第二轮自动复审通过。重复投递幂等、旧交付新回执拒绝，模型请求为 0。
+  新增 `lets-quant-market-report.v1`，在隔离环境使用 244 个实际评估交易日验证逐行日期匹配、
+  有符号场景差值以及返工后的独立复审。
 
 - 产品、需求、技术设计、核心协议、集成边界、指标/评测/收益和旧系统证据文档。
 - Go 1.26 module 已冻结为公开 canonical path `github.com/abietic/argus`；根门禁通过

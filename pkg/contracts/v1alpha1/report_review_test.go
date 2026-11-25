@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/santhosh-tekuri/jsonschema/v6"
@@ -64,6 +65,18 @@ func TestReportReviewContractsAndExamples(t *testing.T) {
 			}
 			if err := test.decode(example); err != nil {
 				t.Fatal(err)
+			}
+			marketName := "report-review-market-" + strings.TrimPrefix(test.name, "report-review-") + ".json"
+			market, err := os.ReadFile(filepath.Join(root, "examples", marketName))
+			if err != nil {
+				t.Fatal(err)
+			}
+			marketValue, err := jsonschema.UnmarshalJSON(bytes.NewReader(market))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if schema.Validate(marketValue) != nil || test.decode(market) != nil {
+				t.Fatal("market profile example rejected")
 			}
 			for field, replacement := range test.bad {
 				object := value.(map[string]any)
