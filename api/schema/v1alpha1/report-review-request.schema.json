@@ -45,7 +45,7 @@
       "pattern": "^[0-9a-f]{64}$"
     },
     "profile": {
-      "const": "lets-quant-report.v1"
+      "enum": ["lets-quant-report.v1", "lets-quant-market-report.v1"]
     },
     "evidence_sha256": {
       "type": "object",

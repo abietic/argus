@@ -76,7 +76,7 @@ func Run(ctx context.Context, store *local.Store, request contract.ReportReviewR
 		return nil, err
 	}
 	result := want
-	result.Findings, err = auditLetsQuant(inputs)
+	result.Findings, err = auditLetsQuant(inputs, request.Profile)
 	if err != nil {
 		return nil, fmt.Errorf("evaluate frozen report: %w", err)
 	}

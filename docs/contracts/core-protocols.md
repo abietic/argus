@@ -1804,6 +1804,10 @@ argus report-review --store /absolute/reviewer-store \
   bare lowercase SHA-256。证据及摘要来自宿主配置，其中 facts 包含独立的实验与 CSV 摘要。
 - Argus 在检查前校验并保存所有输入。该 profile 检查实验输入与结果引用、清单链接、表格指标、
   场景差值及执行参数，适用于既有 lets-quant 离线研究样本的三个场景和 260 个交易日窗口。
+  `lets-quant-market-report.v1` 使用相同的文件集合，从宿主批准的 `facts.json` 读取
+  `market.dataset_id`、`market.source_snapshot_id` 和有序的 `market.evaluation_dates`。
+  [市场请求样例](../../examples/report-review-market-request.json)和[市场结果样例](../../examples/report-review-market-result.json)沿用同一契约。
+  三组 NAV 必须逐行匹配该时间轴。报告需列出窗口、两个来源 ID 和相对配置成本的有符号收益差。
   缺失、漂移或无效证据返回非零退出码，不生成回执。发现报告问题会正常完成并输出 `rework_required`。
 - [结果 Schema](../../api/schema/v1alpha1/report-review-result.schema.json) 与
   [样例](../../examples/report-review-result.json) 回显交付绑定和 profile，并返回稳定的 `review_run_id`、

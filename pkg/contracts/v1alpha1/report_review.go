@@ -12,12 +12,13 @@ import (
 )
 
 const (
-	ReportReviewRequestSchema = "argus.report_review_request.v1alpha1"
-	ReportReviewResultSchema  = "argus.report_review_result.v1alpha1"
-	LetsQuantReportProfile    = "lets-quant-report.v1"
-	ReportReviewPassed        = "passed"
-	ReportReviewNeedsRework   = "rework_required"
-	MaxReportTaskRevision     = 1<<53 - 1
+	ReportReviewRequestSchema    = "argus.report_review_request.v1alpha1"
+	ReportReviewResultSchema     = "argus.report_review_result.v1alpha1"
+	LetsQuantReportProfile       = "lets-quant-report.v1"
+	LetsQuantMarketReportProfile = "lets-quant-market-report.v1"
+	ReportReviewPassed           = "passed"
+	ReportReviewNeedsRework      = "rework_required"
+	MaxReportTaskRevision        = 1<<53 - 1
 )
 
 var reportReviewID = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$`)
@@ -168,7 +169,8 @@ func (result ReportReviewResult) Validate() error {
 
 func validateReportDelivery(task string, revision uint64, worker, artifact, digest, profile string) error {
 	if !reportReviewID.MatchString(task) || !reportReviewID.MatchString(worker) || !reportReviewID.MatchString(artifact) ||
-		revision == 0 || revision > MaxReportTaskRevision || profile != LetsQuantReportProfile {
+		revision == 0 || revision > MaxReportTaskRevision ||
+		(profile != LetsQuantReportProfile && profile != LetsQuantMarketReportProfile) {
 		return fmt.Errorf("invalid report delivery identity or unsupported profile")
 	}
 	return requireSHA256("artifact_sha256", digest)
